@@ -10,7 +10,7 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 | --------------------------- | ------------: | ------------: | ------- | ---------------------------------------------------------- |
 | Carro                       |          Argo |      Argo 1.0 | texto   |                                                            |
 | KM por hora                 |            20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
-| Valor por KM                |          1,50 |          1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
+| Valor por KM                |          1,50 |          1,70 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
 | Horas por mês               |            66 |           192 | h       |                                                            |
 | Dias trabalhados por semana |             5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
 | Valor do combustível        |          6,95 |          6,95 | R$/L    |                                                            |

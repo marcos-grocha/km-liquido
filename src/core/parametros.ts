@@ -36,7 +36,7 @@ export type CampoNumerico = Exclude<
 export const PARAMETROS_PADRAO: Parametros = {
   carro: 'Argo 1.0',
   kmPorHora: 20,
-  valorPorKm: 1.5,
+  valorPorKm: 1.7,
   horasPorMes: 192,
   diasPorSemana: 6,
   precoCombustivel: 6.95,
