@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { Segmentado } from '../../components/Segmentado'
 import {
   PERIODOS,
   type Periodo,
   type Projecao,
   type ResultadoPeriodo,
 } from '../../core/calculo'
-import type { Parametros } from '../../core/parametros'
+import { ROTULOS_PAGAMENTO, type Parametros } from '../../core/parametros'
 import { formatarHoras, formatarMoeda, formatarNumero } from '../../lib/numero'
 
 const ROTULOS: Record<Periodo, string> = {
@@ -15,6 +16,11 @@ const ROTULOS: Record<Periodo, string> = {
   mes: 'Mês',
   ano: 'Ano',
 }
+
+const OPCOES_PERIODO = PERIODOS.map((periodo) => ({
+  valor: periodo,
+  rotulo: ROTULOS[periodo],
+}))
 
 interface PainelProps {
   projecao: Projecao
@@ -56,8 +62,16 @@ export function Painel({ projecao, parametros }: PainelProps) {
       </div>
 
       <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
-        <SeletorPeriodo valor={periodo} onChange={setPeriodo} />
-        <Demonstrativo resultado={projecao.periodos[periodo]} />
+        <Segmentado
+          rotulo="Período"
+          opcoes={OPCOES_PERIODO}
+          valor={periodo}
+          onChange={setPeriodo}
+        />
+        <Demonstrativo
+          resultado={projecao.periodos[periodo]}
+          rotuloPagamento={ROTULOS_PAGAMENTO[parametros.pagamentoDoCarro]}
+        />
       </section>
     </div>
   )
@@ -85,34 +99,13 @@ function Indicador({ titulo, valor, bruto }: IndicadorProps) {
   )
 }
 
-interface SeletorPeriodoProps {
-  valor: Periodo
-  onChange: (periodo: Periodo) => void
+interface DemonstrativoProps {
+  resultado: ResultadoPeriodo
+  /** "Financiamento" ou "Aluguel", conforme o pagamento do carro. */
+  rotuloPagamento: string
 }
 
-function SeletorPeriodo({ valor, onChange }: SeletorPeriodoProps) {
-  return (
-    <div
-      role="group"
-      aria-label="Período"
-      className="grid grid-cols-5 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800"
-    >
-      {PERIODOS.map((periodo) => (
-        <button
-          key={periodo}
-          type="button"
-          aria-pressed={periodo === valor}
-          onClick={() => onChange(periodo)}
-          className={`rounded-lg py-1.5 text-sm font-medium transition-colors ${periodo === valor ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
-        >
-          {ROTULOS[periodo]}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-function Demonstrativo({ resultado: r }: { resultado: ResultadoPeriodo }) {
+function Demonstrativo({ resultado: r, rotuloPagamento }: DemonstrativoProps) {
   return (
     <>
       <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
@@ -134,7 +127,11 @@ function Demonstrativo({ resultado: r }: { resultado: ResultadoPeriodo }) {
           valor={r.faturamentoResponsavel}
           tipo="subtotal"
         />
-        <Linha rotulo="Financiamento" valor={r.financiamento} tipo="custo" />
+        <Linha
+          rotulo={rotuloPagamento}
+          valor={r.financiamentoOuAluguel}
+          tipo="custo"
+        />
         <Linha rotulo="Lucro real" valor={r.lucro} tipo="total" />
       </dl>
     </>

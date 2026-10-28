@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Campo } from '../../components/Campo'
 import { calcularAvulsa, type ResultadoAvulsa } from '../../core/calculo'
 import {
+  ROTULOS_PAGAMENTO,
   validarValor,
   type Parametros,
   type Restricao,
@@ -67,7 +68,10 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
       </section>
 
       {resultado ? (
-        <Resultado resultado={resultado} />
+        <Resultado
+          resultado={resultado}
+          rotuloPagamento={ROTULOS_PAGAMENTO[parametros.pagamentoDoCarro]}
+        />
       ) : (
         <p className="px-6 text-center text-sm text-slate-500 dark:text-slate-400">
           Digite o faturamento bruto para ver quanto separar.
@@ -77,7 +81,13 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
   )
 }
 
-function Resultado({ resultado: r }: { resultado: ResultadoAvulsa }) {
+interface ResultadoProps {
+  resultado: ResultadoAvulsa
+  /** "Financiamento" ou "Aluguel", conforme o pagamento do carro. */
+  rotuloPagamento: string
+}
+
+function Resultado({ resultado: r, rotuloPagamento }: ResultadoProps) {
   const fracaoDoBruto = (valor: number) =>
     r.faturamentoBruto > 0
       ? formatarPercentual(valor / r.faturamentoBruto)
@@ -111,7 +121,7 @@ function Resultado({ resultado: r }: { resultado: ResultadoAvulsa }) {
           {formatarMoeda(r.faturamentoResponsavel)}
         </p>
         <p className="mt-1 text-xs text-white/80">
-          Antes de seguro, IPVA e financiamento.
+          Antes de seguro, IPVA e {rotuloPagamento.toLowerCase()}.
         </p>
       </div>
 

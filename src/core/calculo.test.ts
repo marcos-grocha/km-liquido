@@ -22,7 +22,9 @@ const exemplo: Parametros = {
   manutencaoPorKm: 0.1,
   seguroAnual: 0,
   ipvaAnual: 1700,
+  pagamentoDoCarro: 'financiamento',
   financiamentoMensal: 0,
+  aluguelSemanal: 0,
 }
 /** R$ 7,00 a 14 km/L dá R$ 0,50/km, o custo arredondado que a planilha usa. */
 const comCustoDaPlanilha: Parametros = { ...exemplo, precoCombustivel: 7 }
@@ -157,11 +159,44 @@ describe('calcularProjecao', () => {
 
     esperarValores(mes, {
       faturamentoResponsavel: 1051.05,
-      financiamento: 500,
+      financiamentoOuAluguel: 500,
       lucro: 551.05,
     })
-    esperarValores(ano, { financiamento: 6000, lucro: 6612.57 })
-    esperarValores(hora, { financiamento: 7.58, lucro: 8.35 })
+    esperarValores(ano, { financiamentoOuAluguel: 6000, lucro: 6612.57 })
+    esperarValores(hora, { financiamentoOuAluguel: 7.58, lucro: 8.35 })
+  })
+
+  it('converte o aluguel semanal para o mês e rateia pelas horas', () => {
+    const { hora, dia, semana, mes, ano } = calcularProjecao({
+      ...exemplo,
+      pagamentoDoCarro: 'aluguel',
+      aluguelSemanal: 500,
+    }).periodos
+
+    esperarValores(semana, { financiamentoOuAluguel: 500, lucro: -257.45 })
+    esperarValores(mes, { financiamentoOuAluguel: 2166.67, lucro: -1115.62 })
+    esperarValores(ano, { financiamentoOuAluguel: 26000, lucro: -13387.43 })
+    esperarValores(dia, { financiamentoOuAluguel: 100, lucro: -51.49 })
+    esperarValores(hora, { financiamentoOuAluguel: 32.83, lucro: -16.9 })
+  })
+
+  it('desconta só o pagamento escolhido: financiamento ou aluguel', () => {
+    const comOsDois = {
+      ...exemplo,
+      financiamentoMensal: 1000,
+      aluguelSemanal: 500,
+    }
+    const financiado = calcularProjecao({
+      ...comOsDois,
+      pagamentoDoCarro: 'financiamento',
+    }).periodos.mes
+    const alugado = calcularProjecao({
+      ...comOsDois,
+      pagamentoDoCarro: 'aluguel',
+    }).periodos.mes
+
+    expect(financiado.financiamentoOuAluguel).toBe(1000)
+    expect(alugado.financiamentoOuAluguel).toBeCloseTo(2166.67, 2)
   })
 })
 

@@ -2,6 +2,8 @@ import { useId } from 'react'
 
 interface CampoProps {
   rotulo: string
+  /** Esconde o rótulo na tela, mas o mantém para leitores de tela. */
+  ocultarRotulo?: boolean
   valor: string
   onChange: (valor: string) => void
   onBlur?: () => void
@@ -17,6 +19,7 @@ interface CampoProps {
 
 export function Campo({
   rotulo,
+  ocultarRotulo,
   valor,
   onChange,
   onBlur,
@@ -37,12 +40,16 @@ export function Campo({
     <div className={className}>
       <label
         htmlFor={id}
-        className="text-sm font-medium text-slate-700 dark:text-slate-200"
+        className={
+          ocultarRotulo
+            ? 'sr-only'
+            : 'mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200'
+        }
       >
         {rotulo}
       </label>
       <div
-        className={`mt-1 flex items-center gap-1.5 rounded-xl border bg-white px-3 transition-shadow focus-within:ring-2 dark:bg-slate-950 ${erro ? 'border-rose-500 focus-within:ring-rose-500/25' : 'border-slate-300 focus-within:border-emerald-600 focus-within:ring-emerald-600/20 dark:border-slate-700'}`}
+        className={`flex items-center gap-1.5 rounded-xl border bg-white px-3 transition-shadow focus-within:ring-2 dark:bg-slate-950 ${erro ? 'border-rose-500 focus-within:ring-rose-500/25' : 'border-slate-300 focus-within:border-emerald-600 focus-within:ring-emerald-600/20 dark:border-slate-700'}`}
       >
         {prefixo && (
           <span className="text-sm text-slate-500 dark:text-slate-400">
@@ -61,7 +68,7 @@ export function Campo({
           onBlur={onBlur}
           aria-invalid={erro ? true : undefined}
           aria-describedby={ajuda ? idAjuda : undefined}
-          className="w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-slate-400"
+          className="w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-sm placeholder:text-slate-400"
         />
         {sufixo && (
           <span className="shrink-0 text-sm text-slate-500 dark:text-slate-400">
