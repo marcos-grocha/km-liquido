@@ -1,0 +1,214 @@
+import { RotateCcw } from 'lucide-react'
+import {
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from 'react'
+import { Campo } from '../../components/Campo'
+import type { Projecao } from '../../core/calculo'
+import {
+  PARAMETROS_PADRAO,
+  validarCampo,
+  type CampoNumerico,
+  type Parametros,
+} from '../../core/parametros'
+import { formatarMoeda, formatarParaEdicao, lerNumero } from '../../lib/numero'
+
+interface DefinicaoCampo {
+  campo: CampoNumerico
+  rotulo: string
+  prefixo?: string
+  sufixo?: string
+  /** Campos com dica ocupam a linha inteira. */
+  dica?: string
+}
+
+const VEICULO: DefinicaoCampo[] = [
+  { campo: 'consumoKmPorLitro', rotulo: 'Consumo', sufixo: 'km/L' },
+  {
+    campo: 'precoCombustivel',
+    rotulo: 'Combustível',
+    prefixo: 'R$',
+    sufixo: '/L',
+  },
+]
+
+const ROTINA: DefinicaoCampo[] = [
+  {
+    campo: 'kmPorHora',
+    rotulo: 'Km por hora',
+    sufixo: 'km/h',
+    dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
+  },
+  {
+    campo: 'valorPorKm',
+    rotulo: 'Valor por km',
+    prefixo: 'R$',
+    sufixo: '/km',
+    dica: 'Faturamento bruto ÷ km total rodado, com e sem passageiro.',
+  },
+  { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
+  { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
+]
+
+const CUSTOS: DefinicaoCampo[] = [
+  {
+    campo: 'manutencaoPorKm',
+    rotulo: 'Manutenção',
+    prefixo: 'R$',
+    sufixo: '/km',
+    dica: 'Reserva para pneus, óleo, revisões e peças.',
+  },
+  { campo: 'seguroAnual', rotulo: 'Seguro', prefixo: 'R$', sufixo: '/ano' },
+  { campo: 'ipvaAnual', rotulo: 'IPVA', prefixo: 'R$', sufixo: '/ano' },
+  {
+    campo: 'financiamentoMensal',
+    rotulo: 'Financiamento',
+    prefixo: 'R$',
+    sufixo: '/mês',
+    dica: 'Parcela do carro, se houver.',
+  },
+]
+
+interface MeuCarroProps {
+  parametros: Parametros
+  projecao: Projecao
+  onChange: Dispatch<SetStateAction<Parametros>>
+}
+
+export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
+  // Mudar a versão recria os campos com os valores restaurados.
+  const [versao, setVersao] = useState(0)
+  const { mes } = projecao.periodos
+
+  function alterar(campo: CampoNumerico, valor: number) {
+    onChange((atual) => ({ ...atual, [campo]: valor }))
+  }
+
+  function campos(definicoes: DefinicaoCampo[]) {
+    return definicoes.map((definicao) => (
+      <CampoParametro
+        key={definicao.campo}
+        {...definicao}
+        valor={parametros[definicao.campo]}
+        onChange={alterar}
+      />
+    ))
+  }
+
+  function restaurarExemplo() {
+    const confirmado = window.confirm(
+      'Voltar para os valores do exemplo? Os dados atuais serão substituídos.',
+    )
+    if (!confirmado) return
+    onChange(PARAMETROS_PADRAO)
+    setVersao((v) => v + 1)
+  }
+
+  return (
+    <div key={versao} className="space-y-4">
+      <Secao
+        titulo="Veículo"
+        resumo={`Combustível por km: ${formatarMoeda(projecao.custoCombustivelPorKm)}`}
+      >
+        <Campo
+          className="col-span-2"
+          rotulo="Nome do carro"
+          inputMode="text"
+          valor={parametros.carro}
+          placeholder="Ex.: Argo"
+          maxLength={30}
+          onChange={(carro) => onChange((atual) => ({ ...atual, carro }))}
+        />
+        {campos(VEICULO)}
+      </Secao>
+
+      <Secao
+        titulo="Rotina de trabalho"
+        resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
+      >
+        {campos(ROTINA)}
+      </Secao>
+
+      <Secao
+        titulo="Custos do carro"
+        resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamento)}`}
+      >
+        {campos(CUSTOS)}
+      </Secao>
+
+      <div className="flex flex-col items-center gap-1 text-center">
+        <button
+          type="button"
+          onClick={restaurarExemplo}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+        >
+          <RotateCcw className="size-4" aria-hidden />
+          Restaurar valores do exemplo
+        </button>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Os dados ficam salvos só neste aparelho.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+interface SecaoProps {
+  titulo: string
+  resumo: string
+  children: ReactNode
+}
+
+function Secao({ titulo, resumo, children }: SecaoProps) {
+  return (
+    <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
+      <h2 className="font-semibold">{titulo}</h2>
+      <div className="mt-3 grid grid-cols-2 gap-3">{children}</div>
+      <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 tabular-nums dark:bg-emerald-950/60 dark:text-emerald-300">
+        {resumo}
+      </p>
+    </section>
+  )
+}
+
+interface CampoParametroProps extends DefinicaoCampo {
+  valor: number
+  onChange: (campo: CampoNumerico, valor: number) => void
+}
+
+/** Campo numérico que só repassa o valor quando ele é válido. */
+function CampoParametro({
+  campo,
+  valor,
+  onChange,
+  dica,
+  ...visual
+}: CampoParametroProps) {
+  const [texto, setTexto] = useState(() => formatarParaEdicao(valor))
+  const [erro, setErro] = useState<string | null>(null)
+
+  function alterarTexto(novoTexto: string) {
+    setTexto(novoTexto)
+    const numero = lerNumero(novoTexto)
+    const mensagem =
+      numero === null ? 'Informe um número.' : validarCampo(campo, numero)
+    setErro(mensagem)
+    if (numero !== null && mensagem === null) onChange(campo, numero)
+  }
+
+  return (
+    <Campo
+      {...visual}
+      className={dica ? 'col-span-2' : undefined}
+      dica={dica}
+      valor={texto}
+      erro={erro}
+      onChange={alterarTexto}
+      onBlur={() => {
+        if (!erro) setTexto(formatarParaEdicao(valor))
+      }}
+    />
+  )
+}
