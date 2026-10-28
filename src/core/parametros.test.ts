@@ -29,6 +29,7 @@ describe('validarCampo', () => {
     'seguroAnual',
     'ipvaAnual',
     'financiamentoMensal',
+    'aluguelSemanal',
   ])('aceita %s zerado, mas não negativo', (campo) => {
     expect(validarCampo(campo, 0)).toBeNull()
     expect(validarCampo(campo, -1)).toBe('Não pode ser negativo.')

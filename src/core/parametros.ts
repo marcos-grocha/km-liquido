@@ -14,10 +14,23 @@ export interface Parametros {
   manutencaoPorKm: number
   seguroAnual: number
   ipvaAnual: number
+  pagamentoDoCarro: PagamentoDoCarro
   financiamentoMensal: number
+  aluguelSemanal: number
 }
 
-export type CampoNumerico = Exclude<keyof Parametros, 'carro'>
+/** Como o motorista paga pelo carro: parcela mensal ou aluguel semanal. */
+export type PagamentoDoCarro = 'financiamento' | 'aluguel'
+
+export const ROTULOS_PAGAMENTO: Record<PagamentoDoCarro, string> = {
+  financiamento: 'Financiamento',
+  aluguel: 'Aluguel',
+}
+
+export type CampoNumerico = Exclude<
+  keyof Parametros,
+  'carro' | 'pagamentoDoCarro'
+>
 
 /** Valores com que o app vem preenchido. */
 export const PARAMETROS_PADRAO: Parametros = {
@@ -31,7 +44,9 @@ export const PARAMETROS_PADRAO: Parametros = {
   manutencaoPorKm: 0.2,
   seguroAnual: 0,
   ipvaAnual: 1500,
+  pagamentoDoCarro: 'financiamento',
   financiamentoMensal: 0,
+  aluguelSemanal: 500,
 }
 
 export interface Restricao {
@@ -52,6 +67,7 @@ const RESTRICOES: Record<CampoNumerico, Restricao> = {
   seguroAnual: { min: 0 },
   ipvaAnual: { min: 0 },
   financiamentoMensal: { min: 0 },
+  aluguelSemanal: { min: 0 },
 }
 
 export const CAMPOS_NUMERICOS = Object.keys(RESTRICOES) as CampoNumerico[]

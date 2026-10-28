@@ -6,11 +6,14 @@ import {
   type SetStateAction,
 } from 'react'
 import { Campo } from '../../components/Campo'
+import { Segmentado } from '../../components/Segmentado'
 import type { Projecao } from '../../core/calculo'
 import {
   PARAMETROS_PADRAO,
+  ROTULOS_PAGAMENTO,
   validarCampo,
   type CampoNumerico,
+  type PagamentoDoCarro,
   type Parametros,
 } from '../../core/parametros'
 import { formatarMoeda, formatarParaEdicao, lerNumero } from '../../lib/numero'
@@ -24,6 +27,13 @@ interface DefinicaoCampo {
   placeholder?: string
   /** Campos com dica ocupam a linha inteira. */
   dica?: string
+  /** Esconde o rótulo na tela quando o contexto já identifica o campo. */
+  ocultarRotulo?: boolean
+}
+
+/** Placeholder com o valor padrão do campo como sugestão. */
+function sugestao(campo: CampoNumerico): string {
+  return `${formatarParaEdicao(PARAMETROS_PADRAO[campo])} é uma sugestão realista`
 }
 
 const VEICULO: DefinicaoCampo[] = [
@@ -41,7 +51,7 @@ const ROTINA: DefinicaoCampo[] = [
     campo: 'kmPorHora',
     rotulo: 'Km por hora',
     sufixo: 'km/h',
-    placeholder: '20 é uma sugestão realista',
+    placeholder: sugestao('kmPorHora'),
     dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
   },
   {
@@ -65,14 +75,31 @@ const CUSTOS: DefinicaoCampo[] = [
   },
   { campo: 'seguroAnual', rotulo: 'Seguro', prefixo: 'R$', sufixo: '/ano' },
   { campo: 'ipvaAnual', rotulo: 'IPVA', prefixo: 'R$', sufixo: '/ano' },
-  {
+]
+
+const PAGAMENTO: Record<PagamentoDoCarro, DefinicaoCampo> = {
+  financiamento: {
     campo: 'financiamentoMensal',
-    rotulo: 'Financiamento',
+    rotulo: ROTULOS_PAGAMENTO.financiamento,
+    ocultarRotulo: true,
     prefixo: 'R$',
     sufixo: '/mês',
-    dica: 'Parcela do carro, se houver.',
+    dica: 'Parcela mensal do carro, se houver.',
   },
-]
+  aluguel: {
+    campo: 'aluguelSemanal',
+    rotulo: ROTULOS_PAGAMENTO.aluguel,
+    ocultarRotulo: true,
+    prefixo: 'R$',
+    sufixo: '/semana',
+    placeholder: sugestao('aluguelSemanal'),
+    dica: 'Valor pago por semana pelo aluguel do carro.',
+  },
+}
+
+const OPCOES_PAGAMENTO = (
+  Object.keys(ROTULOS_PAGAMENTO) as PagamentoDoCarro[]
+).map((valor) => ({ valor, rotulo: ROTULOS_PAGAMENTO[valor] }))
 
 interface MeuCarroProps {
   parametros: Parametros
@@ -136,9 +163,23 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
 
       <Secao
         titulo="Custos do carro"
-        resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamento)}`}
+        resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`}
       >
         {campos(CUSTOS)}
+        <div className="col-span-2 space-y-1">
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+            Pagamento do carro
+          </p>
+          <Segmentado
+            rotulo="Pagamento do carro"
+            opcoes={OPCOES_PAGAMENTO}
+            valor={parametros.pagamentoDoCarro}
+            onChange={(pagamentoDoCarro) =>
+              onChange((atual) => ({ ...atual, pagamentoDoCarro }))
+            }
+          />
+        </div>
+        {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
       </Secao>
 
       <div className="flex flex-col items-center gap-1 text-center">

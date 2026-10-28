@@ -22,8 +22,9 @@ export interface ResultadoPeriodo {
   totalCustos: number
   /** Faturamento líquido menos o total de custos (o "Conservador" da planilha). */
   faturamentoResponsavel: number
-  financiamento: number
-  /** Faturamento responsável menos financiamento: o que sobra no bolso. */
+  /** Parcela do financiamento ou aluguel, conforme o pagamento do carro. */
+  financiamentoOuAluguel: number
+  /** Faturamento responsável menos financiamento ou aluguel: o que sobra no bolso. */
   lucro: number
 }
 
@@ -37,6 +38,13 @@ export interface Projecao {
 
 export function custoCombustivelPorKm(p: Parametros): number {
   return p.precoCombustivel / p.consumoKmPorLitro
+}
+
+/** Financiamento ou aluguel por mês; o aluguel semanal vale 52 semanas ÷ 12 meses. */
+function pagamentoMensalDoCarro(p: Parametros): number {
+  return p.pagamentoDoCarro === 'aluguel'
+    ? (p.aluguelSemanal * SEMANAS_POR_ANO) / MESES_POR_ANO
+    : p.financiamentoMensal
 }
 
 function horasPorPeriodo(p: Parametros): Record<Periodo, number> {
@@ -67,7 +75,7 @@ function calcularPeriodo(
   const ipva = (p.ipvaAnual / MESES_POR_ANO) * fracaoDoMes
   const totalCustos = manutencao + seguro + ipva
   const faturamentoResponsavel = faturamentoLiquido - totalCustos
-  const financiamento = p.financiamentoMensal * fracaoDoMes
+  const financiamentoOuAluguel = pagamentoMensalDoCarro(p) * fracaoDoMes
   return {
     horas,
     km,
@@ -79,8 +87,8 @@ function calcularPeriodo(
     ipva,
     totalCustos,
     faturamentoResponsavel,
-    financiamento,
-    lucro: faturamentoResponsavel - financiamento,
+    financiamentoOuAluguel,
+    lucro: faturamentoResponsavel - financiamentoOuAluguel,
   }
 }
 
@@ -120,7 +128,7 @@ export interface ResultadoAvulsa {
   faturamentoResponsavel: number
 }
 
-/** "Fiz R$ X hoje, quanto sobrou?" — seguro, IPVA e financiamento não entram. */
+/** "Fiz R$ X hoje, quanto sobrou?" — seguro, IPVA, financiamento e aluguel não entram. */
 export function calcularAvulsa(
   p: Parametros,
   entrada: EntradaAvulsa,

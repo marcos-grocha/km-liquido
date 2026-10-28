@@ -12,7 +12,8 @@ O nome vem do indicador principal: o **km líquido**, quanto sobra de cada quil�
   bruto até o lucro, por hora, dia, semana, mês ou ano.
 - **Avulsa**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e
   para a manutenção. O km rodado é opcional; sem ele, a distância é estimada pelo valor por km.
-- **Meu carro**: dados do veículo, da rotina e dos custos, salvos no próprio aparelho.
+- **Meu carro**: dados do veículo, da rotina e dos custos, com o pagamento do carro como
+  financiamento (por mês) ou aluguel (por semana), salvos no próprio aparelho.
 
 ## Regras de cálculo
 
@@ -65,4 +66,4 @@ Cada push na `main` publica em produção, e cada pull request ganha uma URL de 
 - [ ] Publicação na Play Store
 - [ ] Diário real: registrar ganhos, km e abastecimentos e comparar com a estimativa
 - [ ] Metas: quantas horas rodar para chegar a um valor
-- [ ] Outros custos: depreciação, aluguel do carro, licenciamento, celular
+- [ ] Outros custos: depreciação, licenciamento, celular

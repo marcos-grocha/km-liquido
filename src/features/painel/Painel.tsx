@@ -6,7 +6,7 @@ import {
   type Projecao,
   type ResultadoPeriodo,
 } from '../../core/calculo'
-import type { Parametros } from '../../core/parametros'
+import { ROTULOS_PAGAMENTO, type Parametros } from '../../core/parametros'
 import { formatarHoras, formatarMoeda, formatarNumero } from '../../lib/numero'
 
 const ROTULOS: Record<Periodo, string> = {
@@ -68,7 +68,10 @@ export function Painel({ projecao, parametros }: PainelProps) {
           valor={periodo}
           onChange={setPeriodo}
         />
-        <Demonstrativo resultado={projecao.periodos[periodo]} />
+        <Demonstrativo
+          resultado={projecao.periodos[periodo]}
+          rotuloPagamento={ROTULOS_PAGAMENTO[parametros.pagamentoDoCarro]}
+        />
       </section>
     </div>
   )
@@ -96,7 +99,13 @@ function Indicador({ titulo, valor, bruto }: IndicadorProps) {
   )
 }
 
-function Demonstrativo({ resultado: r }: { resultado: ResultadoPeriodo }) {
+interface DemonstrativoProps {
+  resultado: ResultadoPeriodo
+  /** "Financiamento" ou "Aluguel", conforme o pagamento do carro. */
+  rotuloPagamento: string
+}
+
+function Demonstrativo({ resultado: r, rotuloPagamento }: DemonstrativoProps) {
   return (
     <>
       <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
@@ -118,7 +127,11 @@ function Demonstrativo({ resultado: r }: { resultado: ResultadoPeriodo }) {
           valor={r.faturamentoResponsavel}
           tipo="subtotal"
         />
-        <Linha rotulo="Financiamento" valor={r.financiamento} tipo="custo" />
+        <Linha
+          rotulo={rotuloPagamento}
+          valor={r.financiamentoOuAluguel}
+          tipo="custo"
+        />
         <Linha rotulo="Lucro real" valor={r.lucro} tipo="total" />
       </dl>
     </>

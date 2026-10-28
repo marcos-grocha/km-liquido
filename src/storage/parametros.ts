@@ -16,6 +16,10 @@ export function carregarParametros(): Parametros {
     const dados = salvo as Record<string, unknown>
     const parametros = { ...PARAMETROS_PADRAO }
     if (typeof dados.carro === 'string') parametros.carro = dados.carro
+    const pagamento = dados.pagamentoDoCarro
+    if (pagamento === 'financiamento' || pagamento === 'aluguel') {
+      parametros.pagamentoDoCarro = pagamento
+    }
     for (const campo of CAMPOS_NUMERICOS) {
       const valor = dados[campo]
       if (typeof valor === 'number' && validarCampo(campo, valor) === null) {

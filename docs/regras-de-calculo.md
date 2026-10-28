@@ -6,19 +6,21 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 
 ## 1. Entradas
 
-| Campo                       | Exemplo | Padrão do app | Unidade | Observação                                                 |
-| --------------------------- | ------: | ------------: | ------- | ---------------------------------------------------------- |
-| Carro                       |    Argo |      Argo 1.0 | texto   |                                                            |
-| KM por hora                 |      20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
-| Valor por KM                |    1,50 |          1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
-| Horas por mês               |      66 |           192 | h       |                                                            |
-| Dias trabalhados por semana |       5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
-| Valor do combustível        |    6,95 |          6,95 | R$/L    |                                                            |
-| Economia do veículo         |      14 |            13 | km/L    |                                                            |
-| Manutenção por KM           |    0,10 |          0,20 | R$/km   |                                                            |
-| Seguro por ano              |       0 |             0 | R$      |                                                            |
-| IPVA por ano                |   1.700 |         1.500 | R$      |                                                            |
-| Financiamento por mês       |       0 |             0 | R$      |                                                            |
+| Campo                       |       Exemplo | Padrão do app | Unidade | Observação                                                 |
+| --------------------------- | ------------: | ------------: | ------- | ---------------------------------------------------------- |
+| Carro                       |          Argo |      Argo 1.0 | texto   |                                                            |
+| KM por hora                 |            20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
+| Valor por KM                |          1,50 |          1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
+| Horas por mês               |            66 |           192 | h       |                                                            |
+| Dias trabalhados por semana |             5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
+| Valor do combustível        |          6,95 |          6,95 | R$/L    |                                                            |
+| Economia do veículo         |            14 |            13 | km/L    |                                                            |
+| Manutenção por KM           |          0,10 |          0,20 | R$/km   |                                                            |
+| Seguro por ano              |             0 |             0 | R$      |                                                            |
+| IPVA por ano                |         1.700 |         1.500 | R$      |                                                            |
+| Pagamento do carro          | financiamento | financiamento | —       | só no app: financiamento ou aluguel                        |
+| Financiamento por mês       |             0 |             0 | R$      | quando o pagamento é financiamento                         |
+| Aluguel por semana          |             — |           500 | R$      | só no app; quando o pagamento é aluguel                    |
 
 O **exemplo** é o da planilha e é a base dos casos de referência (§4 e §5). O **padrão do app**
 são os valores com que o app vem preenchido.
@@ -46,21 +48,23 @@ Na tela, as horas aparecem em horas e minutos, arredondadas ao minuto (3,05 h �
 
 Para um período com `h` horas e fração do mês `f = h ÷ horas por mês`:
 
-| Métrica                 | Fórmula                                 |
-| ----------------------- | --------------------------------------- |
-| Quilometragem           | km/h × h                                |
-| Faturamento bruto       | km × valor/km                           |
-| Gasto com combustível   | km × custo/km                           |
-| Faturamento líquido     | bruto − combustível                     |
-| Manutenção              | km × manutenção/km                      |
-| Seguro                  | seguro/ano ÷ 12 × f                     |
-| IPVA                    | IPVA/ano ÷ 12 × f                       |
-| TOTAL                   | manutenção + seguro + IPVA              |
-| Faturamento responsável | faturamento líquido − TOTAL             |
-| Financiamento           | financiamento/mês × f                   |
-| Lucro real              | faturamento responsável − financiamento |
+| Métrica                  | Fórmula                                                |
+| ------------------------ | ------------------------------------------------------ |
+| Quilometragem            | km/h × h                                               |
+| Faturamento bruto        | km × valor/km                                          |
+| Gasto com combustível    | km × custo/km                                          |
+| Faturamento líquido      | bruto − combustível                                    |
+| Manutenção               | km × manutenção/km                                     |
+| Seguro                   | seguro/ano ÷ 12 × f                                    |
+| IPVA                     | IPVA/ano ÷ 12 × f                                      |
+| TOTAL                    | manutenção + seguro + IPVA                             |
+| Faturamento responsável  | faturamento líquido − TOTAL                            |
+| Financiamento ou aluguel | financiamento/mês × f, ou aluguel/semana × 52 ÷ 12 × f |
+| Lucro real               | faturamento responsável − financiamento ou aluguel     |
 
-O faturamento responsável corresponde ao "Conservador" da planilha.
+O faturamento responsável corresponde ao "Conservador" da planilha. Só um pagamento do carro
+entra na conta, o escolhido: o aluguel semanal vira mensal com 52 semanas ÷ 12 meses, então vale
+exatamente o aluguel no período "semana".
 
 Indicadores em destaque:
 
@@ -70,7 +74,7 @@ Indicadores em destaque:
 Forma fechada do lucro mensal:
 
 ```
-lucro = horas × km/h × (valor/km − custo/km − manutenção/km) − (seguro + IPVA) ÷ 12 − financiamento
+lucro = horas × km/h × (valor/km − custo/km − manutenção/km) − (seguro + IPVA) ÷ 12 − financiamento ou aluguel mensal
       = 66 × 20 × (1,50 − 0,4964 − 0,10) − 1.700 ÷ 12 − 0
       = 1.192,71 − 141,67
       = 1.051,05
@@ -95,6 +99,10 @@ lucro = horas × km/h × (valor/km − custo/km − manutenção/km) − (seguro
 
 KM líquido: R$ 0,80.
 
+Com aluguel de R$ 500 por semana no lugar do financiamento, o mesmo exemplo desconta R$ 100,00
+por dia, R$ 500,00 por semana, R$ 2.166,67 por mês e R$ 26.000,00 por ano, e o lucro real fica
+em −R$ 1.115,62 por mês.
+
 ### Planilha original
 
 | Métrica       | Hora |   Dia | Semana |      Mês |       Ano |
@@ -117,7 +125,7 @@ arredondamento.
 ## 5. Calculadora Avulsa
 
 Responde "fiz R$ X hoje, quanto sobrou?": quanto do bruto separar para o combustível e para a
-manutenção. Seguro, IPVA e financiamento não entram.
+manutenção. Seguro, IPVA, financiamento e aluguel não entram.
 
 - km = km informado ou, se em branco, bruto ÷ valor/km
 - combustível = km × custo/km
@@ -140,11 +148,13 @@ manutenção. Seguro, IPVA e financiamento não entram.
 2. **Calendário.** A planilha fixa 21 dias/mês e 5 dias/semana, e semana × 52 não fecha com o
    ano. O app usa 52 semanas/ano e "dias trabalhados por semana" como parâmetro. Mês e ano não
    mudam; dia e semana mudam (60,92 km/dia em vez de 62,86 no exemplo).
-3. **Custos fixos rateados.** Seguro, IPVA e financiamento aparecem também por hora, dia e
-   semana, proporcionais às horas trabalhadas. A planilha deixava essas células em branco.
+3. **Custos fixos rateados.** Seguro, IPVA e financiamento ou aluguel aparecem também por hora,
+   dia e semana, proporcionais às horas trabalhadas. A planilha deixava essas células em branco.
 4. **Hora líquida e km líquido** ficam em destaque no app; a planilha não os mostra.
+5. **Aluguel.** A planilha só previa financiamento mensal. No app, o pagamento do carro pode ser
+   financiamento (por mês) ou aluguel (por semana, R$ 500 por padrão).
 
 ## 7. Fora do escopo por enquanto
 
-Custos não modelados: depreciação, aluguel do carro, licenciamento, celular/internet, lavagem,
-impostos/INSS. Candidatos a uma lista de "outros custos" (fixos por mês ou por km).
+Custos não modelados: depreciação, licenciamento, celular/internet, lavagem, impostos/INSS.
+Candidatos a uma lista de "outros custos" (fixos por mês ou por km).
