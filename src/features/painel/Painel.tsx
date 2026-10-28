@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Segmentado } from '../../components/Segmentado'
 import {
   PERIODOS,
   type Periodo,
@@ -15,6 +16,11 @@ const ROTULOS: Record<Periodo, string> = {
   mes: 'Mês',
   ano: 'Ano',
 }
+
+const OPCOES_PERIODO = PERIODOS.map((periodo) => ({
+  valor: periodo,
+  rotulo: ROTULOS[periodo],
+}))
 
 interface PainelProps {
   projecao: Projecao
@@ -56,7 +62,12 @@ export function Painel({ projecao, parametros }: PainelProps) {
       </div>
 
       <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
-        <SeletorPeriodo valor={periodo} onChange={setPeriodo} />
+        <Segmentado
+          rotulo="Período"
+          opcoes={OPCOES_PERIODO}
+          valor={periodo}
+          onChange={setPeriodo}
+        />
         <Demonstrativo resultado={projecao.periodos[periodo]} />
       </section>
     </div>
@@ -81,33 +92,6 @@ function Indicador({ titulo, valor, bruto }: IndicadorProps) {
       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
         de {formatarMoeda(bruto)} bruto
       </p>
-    </div>
-  )
-}
-
-interface SeletorPeriodoProps {
-  valor: Periodo
-  onChange: (periodo: Periodo) => void
-}
-
-function SeletorPeriodo({ valor, onChange }: SeletorPeriodoProps) {
-  return (
-    <div
-      role="group"
-      aria-label="Período"
-      className="grid grid-cols-5 gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800"
-    >
-      {PERIODOS.map((periodo) => (
-        <button
-          key={periodo}
-          type="button"
-          aria-pressed={periodo === valor}
-          onClick={() => onChange(periodo)}
-          className={`rounded-lg py-1.5 text-sm font-medium transition-colors ${periodo === valor ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
-        >
-          {ROTULOS[periodo]}
-        </button>
-      ))}
     </div>
   )
 }
