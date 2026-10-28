@@ -34,7 +34,7 @@ export const PARAMETROS_PADRAO: Parametros = {
   financiamentoMensal: 0,
 }
 
-interface Restricao {
+export interface Restricao {
   min: number
   /** O próprio mínimo não vale: o campo é usado como divisor. */
   minExclusivo?: boolean
@@ -61,7 +61,14 @@ export function validarCampo(
   campo: CampoNumerico,
   valor: number,
 ): string | null {
-  const { min, minExclusivo, max } = RESTRICOES[campo]
+  return validarValor(valor, RESTRICOES[campo])
+}
+
+/** Devolve a mensagem de erro do valor, ou `null` se ele é válido. */
+export function validarValor(
+  valor: number,
+  { min, minExclusivo, max }: Restricao,
+): string | null {
   if (!Number.isFinite(valor)) return 'Informe um número.'
   if (max !== undefined && (valor < min || valor > max)) {
     return `Use um valor entre ${min} e ${max}.`

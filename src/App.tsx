@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Cabecalho } from './components/Cabecalho'
 import { NavegacaoInferior, type Aba } from './components/NavegacaoInferior'
 import { calcularProjecao } from './core/calculo'
+import { Avulsa } from './features/avulsa/Avulsa'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
 import { carregarParametros, salvarParametros } from './storage/parametros'
@@ -18,20 +19,24 @@ export default function App() {
     window.scrollTo({ top: 0 })
   }
 
+  // As abas ficam montadas para não perder o que foi digitado ao trocar.
   return (
     <div className="mx-auto min-h-dvh max-w-md">
       <Cabecalho carro={parametros.carro} />
       <main className="px-4 pb-28">
-        {aba === 'painel' && (
+        <div hidden={aba !== 'painel'}>
           <Painel projecao={projecao} parametros={parametros} />
-        )}
-        {aba === 'carro' && (
+        </div>
+        <div hidden={aba !== 'avulsa'}>
+          <Avulsa parametros={parametros} />
+        </div>
+        <div hidden={aba !== 'carro'}>
           <MeuCarro
             parametros={parametros}
             projecao={projecao}
             onChange={setParametros}
           />
-        )}
+        </div>
       </main>
       <NavegacaoInferior aba={aba} onChange={trocarAba} />
     </div>

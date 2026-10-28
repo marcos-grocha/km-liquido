@@ -9,6 +9,16 @@ export function formatarMoeda(valor: number): string {
   return moeda.format(valor)
 }
 
+const percentual = new Intl.NumberFormat('pt-BR', {
+  style: 'percent',
+  maximumFractionDigits: 0,
+})
+
+/** "33%" */
+export function formatarPercentual(fracao: number): string {
+  return percentual.format(fracao)
+}
+
 /** Número com até `casas` decimais: "1.320", "60,9". */
 export function formatarNumero(valor: number, casas = 1): string {
   return valor.toLocaleString('pt-BR', {

@@ -3,6 +3,7 @@ import {
   formatarMoeda,
   formatarNumero,
   formatarParaEdicao,
+  formatarPercentual,
   lerNumero,
 } from './numero'
 
@@ -38,6 +39,10 @@ describe('formatação', () => {
 
   it('não mostra sinal em valores que arredondam para zero', () => {
     expect(formatarMoeda(-0.001)).toBe('R$ 0,00')
+  })
+
+  it('formata percentuais sem casas decimais', () => {
+    expect(formatarPercentual(0.331)).toBe('33%')
   })
 
   it('formata números com separador de milhar e poucas casas', () => {

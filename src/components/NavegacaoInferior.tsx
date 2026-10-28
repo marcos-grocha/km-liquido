@@ -1,9 +1,10 @@
-import { Car, LayoutDashboard, type LucideIcon } from 'lucide-react'
+import { Calculator, Car, LayoutDashboard, type LucideIcon } from 'lucide-react'
 
-export type Aba = 'painel' | 'carro'
+export type Aba = 'painel' | 'avulsa' | 'carro'
 
 const ABAS: { id: Aba; rotulo: string; Icone: LucideIcon }[] = [
   { id: 'painel', rotulo: 'Painel', Icone: LayoutDashboard },
+  { id: 'avulsa', rotulo: 'Avulsa', Icone: Calculator },
   { id: 'carro', rotulo: 'Meu carro', Icone: Car },
 ]
 
