@@ -181,7 +181,10 @@ interface CampoParametroProps extends DefinicaoCampo {
   onChange: (campo: CampoNumerico, valor: number) => void
 }
 
-/** Campo numérico que só repassa o valor quando ele é válido. */
+/**
+ * Campo numérico que só repassa o valor quando ele é válido. Em branco, mantém
+ * o último valor válido e o devolve ao campo quando ele perde o foco.
+ */
 function CampoParametro({
   campo,
   valor,
@@ -194,6 +197,10 @@ function CampoParametro({
 
   function alterarTexto(novoTexto: string) {
     setTexto(novoTexto)
+    if (novoTexto.trim() === '') {
+      setErro(null)
+      return
+    }
     const numero = lerNumero(novoTexto)
     const mensagem =
       numero === null ? 'Informe um número.' : validarCampo(campo, numero)
