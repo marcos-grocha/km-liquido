@@ -42,6 +42,8 @@ Cada período é medido em horas trabalhadas:
 | semana  | ano ÷ 52                 |   15,23 |
 | dia     | semana ÷ dias por semana |    3,05 |
 
+Na tela, as horas aparecem em horas e minutos, arredondadas ao minuto (3,05 h → 3h03min).
+
 Para um período com `h` horas e fração do mês `f = h ÷ horas por mês`:
 
 | Métrica                 | Fórmula                                 |

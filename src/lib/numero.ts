@@ -27,6 +27,16 @@ export function formatarNumero(valor: number, casas = 1): string {
   })
 }
 
+/** Duração em horas e minutos, arredondada ao minuto: "7h23min", "192h", "45min". */
+export function formatarHoras(horas: number): string {
+  const totalMinutos = Math.round(horas * 60)
+  const inteiras = Math.floor(totalMinutos / 60)
+  const minutos = totalMinutos % 60
+  if (minutos === 0) return `${formatarNumero(inteiras, 0)}h`
+  if (inteiras === 0) return `${minutos}min`
+  return `${formatarNumero(inteiras, 0)}h${String(minutos).padStart(2, '0')}min`
+}
+
 /** Texto para um campo editável: sem separador de milhar ("1700", "6,95"). */
 export function formatarParaEdicao(valor: number): string {
   return valor.toLocaleString('pt-BR', {

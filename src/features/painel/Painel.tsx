@@ -6,7 +6,7 @@ import {
   type ResultadoPeriodo,
 } from '../../core/calculo'
 import type { Parametros } from '../../core/parametros'
-import { formatarMoeda, formatarNumero } from '../../lib/numero'
+import { formatarHoras, formatarMoeda, formatarNumero } from '../../lib/numero'
 
 const ROTULOS: Record<Periodo, string> = {
   hora: 'Hora',
@@ -38,7 +38,7 @@ export function Painel({ projecao, parametros }: PainelProps) {
         </p>
         <p className="mt-2 text-sm text-white/80">
           {formatarMoeda(ano.lucro)} por ano ·{' '}
-          {formatarNumero(parametros.horasPorMes)} h por mês
+          {formatarHoras(parametros.horasPorMes)} por mês
         </p>
       </section>
 
@@ -116,8 +116,7 @@ function Demonstrativo({ resultado: r }: { resultado: ResultadoPeriodo }) {
   return (
     <>
       <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
-        {formatarNumero(r.horas)} h de trabalho · {formatarNumero(r.km)} km
-        rodados
+        {formatarHoras(r.horas)} de trabalho · {formatarNumero(r.km)} km rodados
       </p>
       <dl className="mt-2 text-sm">
         <Linha rotulo="Faturamento bruto" valor={r.faturamentoBruto} />
