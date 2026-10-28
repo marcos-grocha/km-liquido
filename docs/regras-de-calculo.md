@@ -6,19 +6,22 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 
 ## 1. Entradas
 
-| Campo                       | Exemplo | Unidade | Observação                                                 |
-| --------------------------- | ------: | ------- | ---------------------------------------------------------- |
-| Carro                       |    Argo | texto   |                                                            |
-| KM por hora                 |      20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
-| Valor por KM                |    1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
-| Horas por mês               |      66 | h       |                                                            |
-| Dias trabalhados por semana |       5 | dias    | só no app; distribui as horas entre dia e semana           |
-| Valor do combustível        |    6,95 | R$/L    |                                                            |
-| Economia do veículo         |      14 | km/L    |                                                            |
-| Manutenção por KM           |    0,10 | R$/km   |                                                            |
-| Seguro por ano              |       0 | R$      |                                                            |
-| IPVA por ano                |   1.700 | R$      |                                                            |
-| Financiamento por mês       |       0 | R$      |                                                            |
+| Campo                       | Exemplo | Padrão do app | Unidade | Observação                                                 |
+| --------------------------- | ------: | ------------: | ------- | ---------------------------------------------------------- |
+| Carro                       |    Argo |      Argo 1.0 | texto   |                                                            |
+| KM por hora                 |      20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
+| Valor por KM                |    1,50 |          1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
+| Horas por mês               |      66 |           192 | h       |                                                            |
+| Dias trabalhados por semana |       5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
+| Valor do combustível        |    6,95 |          6,95 | R$/L    |                                                            |
+| Economia do veículo         |      14 |            13 | km/L    |                                                            |
+| Manutenção por KM           |    0,10 |          0,20 | R$/km   |                                                            |
+| Seguro por ano              |       0 |             0 | R$      |                                                            |
+| IPVA por ano                |   1.700 |         1.500 | R$      |                                                            |
+| Financiamento por mês       |       0 |             0 | R$      |                                                            |
+
+O **exemplo** é o da planilha e é a base dos casos de referência (§4 e §5). O **padrão do app**
+são os valores com que o app vem preenchido.
 
 ## 2. Derivados
 

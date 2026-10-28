@@ -97,9 +97,9 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
     ))
   }
 
-  function restaurarExemplo() {
+  function restaurarPadrao() {
     const confirmado = window.confirm(
-      'Voltar para os valores do exemplo? Os dados atuais serão substituídos.',
+      'Voltar para os valores padrão? Os dados atuais serão substituídos.',
     )
     if (!confirmado) return
     onChange(PARAMETROS_PADRAO)
@@ -141,11 +141,11 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
       <div className="flex flex-col items-center gap-1 text-center">
         <button
           type="button"
-          onClick={restaurarExemplo}
+          onClick={restaurarPadrao}
           className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           <RotateCcw className="size-4" aria-hidden />
-          Restaurar valores do exemplo
+          Restaurar valores padrão
         </button>
         <p className="text-xs text-slate-500 dark:text-slate-400">
           Os dados ficam salvos só neste aparelho.

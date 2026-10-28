@@ -6,11 +6,24 @@ import {
   type Periodo,
   type ResultadoPeriodo,
 } from './calculo'
-import { PARAMETROS_PADRAO, type Parametros } from './parametros'
+import type { Parametros } from './parametros'
 
 // Casos de referência: docs/regras-de-calculo.md, §4 e §5.
 
-const exemplo = PARAMETROS_PADRAO
+/** Exemplo da planilha original (docs/regras-de-calculo.md, §1). */
+const exemplo: Parametros = {
+  carro: 'Argo',
+  kmPorHora: 20,
+  valorPorKm: 1.5,
+  horasPorMes: 66,
+  diasPorSemana: 5,
+  precoCombustivel: 6.95,
+  consumoKmPorLitro: 14,
+  manutencaoPorKm: 0.1,
+  seguroAnual: 0,
+  ipvaAnual: 1700,
+  financiamentoMensal: 0,
+}
 /** R$ 7,00 a 14 km/L dá R$ 0,50/km, o custo arredondado que a planilha usa. */
 const comCustoDaPlanilha: Parametros = { ...exemplo, precoCombustivel: 7 }
 
