@@ -6,43 +6,43 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 
 ## 1. Entradas
 
-| Campo                       | Exemplo | Unidade | Observação                                                |
-|-----------------------------|--------:|---------|-----------------------------------------------------------|
-| Carro                       | Argo    | texto   |                                                           |
-| KM por hora                 | 20      | km/h    | média rodada por hora trabalhada, com e sem passageiro    |
-| Valor por KM                | 1,50    | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
-| Horas por mês               | 66      | h       |                                                           |
-| Dias trabalhados por semana | 5       | dias    | só no app; distribui as horas entre dia e semana          |
-| Valor do combustível        | 6,95    | R$/L    |                                                           |
-| Economia do veículo         | 14      | km/L    |                                                           |
-| Manutenção por KM           | 0,10    | R$/km   |                                                           |
-| Seguro por ano              | 0       | R$      |                                                           |
-| IPVA por ano                | 1.700   | R$      |                                                           |
-| Financiamento por mês       | 0       | R$      |                                                           |
+| Campo                       | Exemplo | Unidade | Observação                                                 |
+| --------------------------- | ------: | ------- | ---------------------------------------------------------- |
+| Carro                       |    Argo | texto   |                                                            |
+| KM por hora                 |      20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
+| Valor por KM                |    1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
+| Horas por mês               |      66 | h       |                                                            |
+| Dias trabalhados por semana |       5 | dias    | só no app; distribui as horas entre dia e semana           |
+| Valor do combustível        |    6,95 | R$/L    |                                                            |
+| Economia do veículo         |      14 | km/L    |                                                            |
+| Manutenção por KM           |    0,10 | R$/km   |                                                            |
+| Seguro por ano              |       0 | R$      |                                                            |
+| IPVA por ano                |   1.700 | R$      |                                                            |
+| Financiamento por mês       |       0 | R$      |                                                            |
 
 ## 2. Derivados
 
 | Valor          | Fórmula                | Exemplo |
-|----------------|------------------------|--------:|
-| Custo por KM   | combustível ÷ economia | 0,4964  |
-| Valor por hora | km/h × valor/km        | 30,00   |
+| -------------- | ---------------------- | ------: |
+| Custo por KM   | combustível ÷ economia |  0,4964 |
+| Valor por hora | km/h × valor/km        |   30,00 |
 
 ## 3. Métricas por período
 
 Cada período é medido em horas trabalhadas:
 
 | Período | Horas                    | Exemplo |
-|---------|--------------------------|--------:|
-| hora    | 1                        | 1       |
-| mês     | horas por mês            | 66      |
-| ano     | mês × 12                 | 792     |
-| semana  | ano ÷ 52                 | 15,23   |
-| dia     | semana ÷ dias por semana | 3,05    |
+| ------- | ------------------------ | ------: |
+| hora    | 1                        |       1 |
+| mês     | horas por mês            |      66 |
+| ano     | mês × 12                 |     792 |
+| semana  | ano ÷ 52                 |   15,23 |
+| dia     | semana ÷ dias por semana |    3,05 |
 
 Para um período com `h` horas e fração do mês `f = h ÷ horas por mês`:
 
 | Métrica               | Fórmula                     |
-|-----------------------|-----------------------------|
+| --------------------- | --------------------------- |
 | Quilometragem         | km/h × h                    |
 | Faturamento bruto     | km × valor/km               |
 | Gasto com combustível | km × custo/km               |
@@ -73,16 +73,16 @@ lucro = horas × km/h × (valor/km − custo/km − manutenção/km) − (seguro
 
 ### App (exemplo da §1)
 
-| Métrica       | Hora  | Dia   | Semana | Mês      | Ano       |
-|---------------|------:|------:|-------:|---------:|----------:|
+| Métrica       |  Hora |   Dia | Semana |      Mês |       Ano |
+| ------------- | ----: | ----: | -----: | -------: | --------: |
 | Quilometragem | 20,00 | 60,92 | 304,62 | 1.320,00 | 15.840,00 |
 | Bruto         | 30,00 | 91,38 | 456,92 | 1.980,00 | 23.760,00 |
-| Combustível   | 9,93  | 30,24 | 151,22 | 655,29   | 7.863,43  |
+| Combustível   |  9,93 | 30,24 | 151,22 |   655,29 |  7.863,43 |
 | Líquido       | 20,07 | 61,14 | 305,70 | 1.324,71 | 15.896,57 |
-| Manutenção    | 2,00  | 6,09  | 30,46  | 132,00   | 1.584,00  |
-| Seguro        | 0,00  | 0,00  | 0,00   | 0,00     | 0,00      |
-| IPVA          | 2,15  | 6,54  | 32,69  | 141,67   | 1.700,00  |
-| TOTAL         | 4,15  | 12,63 | 63,15  | 273,67   | 3.284,00  |
+| Manutenção    |  2,00 |  6,09 |  30,46 |   132,00 |  1.584,00 |
+| Seguro        |  0,00 |  0,00 |   0,00 |     0,00 |      0,00 |
+| IPVA          |  2,15 |  6,54 |  32,69 |   141,67 |  1.700,00 |
+| TOTAL         |  4,15 | 12,63 |  63,15 |   273,67 |  3.284,00 |
 | Conservador   | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
 | Lucro real    | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
 
@@ -90,17 +90,17 @@ KM líquido: R$ 0,80.
 
 ### Planilha original
 
-| Métrica       | Hora | Dia   | Semana | Mês      | Ano       |
-|---------------|-----:|------:|-------:|---------:|----------:|
-| Quilometragem | 20   | 62,86 | 314,29 | 1.320    | 15.840    |
-| Bruto         | 30   | 94,29 | 471,43 | 1.980    | 23.760    |
-| Combustível   | 10   | 31,43 | 157,14 | 660      | 7.920     |
-| Líquido       | 20   | 62,86 | 314,29 | 1.320    | 15.840    |
-| Manutenção    |      | 6,29  | 31,43  | 132      | 1.584     |
-| Seguro        |      |       |        | 0        | 0         |
-| IPVA          |      |       |        | 141,67   | 1.700     |
-| TOTAL         |      |       |        | 273,67   | 3.284     |
-| Conservador   |      |       |        | 1.046,33 | 12.556    |
+| Métrica       | Hora |   Dia | Semana |      Mês |       Ano |
+| ------------- | ---: | ----: | -----: | -------: | --------: |
+| Quilometragem |   20 | 62,86 | 314,29 |    1.320 |    15.840 |
+| Bruto         |   30 | 94,29 | 471,43 |    1.980 |    23.760 |
+| Combustível   |   10 | 31,43 | 157,14 |      660 |     7.920 |
+| Líquido       |   20 | 62,86 | 314,29 |    1.320 |    15.840 |
+| Manutenção    |      |  6,29 |  31,43 |      132 |     1.584 |
+| Seguro        |      |       |        |        0 |         0 |
+| IPVA          |      |       |        |   141,67 |     1.700 |
+| TOTAL         |      |       |        |   273,67 |     3.284 |
+| Conservador   |      |       |        | 1.046,33 |    12.556 |
 | Lucro final   |      |       |        | 1.046,33 | 12.555,96 |
 
 Com custo por km de exatamente R$ 0,50 (combustível a R$ 7,00 e 14 km/L), os valores de mês e
@@ -119,11 +119,11 @@ manutenção. Seguro, IPVA e financiamento não entram.
 - TOTAL = manutenção
 - conservador (sobra) = líquido − TOTAL
 
-| Caso                                    | km    | Combustível | Líquido | Manutenção | Sobra |
-|-----------------------------------------|------:|------------:|--------:|-----------:|------:|
-| Planilha (bruto 94,29; custo/km 0,50)   | 62,86 | 31,43       | 62,86   | 6,29       | 56,57 |
-| App (bruto 94,29; custo/km 0,4964)      | 62,86 | 31,21       | 63,08   | 6,29       | 56,80 |
-| App (bruto 100,00; 80 km informados)    | 80,00 | 39,71       | 60,29   | 8,00       | 52,29 |
+| Caso                                  |    km | Combustível | Líquido | Manutenção | Sobra |
+| ------------------------------------- | ----: | ----------: | ------: | ---------: | ----: |
+| Planilha (bruto 94,29; custo/km 0,50) | 62,86 |       31,43 |   62,86 |       6,29 | 56,57 |
+| App (bruto 94,29; custo/km 0,4964)    | 62,86 |       31,21 |   63,08 |       6,29 | 56,80 |
+| App (bruto 100,00; 80 km informados)  | 80,00 |       39,71 |   60,29 |       8,00 | 52,29 |
 
 ## 6. Diferenças entre o app e a planilha
 
