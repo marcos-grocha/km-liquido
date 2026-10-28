@@ -35,3 +35,11 @@ export function salvarParametros(parametros: Parametros): void {
     // Sem armazenamento disponível (modo privado, cota cheia): segue só em memória.
   }
 }
+
+export function apagarParametros(): void {
+  try {
+    localStorage.removeItem(CHAVE)
+  } catch {
+    // Sem armazenamento disponível: não há o que apagar.
+  }
+}

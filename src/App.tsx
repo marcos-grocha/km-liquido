@@ -2,17 +2,27 @@ import { useEffect, useMemo, useState } from 'react'
 import { Cabecalho } from './components/Cabecalho'
 import { NavegacaoInferior, type Aba } from './components/NavegacaoInferior'
 import { calcularProjecao } from './core/calculo'
+import { PARAMETROS_PADRAO } from './core/parametros'
 import { Avulsa } from './features/avulsa/Avulsa'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
-import { carregarParametros, salvarParametros } from './storage/parametros'
+import {
+  apagarParametros,
+  carregarParametros,
+  salvarParametros,
+} from './storage/parametros'
 
 export default function App() {
   const [parametros, setParametros] = useState(carregarParametros)
   const [aba, setAba] = useState<Aba>('painel')
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
-  useEffect(() => salvarParametros(parametros), [parametros])
+  // Só fica salvo o que o motorista editou. Sem edição (ou depois de
+  // restaurar), vale o padrão atual do app, mesmo que ele mude numa versão nova.
+  useEffect(() => {
+    if (parametros === PARAMETROS_PADRAO) apagarParametros()
+    else salvarParametros(parametros)
+  }, [parametros])
 
   function trocarAba(novaAba: Aba) {
     setAba(novaAba)
