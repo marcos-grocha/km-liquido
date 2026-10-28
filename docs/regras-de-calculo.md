@@ -6,19 +6,22 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 
 ## 1. Entradas
 
-| Campo                       | Exemplo | Unidade | Observação                                                 |
-| --------------------------- | ------: | ------- | ---------------------------------------------------------- |
-| Carro                       |    Argo | texto   |                                                            |
-| KM por hora                 |      20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
-| Valor por KM                |    1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
-| Horas por mês               |      66 | h       |                                                            |
-| Dias trabalhados por semana |       5 | dias    | só no app; distribui as horas entre dia e semana           |
-| Valor do combustível        |    6,95 | R$/L    |                                                            |
-| Economia do veículo         |      14 | km/L    |                                                            |
-| Manutenção por KM           |    0,10 | R$/km   |                                                            |
-| Seguro por ano              |       0 | R$      |                                                            |
-| IPVA por ano                |   1.700 | R$      |                                                            |
-| Financiamento por mês       |       0 | R$      |                                                            |
+| Campo                       | Exemplo | Padrão do app | Unidade | Observação                                                 |
+| --------------------------- | ------: | ------------: | ------- | ---------------------------------------------------------- |
+| Carro                       |    Argo |      Argo 1.0 | texto   |                                                            |
+| KM por hora                 |      20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
+| Valor por KM                |    1,50 |          1,50 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
+| Horas por mês               |      66 |           192 | h       |                                                            |
+| Dias trabalhados por semana |       5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
+| Valor do combustível        |    6,95 |          6,95 | R$/L    |                                                            |
+| Economia do veículo         |      14 |            13 | km/L    |                                                            |
+| Manutenção por KM           |    0,10 |          0,20 | R$/km   |                                                            |
+| Seguro por ano              |       0 |             0 | R$      |                                                            |
+| IPVA por ano                |   1.700 |         1.500 | R$      |                                                            |
+| Financiamento por mês       |       0 |             0 | R$      |                                                            |
+
+O **exemplo** é o da planilha e é a base dos casos de referência (§4 e §5). O **padrão do app**
+são os valores com que o app vem preenchido.
 
 ## 2. Derivados
 
@@ -39,21 +42,25 @@ Cada período é medido em horas trabalhadas:
 | semana  | ano ÷ 52                 |   15,23 |
 | dia     | semana ÷ dias por semana |    3,05 |
 
+Na tela, as horas aparecem em horas e minutos, arredondadas ao minuto (3,05 h → 3h03min).
+
 Para um período com `h` horas e fração do mês `f = h ÷ horas por mês`:
 
-| Métrica               | Fórmula                     |
-| --------------------- | --------------------------- |
-| Quilometragem         | km/h × h                    |
-| Faturamento bruto     | km × valor/km               |
-| Gasto com combustível | km × custo/km               |
-| Faturamento líquido   | bruto − combustível         |
-| Manutenção            | km × manutenção/km          |
-| Seguro                | seguro/ano ÷ 12 × f         |
-| IPVA                  | IPVA/ano ÷ 12 × f           |
-| TOTAL                 | manutenção + seguro + IPVA  |
-| Conservador           | faturamento líquido − TOTAL |
-| Financiamento         | financiamento/mês × f       |
-| Lucro real            | conservador − financiamento |
+| Métrica                 | Fórmula                                 |
+| ----------------------- | --------------------------------------- |
+| Quilometragem           | km/h × h                                |
+| Faturamento bruto       | km × valor/km                           |
+| Gasto com combustível   | km × custo/km                           |
+| Faturamento líquido     | bruto − combustível                     |
+| Manutenção              | km × manutenção/km                      |
+| Seguro                  | seguro/ano ÷ 12 × f                     |
+| IPVA                    | IPVA/ano ÷ 12 × f                       |
+| TOTAL                   | manutenção + seguro + IPVA              |
+| Faturamento responsável | faturamento líquido − TOTAL             |
+| Financiamento           | financiamento/mês × f                   |
+| Lucro real              | faturamento responsável − financiamento |
+
+O faturamento responsável corresponde ao "Conservador" da planilha.
 
 Indicadores em destaque:
 
@@ -73,18 +80,18 @@ lucro = horas × km/h × (valor/km − custo/km − manutenção/km) − (seguro
 
 ### App (exemplo da §1)
 
-| Métrica       |  Hora |   Dia | Semana |      Mês |       Ano |
-| ------------- | ----: | ----: | -----: | -------: | --------: |
-| Quilometragem | 20,00 | 60,92 | 304,62 | 1.320,00 | 15.840,00 |
-| Bruto         | 30,00 | 91,38 | 456,92 | 1.980,00 | 23.760,00 |
-| Combustível   |  9,93 | 30,24 | 151,22 |   655,29 |  7.863,43 |
-| Líquido       | 20,07 | 61,14 | 305,70 | 1.324,71 | 15.896,57 |
-| Manutenção    |  2,00 |  6,09 |  30,46 |   132,00 |  1.584,00 |
-| Seguro        |  0,00 |  0,00 |   0,00 |     0,00 |      0,00 |
-| IPVA          |  2,15 |  6,54 |  32,69 |   141,67 |  1.700,00 |
-| TOTAL         |  4,15 | 12,63 |  63,15 |   273,67 |  3.284,00 |
-| Conservador   | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
-| Lucro real    | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
+| Métrica                 |  Hora |   Dia | Semana |      Mês |       Ano |
+| ----------------------- | ----: | ----: | -----: | -------: | --------: |
+| Quilometragem           | 20,00 | 60,92 | 304,62 | 1.320,00 | 15.840,00 |
+| Bruto                   | 30,00 | 91,38 | 456,92 | 1.980,00 | 23.760,00 |
+| Combustível             |  9,93 | 30,24 | 151,22 |   655,29 |  7.863,43 |
+| Líquido                 | 20,07 | 61,14 | 305,70 | 1.324,71 | 15.896,57 |
+| Manutenção              |  2,00 |  6,09 |  30,46 |   132,00 |  1.584,00 |
+| Seguro                  |  0,00 |  0,00 |   0,00 |     0,00 |      0,00 |
+| IPVA                    |  2,15 |  6,54 |  32,69 |   141,67 |  1.700,00 |
+| TOTAL                   |  4,15 | 12,63 |  63,15 |   273,67 |  3.284,00 |
+| Faturamento responsável | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
+| Lucro real              | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
 
 KM líquido: R$ 0,80.
 
@@ -117,7 +124,7 @@ manutenção. Seguro, IPVA e financiamento não entram.
 - líquido = bruto − combustível
 - manutenção = km × manutenção/km
 - TOTAL = manutenção
-- conservador (sobra) = líquido − TOTAL
+- faturamento responsável (sobra) = líquido − TOTAL
 
 | Caso                                  |    km | Combustível | Líquido | Manutenção | Sobra |
 | ------------------------------------- | ----: | ----------: | ------: | ---------: | ----: |

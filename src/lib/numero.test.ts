@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  formatarHoras,
   formatarMoeda,
   formatarNumero,
   formatarParaEdicao,
@@ -39,6 +40,19 @@ describe('formatação', () => {
 
   it('não mostra sinal em valores que arredondam para zero', () => {
     expect(formatarMoeda(-0.001)).toBe('R$ 0,00')
+  })
+
+  it.each([
+    [7.75, '7h45min'],
+    [7.384615, '7h23min'],
+    [3.046154, '3h03min'],
+    [0.75, '45min'],
+    [1.9999, '2h'],
+    [192, '192h'],
+    [2304, '2.304h'],
+    [0, '0h'],
+  ])('formata %d horas como "%s"', (horas, esperado) => {
+    expect(formatarHoras(horas)).toBe(esperado)
   })
 
   it('formata percentuais sem casas decimais', () => {

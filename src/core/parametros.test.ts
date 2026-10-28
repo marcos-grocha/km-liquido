@@ -7,7 +7,7 @@ import {
 } from './parametros'
 
 describe('validarCampo', () => {
-  it('aceita todos os valores do exemplo da planilha', () => {
+  it('aceita todos os valores padrão', () => {
     for (const campo of CAMPOS_NUMERICOS) {
       expect(validarCampo(campo, PARAMETROS_PADRAO[campo]), campo).toBeNull()
     }

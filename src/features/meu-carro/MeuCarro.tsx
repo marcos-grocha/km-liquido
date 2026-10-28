@@ -20,6 +20,8 @@ interface DefinicaoCampo {
   rotulo: string
   prefixo?: string
   sufixo?: string
+  /** Aparece quando o campo está vazio. */
+  placeholder?: string
   /** Campos com dica ocupam a linha inteira. */
   dica?: string
 }
@@ -39,6 +41,7 @@ const ROTINA: DefinicaoCampo[] = [
     campo: 'kmPorHora',
     rotulo: 'Km por hora',
     sufixo: 'km/h',
+    placeholder: '20 é uma sugestão realista',
     dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
   },
   {
@@ -97,9 +100,9 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
     ))
   }
 
-  function restaurarExemplo() {
+  function restaurarPadrao() {
     const confirmado = window.confirm(
-      'Voltar para os valores do exemplo? Os dados atuais serão substituídos.',
+      'Voltar para os valores padrão? Os dados atuais serão substituídos.',
     )
     if (!confirmado) return
     onChange(PARAMETROS_PADRAO)
@@ -141,11 +144,11 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
       <div className="flex flex-col items-center gap-1 text-center">
         <button
           type="button"
-          onClick={restaurarExemplo}
+          onClick={restaurarPadrao}
           className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           <RotateCcw className="size-4" aria-hidden />
-          Restaurar valores do exemplo
+          Restaurar valores padrão
         </button>
         <p className="text-xs text-slate-500 dark:text-slate-400">
           Os dados ficam salvos só neste aparelho.
@@ -178,7 +181,10 @@ interface CampoParametroProps extends DefinicaoCampo {
   onChange: (campo: CampoNumerico, valor: number) => void
 }
 
-/** Campo numérico que só repassa o valor quando ele é válido. */
+/**
+ * Campo numérico que só repassa o valor quando ele é válido. Em branco, mantém
+ * o último valor válido e o devolve ao campo quando ele perde o foco.
+ */
 function CampoParametro({
   campo,
   valor,
@@ -191,6 +197,10 @@ function CampoParametro({
 
   function alterarTexto(novoTexto: string) {
     setTexto(novoTexto)
+    if (novoTexto.trim() === '') {
+      setErro(null)
+      return
+    }
     const numero = lerNumero(novoTexto)
     const mensagem =
       numero === null ? 'Informe um número.' : validarCampo(campo, numero)

@@ -6,11 +6,24 @@ import {
   type Periodo,
   type ResultadoPeriodo,
 } from './calculo'
-import { PARAMETROS_PADRAO, type Parametros } from './parametros'
+import type { Parametros } from './parametros'
 
 // Casos de referência: docs/regras-de-calculo.md, §4 e §5.
 
-const exemplo = PARAMETROS_PADRAO
+/** Exemplo da planilha original (docs/regras-de-calculo.md, §1). */
+const exemplo: Parametros = {
+  carro: 'Argo',
+  kmPorHora: 20,
+  valorPorKm: 1.5,
+  horasPorMes: 66,
+  diasPorSemana: 5,
+  precoCombustivel: 6.95,
+  consumoKmPorLitro: 14,
+  manutencaoPorKm: 0.1,
+  seguroAnual: 0,
+  ipvaAnual: 1700,
+  financiamentoMensal: 0,
+}
 /** R$ 7,00 a 14 km/L dá R$ 0,50/km, o custo arredondado que a planilha usa. */
 const comCustoDaPlanilha: Parametros = { ...exemplo, precoCombustivel: 7 }
 
@@ -37,7 +50,7 @@ describe('calcularProjecao', () => {
       seguro: 0,
       ipva: 141.67,
       totalCustos: 273.67,
-      conservador: 1046.33,
+      faturamentoResponsavel: 1046.33,
       lucro: 1046.33,
     })
     esperarValores(ano, {
@@ -49,7 +62,7 @@ describe('calcularProjecao', () => {
       seguro: 0,
       ipva: 1700,
       totalCustos: 3284,
-      conservador: 12556,
+      faturamentoResponsavel: 12556,
       lucro: 12556,
     })
   })
@@ -143,7 +156,7 @@ describe('calcularProjecao', () => {
     }).periodos
 
     esperarValores(mes, {
-      conservador: 1051.05,
+      faturamentoResponsavel: 1051.05,
       financiamento: 500,
       lucro: 551.05,
     })
@@ -164,7 +177,7 @@ describe('calcularAvulsa', () => {
       combustivel: 31.43,
       faturamentoLiquido: 62.86,
       manutencao: 6.29,
-      conservador: 56.57,
+      faturamentoResponsavel: 56.57,
     })
   })
 
@@ -174,7 +187,7 @@ describe('calcularAvulsa', () => {
       combustivel: 31.21,
       faturamentoLiquido: 63.08,
       manutencao: 6.29,
-      conservador: 56.8,
+      faturamentoResponsavel: 56.8,
     })
   })
 
@@ -187,7 +200,7 @@ describe('calcularAvulsa', () => {
       combustivel: 39.71,
       faturamentoLiquido: 60.29,
       manutencao: 8,
-      conservador: 52.29,
+      faturamentoResponsavel: 52.29,
     })
   })
 })

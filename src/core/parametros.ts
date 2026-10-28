@@ -19,18 +19,18 @@ export interface Parametros {
 
 export type CampoNumerico = Exclude<keyof Parametros, 'carro'>
 
-/** Exemplo da planilha original. */
+/** Valores com que o app vem preenchido. */
 export const PARAMETROS_PADRAO: Parametros = {
-  carro: 'Argo',
+  carro: 'Argo 1.0',
   kmPorHora: 20,
   valorPorKm: 1.5,
-  horasPorMes: 66,
-  diasPorSemana: 5,
+  horasPorMes: 192,
+  diasPorSemana: 6,
   precoCombustivel: 6.95,
-  consumoKmPorLitro: 14,
-  manutencaoPorKm: 0.1,
+  consumoKmPorLitro: 13,
+  manutencaoPorKm: 0.2,
   seguroAnual: 0,
-  ipvaAnual: 1700,
+  ipvaAnual: 1500,
   financiamentoMensal: 0,
 }
 
