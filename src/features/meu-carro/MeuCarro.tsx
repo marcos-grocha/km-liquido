@@ -20,6 +20,8 @@ interface DefinicaoCampo {
   rotulo: string
   prefixo?: string
   sufixo?: string
+  /** Aparece quando o campo está vazio. */
+  placeholder?: string
   /** Campos com dica ocupam a linha inteira. */
   dica?: string
 }
@@ -39,6 +41,7 @@ const ROTINA: DefinicaoCampo[] = [
     campo: 'kmPorHora',
     rotulo: 'Km por hora',
     sufixo: 'km/h',
+    placeholder: '20 é uma sugestão realista',
     dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
   },
   {
