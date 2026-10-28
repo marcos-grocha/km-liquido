@@ -44,19 +44,21 @@ Cada período é medido em horas trabalhadas:
 
 Para um período com `h` horas e fração do mês `f = h ÷ horas por mês`:
 
-| Métrica               | Fórmula                     |
-| --------------------- | --------------------------- |
-| Quilometragem         | km/h × h                    |
-| Faturamento bruto     | km × valor/km               |
-| Gasto com combustível | km × custo/km               |
-| Faturamento líquido   | bruto − combustível         |
-| Manutenção            | km × manutenção/km          |
-| Seguro                | seguro/ano ÷ 12 × f         |
-| IPVA                  | IPVA/ano ÷ 12 × f           |
-| TOTAL                 | manutenção + seguro + IPVA  |
-| Conservador           | faturamento líquido − TOTAL |
-| Financiamento         | financiamento/mês × f       |
-| Lucro real            | conservador − financiamento |
+| Métrica                 | Fórmula                                 |
+| ----------------------- | --------------------------------------- |
+| Quilometragem           | km/h × h                                |
+| Faturamento bruto       | km × valor/km                           |
+| Gasto com combustível   | km × custo/km                           |
+| Faturamento líquido     | bruto − combustível                     |
+| Manutenção              | km × manutenção/km                      |
+| Seguro                  | seguro/ano ÷ 12 × f                     |
+| IPVA                    | IPVA/ano ÷ 12 × f                       |
+| TOTAL                   | manutenção + seguro + IPVA              |
+| Faturamento responsável | faturamento líquido − TOTAL             |
+| Financiamento           | financiamento/mês × f                   |
+| Lucro real              | faturamento responsável − financiamento |
+
+O faturamento responsável corresponde ao "Conservador" da planilha.
 
 Indicadores em destaque:
 
@@ -76,18 +78,18 @@ lucro = horas × km/h × (valor/km − custo/km − manutenção/km) − (seguro
 
 ### App (exemplo da §1)
 
-| Métrica       |  Hora |   Dia | Semana |      Mês |       Ano |
-| ------------- | ----: | ----: | -----: | -------: | --------: |
-| Quilometragem | 20,00 | 60,92 | 304,62 | 1.320,00 | 15.840,00 |
-| Bruto         | 30,00 | 91,38 | 456,92 | 1.980,00 | 23.760,00 |
-| Combustível   |  9,93 | 30,24 | 151,22 |   655,29 |  7.863,43 |
-| Líquido       | 20,07 | 61,14 | 305,70 | 1.324,71 | 15.896,57 |
-| Manutenção    |  2,00 |  6,09 |  30,46 |   132,00 |  1.584,00 |
-| Seguro        |  0,00 |  0,00 |   0,00 |     0,00 |      0,00 |
-| IPVA          |  2,15 |  6,54 |  32,69 |   141,67 |  1.700,00 |
-| TOTAL         |  4,15 | 12,63 |  63,15 |   273,67 |  3.284,00 |
-| Conservador   | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
-| Lucro real    | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
+| Métrica                 |  Hora |   Dia | Semana |      Mês |       Ano |
+| ----------------------- | ----: | ----: | -----: | -------: | --------: |
+| Quilometragem           | 20,00 | 60,92 | 304,62 | 1.320,00 | 15.840,00 |
+| Bruto                   | 30,00 | 91,38 | 456,92 | 1.980,00 | 23.760,00 |
+| Combustível             |  9,93 | 30,24 | 151,22 |   655,29 |  7.863,43 |
+| Líquido                 | 20,07 | 61,14 | 305,70 | 1.324,71 | 15.896,57 |
+| Manutenção              |  2,00 |  6,09 |  30,46 |   132,00 |  1.584,00 |
+| Seguro                  |  0,00 |  0,00 |   0,00 |     0,00 |      0,00 |
+| IPVA                    |  2,15 |  6,54 |  32,69 |   141,67 |  1.700,00 |
+| TOTAL                   |  4,15 | 12,63 |  63,15 |   273,67 |  3.284,00 |
+| Faturamento responsável | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
+| Lucro real              | 15,92 | 48,51 | 242,55 | 1.051,05 | 12.612,57 |
 
 KM líquido: R$ 0,80.
 
@@ -120,7 +122,7 @@ manutenção. Seguro, IPVA e financiamento não entram.
 - líquido = bruto − combustível
 - manutenção = km × manutenção/km
 - TOTAL = manutenção
-- conservador (sobra) = líquido − TOTAL
+- faturamento responsável (sobra) = líquido − TOTAL
 
 | Caso                                  |    km | Combustível | Líquido | Manutenção | Sobra |
 | ------------------------------------- | ----: | ----------: | ------: | ---------: | ----: |

@@ -130,7 +130,11 @@ function Demonstrativo({ resultado: r }: { resultado: ResultadoPeriodo }) {
         <Linha rotulo="Manutenção" valor={r.manutencao} tipo="custo" />
         <Linha rotulo="Seguro" valor={r.seguro} tipo="custo" />
         <Linha rotulo="IPVA" valor={r.ipva} tipo="custo" />
-        <Linha rotulo="Conservador" valor={r.conservador} tipo="subtotal" />
+        <Linha
+          rotulo="Faturamento responsável"
+          valor={r.faturamentoResponsavel}
+          tipo="subtotal"
+        />
         <Linha rotulo="Financiamento" valor={r.financiamento} tipo="custo" />
         <Linha rotulo="Lucro real" valor={r.lucro} tipo="total" />
       </dl>

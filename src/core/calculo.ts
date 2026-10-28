@@ -20,10 +20,10 @@ export interface ResultadoPeriodo {
   ipva: number
   /** Manutenção + seguro + IPVA (o "TOTAL" da planilha). */
   totalCustos: number
-  /** Faturamento líquido menos o total de custos. */
-  conservador: number
+  /** Faturamento líquido menos o total de custos (o "Conservador" da planilha). */
+  faturamentoResponsavel: number
   financiamento: number
-  /** Conservador menos financiamento: o que sobra no bolso. */
+  /** Faturamento responsável menos financiamento: o que sobra no bolso. */
   lucro: number
 }
 
@@ -66,7 +66,7 @@ function calcularPeriodo(
   const seguro = (p.seguroAnual / MESES_POR_ANO) * fracaoDoMes
   const ipva = (p.ipvaAnual / MESES_POR_ANO) * fracaoDoMes
   const totalCustos = manutencao + seguro + ipva
-  const conservador = faturamentoLiquido - totalCustos
+  const faturamentoResponsavel = faturamentoLiquido - totalCustos
   const financiamento = p.financiamentoMensal * fracaoDoMes
   return {
     horas,
@@ -78,9 +78,9 @@ function calcularPeriodo(
     seguro,
     ipva,
     totalCustos,
-    conservador,
+    faturamentoResponsavel,
     financiamento,
-    lucro: conservador - financiamento,
+    lucro: faturamentoResponsavel - financiamento,
   }
 }
 
@@ -117,7 +117,7 @@ export interface ResultadoAvulsa {
   faturamentoLiquido: number
   manutencao: number
   /** O que sobra depois de separar combustível e manutenção. */
-  conservador: number
+  faturamentoResponsavel: number
 }
 
 /** "Fiz R$ X hoje, quanto sobrou?" — seguro, IPVA e financiamento não entram. */
@@ -137,6 +137,6 @@ export function calcularAvulsa(
     combustivel,
     faturamentoLiquido,
     manutencao,
-    conservador: faturamentoLiquido - manutencao,
+    faturamentoResponsavel: faturamentoLiquido - manutencao,
   }
 }

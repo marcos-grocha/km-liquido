@@ -50,7 +50,7 @@ describe('calcularProjecao', () => {
       seguro: 0,
       ipva: 141.67,
       totalCustos: 273.67,
-      conservador: 1046.33,
+      faturamentoResponsavel: 1046.33,
       lucro: 1046.33,
     })
     esperarValores(ano, {
@@ -62,7 +62,7 @@ describe('calcularProjecao', () => {
       seguro: 0,
       ipva: 1700,
       totalCustos: 3284,
-      conservador: 12556,
+      faturamentoResponsavel: 12556,
       lucro: 12556,
     })
   })
@@ -156,7 +156,7 @@ describe('calcularProjecao', () => {
     }).periodos
 
     esperarValores(mes, {
-      conservador: 1051.05,
+      faturamentoResponsavel: 1051.05,
       financiamento: 500,
       lucro: 551.05,
     })
@@ -177,7 +177,7 @@ describe('calcularAvulsa', () => {
       combustivel: 31.43,
       faturamentoLiquido: 62.86,
       manutencao: 6.29,
-      conservador: 56.57,
+      faturamentoResponsavel: 56.57,
     })
   })
 
@@ -187,7 +187,7 @@ describe('calcularAvulsa', () => {
       combustivel: 31.21,
       faturamentoLiquido: 63.08,
       manutencao: 6.29,
-      conservador: 56.8,
+      faturamentoResponsavel: 56.8,
     })
   })
 
@@ -200,7 +200,7 @@ describe('calcularAvulsa', () => {
       combustivel: 39.71,
       faturamentoLiquido: 60.29,
       manutencao: 8,
-      conservador: 52.29,
+      faturamentoResponsavel: 52.29,
     })
   })
 })

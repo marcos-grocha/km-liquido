@@ -101,14 +101,14 @@ function Resultado({ resultado: r }: { resultado: ResultadoAvulsa }) {
       </div>
 
       <div
-        className={`mt-3 rounded-2xl p-4 text-white ${r.conservador < 0 ? 'bg-rose-600' : 'bg-emerald-700'}`}
+        className={`mt-3 rounded-2xl p-4 text-white ${r.faturamentoResponsavel < 0 ? 'bg-rose-600' : 'bg-emerald-700'}`}
       >
         <p className="flex justify-between text-sm text-white/80">
           <span>Sobra</span>
-          <span>{fracaoDoBruto(r.conservador)}</span>
+          <span>{fracaoDoBruto(r.faturamentoResponsavel)}</span>
         </p>
         <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">
-          {formatarMoeda(r.conservador)}
+          {formatarMoeda(r.faturamentoResponsavel)}
         </p>
         <p className="mt-1 text-xs text-white/80">
           Antes de seguro, IPVA e financiamento.
