@@ -101,7 +101,7 @@ export function Doacao({ aberta, onFechar, coracao }: DoacaoProps) {
       onClick={(e) => {
         if (e.target === e.currentTarget) fechar()
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-xs rounded-3xl bg-white text-slate-900 shadow-xl backdrop:bg-slate-950/60 backdrop:transition-opacity backdrop:duration-400 data-fechando:backdrop:opacity-0 dark:bg-slate-900 dark:text-slate-100"
+      className="m-auto w-[calc(100%-2rem)] max-w-xs rounded-3xl bg-white text-slate-900 shadow-xl backdrop:bg-slate-950/75 backdrop:transition-opacity backdrop:duration-400 data-fechando:backdrop:opacity-0 dark:bg-slate-900 dark:text-slate-100"
     >
       <div className="relative p-5">
         <h2
