@@ -1,11 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Cabecalho } from './components/Cabecalho'
 import { NavegacaoInferior, type Aba } from './components/NavegacaoInferior'
 import { calcularProjecao } from './core/calculo'
 import { PARAMETROS_PADRAO } from './core/parametros'
 import { Avulsa } from './features/avulsa/Avulsa'
+import { Doacao } from './features/doacao/Doacao'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
+import {
+  carregarFechamentoDoacao,
+  deveAbrirDoacao,
+  salvarFechamentoDoacao,
+} from './storage/doacao'
 import {
   apagarParametros,
   carregarParametros,
@@ -18,6 +24,16 @@ export default function App() {
   const [aba, setAba] = useState<Aba>(() =>
     parametros === PARAMETROS_PADRAO ? 'carro' : 'painel',
   )
+  const [doacaoAberta, setDoacaoAberta] = useState(() =>
+    deveAbrirDoacao(
+      parametros !== PARAMETROS_PADRAO,
+      carregarFechamentoDoacao(),
+      Date.now(),
+    ),
+  )
+  // O pontinho no coração some quando a pessoa toca nele e volta a cada abertura do app.
+  const [pontinho, setPontinho] = useState(true)
+  const coracao = useRef<HTMLButtonElement>(null)
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
   // Só fica salvo o que o motorista editou. Sem edição (ou depois de
@@ -32,10 +48,25 @@ export default function App() {
     window.scrollTo({ top: 0 })
   }
 
+  function abrirPeloCoracao() {
+    setDoacaoAberta(true)
+    setPontinho(false)
+  }
+
+  function fecharDoacao() {
+    setDoacaoAberta(false)
+    salvarFechamentoDoacao(Date.now())
+  }
+
   // As abas ficam montadas para não perder o que foi digitado ao trocar.
   return (
     <div className="mx-auto min-h-dvh max-w-md">
-      <Cabecalho carro={parametros.carro} />
+      <Cabecalho
+        carro={parametros.carro}
+        pontinho={pontinho}
+        coracao={coracao}
+        onApoiar={abrirPeloCoracao}
+      />
       <main className="px-4 pb-28">
         <div hidden={aba !== 'painel'}>
           <Painel projecao={projecao} parametros={parametros} />
@@ -52,6 +83,7 @@ export default function App() {
         </div>
       </main>
       <NavegacaoInferior aba={aba} onChange={trocarAba} />
+      <Doacao aberta={doacaoAberta} onFechar={fecharDoacao} coracao={coracao} />
     </div>
   )
 }
