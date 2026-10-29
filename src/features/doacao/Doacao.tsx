@@ -1,10 +1,12 @@
-import { ArrowUpRight, Check, Copy, Heart, X } from 'lucide-react'
+import { Check, Copy, Heart, X } from 'lucide-react'
 import { useEffect, useRef, useState, type RefObject } from 'react'
+import { IconeInstagram, IconeWhatsApp } from './IconesDeMarca'
 
 // A chave Pix é o celular do projeto, o mesmo número do WhatsApp.
 const CHAVE_PIX = '79999630944'
 const CHAVE_PIX_NA_TELA = '(79) 99963-0944'
 const WHATSAPP = `https://wa.me/5579999630944?text=${encodeURIComponent('Olá! Sobre o km líquido: ')}`
+const INSTAGRAM = 'https://www.instagram.com/goulartcore/'
 
 interface DoacaoProps {
   aberta: boolean
@@ -148,16 +150,29 @@ export function Doacao({ aberta, onFechar, coracao }: DoacaoProps) {
           <p className="text-sm text-balance text-slate-600 dark:text-slate-300">
             Dúvidas, sugestões ou críticas?
           </p>
-          {/* No verde do WhatsApp, para ser reconhecido de cara como o caminho para o chat. */}
-          <a
-            href={WHATSAPP}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-slate-950 hover:brightness-95"
-          >
-            WhatsApp
-            <ArrowUpRight className="size-4" aria-hidden />
-          </a>
+          {/* Só os ícones, nas cores de cada marca, para serem reconhecidos de cara. */}
+          <div className="flex shrink-0 gap-2">
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Mandar mensagem no WhatsApp"
+              title="Mandar mensagem no WhatsApp"
+              className="grid size-10 place-items-center rounded-full bg-[#25D366] text-white hover:brightness-95"
+            >
+              <IconeWhatsApp className="size-5" />
+            </a>
+            <a
+              href={INSTAGRAM}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Ver o Instagram @goulartcore"
+              title="Ver o Instagram @goulartcore"
+              className="grid size-10 place-items-center rounded-full bg-linear-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white hover:brightness-95"
+            >
+              <IconeInstagram className="size-5" />
+            </a>
+          </div>
         </div>
 
         {/* Fica por último no DOM para o pop-up abrir com o foco no Copiar, não no X. */}
