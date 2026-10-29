@@ -1,4 +1,4 @@
-import { Check, Copy, Heart, MessageCircle, X } from 'lucide-react'
+import { ArrowUpRight, Check, Copy, Heart, X } from 'lucide-react'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 
 // A chave Pix é o celular do projeto, o mesmo número do WhatsApp.
@@ -144,18 +144,21 @@ export function Doacao({ aberta, onFechar, coracao }: DoacaoProps) {
           </button>
         </div>
 
-        <a
-          href={WHATSAPP}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 flex items-center justify-center gap-1.5 py-1 text-sm text-slate-500 dark:text-slate-400"
-        >
-          <MessageCircle className="size-4" aria-hidden />
-          Sugestões ou críticas?
-          <span className="font-medium text-emerald-700 underline underline-offset-2 dark:text-emerald-400">
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <p className="text-sm text-balance text-slate-600 dark:text-slate-300">
+            Dúvidas, sugestões ou críticas?
+          </p>
+          {/* No verde do WhatsApp, para ser reconhecido de cara como o caminho para o chat. */}
+          <a
+            href={WHATSAPP}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-slate-950 hover:brightness-95"
+          >
             WhatsApp
-          </span>
-        </a>
+            <ArrowUpRight className="size-4" aria-hidden />
+          </a>
+        </div>
 
         {/* Fica por último no DOM para o pop-up abrir com o foco no Copiar, não no X. */}
         <button
