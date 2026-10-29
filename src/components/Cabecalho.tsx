@@ -2,10 +2,12 @@ import { Car, Heart } from 'lucide-react'
 
 interface CabecalhoProps {
   carro: string
+  /** Pontinho de notificação no coração, chamando para o pop-up de doação. */
+  pontinho: boolean
   onApoiar: () => void
 }
 
-export function Cabecalho({ carro, onApoiar }: CabecalhoProps) {
+export function Cabecalho({ carro, pontinho, onApoiar }: CabecalhoProps) {
   return (
     <header className="flex items-center justify-between gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
       <div className="flex shrink-0 items-center gap-2">
@@ -24,9 +26,12 @@ export function Cabecalho({ carro, onApoiar }: CabecalhoProps) {
           onClick={onApoiar}
           aria-label="Apoiar o projeto"
           title="Apoiar o projeto"
-          className="grid size-8 shrink-0 place-items-center rounded-full bg-white text-rose-500 shadow-sm hover:bg-rose-50 dark:bg-slate-900 dark:text-rose-400 dark:hover:bg-slate-800"
+          className="relative grid size-8 shrink-0 place-items-center rounded-full bg-white text-rose-500 shadow-sm hover:bg-rose-50 dark:bg-slate-900 dark:text-rose-400 dark:hover:bg-slate-800"
         >
           <Heart className="size-4" aria-hidden />
+          {pontinho && (
+            <span className="absolute top-0 right-0 size-2.5 rounded-full bg-rose-500 ring-2 ring-slate-100 dark:ring-slate-950" />
+          )}
         </button>
       </div>
     </header>

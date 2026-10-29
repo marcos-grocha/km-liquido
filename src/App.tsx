@@ -8,8 +8,10 @@ import { Doacao } from './features/doacao/Doacao'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
 import {
+  carregarCoracaoTocado,
   carregarFechamentoDoacao,
   deveAbrirDoacao,
+  salvarCoracaoTocado,
   salvarFechamentoDoacao,
 } from './storage/doacao'
 import {
@@ -31,6 +33,7 @@ export default function App() {
       Date.now(),
     ),
   )
+  const [pontinho, setPontinho] = useState(() => !carregarCoracaoTocado())
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
   // Só fica salvo o que o motorista editou. Sem edição (ou depois de
@@ -45,6 +48,12 @@ export default function App() {
     window.scrollTo({ top: 0 })
   }
 
+  function abrirPeloCoracao() {
+    setDoacaoAberta(true)
+    setPontinho(false)
+    salvarCoracaoTocado()
+  }
+
   function fecharDoacao() {
     setDoacaoAberta(false)
     salvarFechamentoDoacao(Date.now())
@@ -55,7 +64,8 @@ export default function App() {
     <div className="mx-auto min-h-dvh max-w-md">
       <Cabecalho
         carro={parametros.carro}
-        onApoiar={() => setDoacaoAberta(true)}
+        pontinho={pontinho}
+        onApoiar={abrirPeloCoracao}
       />
       <main className="px-4 pb-28">
         <div hidden={aba !== 'painel'}>
