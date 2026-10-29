@@ -19,7 +19,8 @@ Acesse o app em [kmliquido.netlify.app](https://kmliquido.netlify.app).
   para a manutenção. O km rodado é opcional; sem ele, a distância é estimada pelo valor por km.
 - **Apoie o projeto**: pop-up com a chave Pix para doações e o WhatsApp para sugestões e
   críticas. Abre sozinho depois que o carro foi configurado e, uma vez fechado, só volta
-  depois de uma semana; o coração no cabeçalho abre a qualquer momento.
+  depois de uma semana. Ao fechar, encolhe de volta para o coração do cabeçalho, que abre o
+  pop-up a qualquer momento e mostra um pontinho de notificação até o primeiro toque.
 
 ## Regras de cálculo
 
