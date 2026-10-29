@@ -14,7 +14,10 @@ import {
 
 export default function App() {
   const [parametros, setParametros] = useState(carregarParametros)
-  const [aba, setAba] = useState<Aba>('painel')
+  // Sem nada salvo, o carro ainda não foi configurado: o app começa por ele.
+  const [aba, setAba] = useState<Aba>(() =>
+    parametros === PARAMETROS_PADRAO ? 'carro' : 'painel',
+  )
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
   // Só fica salvo o que o motorista editou. Sem edição (ou depois de

@@ -9,7 +9,8 @@ O nome vem do indicador principal: o **km líquido**, quanto sobra de cada quil�
 ## Funcionalidades
 
 - **Meu carro**: dados do veículo, da rotina e dos custos, com o pagamento do carro como
-  financiamento (por mês) ou aluguel (por semana), salvos no próprio aparelho.
+  financiamento (por mês) ou aluguel (por semana), salvos no próprio aparelho. O app abre
+  nesta aba enquanto nenhum valor foi editado.
 - **Painel**: lucro real do mês, hora líquida, km líquido e o demonstrativo do faturamento
   bruto até o lucro, por hora, dia, semana, mês ou ano.
 - **Quanto sobrou**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e
