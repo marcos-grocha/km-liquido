@@ -148,7 +148,7 @@ export function Doacao({ aberta, onFechar, coracao }: DoacaoProps) {
 
         <div className="mt-3 flex items-center justify-between gap-3">
           <p className="text-sm text-balance text-slate-600 dark:text-slate-300">
-            Dúvidas, sugestões ou críticas?
+            Dúvidas ou sugestões? ➡️
           </p>
           {/* Só os ícones, nas cores de cada marca, para serem reconhecidos de cara. */}
           <div className="flex shrink-0 gap-2">
