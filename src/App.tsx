@@ -8,10 +8,8 @@ import { Doacao } from './features/doacao/Doacao'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
 import {
-  carregarCoracaoTocado,
   carregarFechamentoDoacao,
   deveAbrirDoacao,
-  salvarCoracaoTocado,
   salvarFechamentoDoacao,
 } from './storage/doacao'
 import {
@@ -33,7 +31,8 @@ export default function App() {
       Date.now(),
     ),
   )
-  const [pontinho, setPontinho] = useState(() => !carregarCoracaoTocado())
+  // O pontinho no coração some quando a pessoa toca nele e volta a cada abertura do app.
+  const [pontinho, setPontinho] = useState(true)
   const coracao = useRef<HTMLButtonElement>(null)
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
@@ -52,7 +51,6 @@ export default function App() {
   function abrirPeloCoracao() {
     setDoacaoAberta(true)
     setPontinho(false)
-    salvarCoracaoTocado()
   }
 
   function fecharDoacao() {
