@@ -17,6 +17,9 @@ Acesse o app em [kmliquido.netlify.app](https://kmliquido.netlify.app).
   bruto até o lucro, por hora, dia, semana, mês ou ano.
 - **Quanto sobrou**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e
   para a manutenção. O km rodado é opcional; sem ele, a distância é estimada pelo valor por km.
+- **Apoie o projeto**: pop-up com a chave Pix para doações e o WhatsApp para sugestões e
+  críticas. Abre sozinho depois que o carro foi configurado e, uma vez fechado, só volta
+  depois de uma semana; o coração no cabeçalho abre a qualquer momento.
 
 ## Regras de cálculo
 
@@ -45,7 +48,7 @@ src/
   lib/         leitura e formatação de números em pt-BR
   storage/     persistência local (localStorage)
   components/  componentes de interface compartilhados
-  features/    telas: meu-carro, painel e avulsa (aba "Quanto sobrou")
+  features/    telas: meu-carro, painel, avulsa (aba "Quanto sobrou") e doacao (pop-up)
 docs/          especificação das regras de cálculo
 ```
 
