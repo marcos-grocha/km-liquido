@@ -1,4 +1,4 @@
-import { Check, Copy, Heart, MessageCircle } from 'lucide-react'
+import { Check, Copy, Heart, MessageCircle, X } from 'lucide-react'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 
 // A chave Pix é o celular do projeto, o mesmo número do WhatsApp.
@@ -101,29 +101,30 @@ export function Doacao({ aberta, onFechar, coracao }: DoacaoProps) {
       onClick={(e) => {
         if (e.target === e.currentTarget) fechar()
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-3xl bg-white text-slate-900 shadow-xl backdrop:bg-slate-950/60 backdrop:transition-opacity backdrop:duration-400 data-fechando:backdrop:opacity-0 dark:bg-slate-900 dark:text-slate-100"
+      className="m-auto w-[calc(100%-2rem)] max-w-xs rounded-3xl bg-white text-slate-900 shadow-xl backdrop:bg-slate-950/60 backdrop:transition-opacity backdrop:duration-400 data-fechando:backdrop:opacity-0 dark:bg-slate-900 dark:text-slate-100"
     >
-      <div className="p-5">
-        <div className="grid size-10 place-items-center rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300">
-          <Heart className="size-5" aria-hidden />
-        </div>
+      <div className="relative p-5">
         <h2
           id="doacao-titulo"
-          className="mt-3 text-lg font-bold tracking-tight"
+          className="flex items-center gap-2 pr-8 text-lg font-bold tracking-tight"
         >
-          Esse app está te ajudando?
+          <Heart
+            className="size-5 shrink-0 fill-rose-500 text-rose-500 dark:fill-rose-400 dark:text-rose-400"
+            aria-hidden
+          />
+          Esse app te ajuda?
         </h2>
         <p
           id="doacao-texto"
           className="mt-1 text-sm text-slate-600 dark:text-slate-300"
         >
-          Faça uma doação para ajudar a manter o projeto!
+          Apoie com um Pix de qualquer valor.
         </p>
 
         <div className="mt-4 flex items-center gap-3 rounded-2xl bg-slate-100 p-3 dark:bg-slate-800">
           <div className="min-w-0 flex-1">
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Chave Pix (celular)
+              Chave Pix
             </p>
             <p ref={chave} className="font-semibold tabular-nums select-all">
               {CHAVE_PIX_NA_TELA}
@@ -143,28 +144,28 @@ export function Doacao({ aberta, onFechar, coracao }: DoacaoProps) {
           </button>
         </div>
 
-        <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
-          Para sugestões ou críticas, envie uma mensagem:
-        </p>
         <a
           href={WHATSAPP}
           target="_blank"
           rel="noreferrer"
-          className="mt-2 flex items-center justify-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-medium hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
+          className="mt-3 flex items-center justify-center gap-1.5 py-1 text-sm text-slate-500 dark:text-slate-400"
         >
           <MessageCircle className="size-4" aria-hidden />
-          Mandar mensagem no WhatsApp
+          Sugestões ou críticas?
+          <span className="font-medium text-emerald-700 underline underline-offset-2 dark:text-emerald-400">
+            WhatsApp
+          </span>
         </a>
 
-        <div className="mt-2 text-center">
-          <button
-            type="button"
-            onClick={fechar}
-            className="rounded-full px-4 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-          >
-            Agora não
-          </button>
-        </div>
+        {/* Fica por último no DOM para o pop-up abrir com o foco no Copiar, não no X. */}
+        <button
+          type="button"
+          onClick={fechar}
+          aria-label="Fechar"
+          className="absolute top-4.5 right-3.5 grid size-8 place-items-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+        >
+          <X className="size-5" aria-hidden />
+        </button>
       </div>
     </dialog>
   )
