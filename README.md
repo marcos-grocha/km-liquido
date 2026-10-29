@@ -20,7 +20,8 @@ Acesse o app em [kmliquido.netlify.app](https://kmliquido.netlify.app).
 - **Apoie o projeto**: pop-up com a chave Pix para doações e o WhatsApp para sugestões e
   críticas. Abre sozinho depois que o carro foi configurado e, uma vez fechado, só volta
   depois de uma semana. Ao fechar, encolhe de volta para o coração do cabeçalho, que abre o
-  pop-up a qualquer momento e mostra um pontinho de notificação até o primeiro toque.
+  pop-up a qualquer momento e mostra um pontinho de notificação a cada abertura do app, até
+  ser tocado.
 
 ## Regras de cálculo
 
