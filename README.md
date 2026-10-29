@@ -8,6 +8,18 @@ O nome vem do indicador principal: o **km líquido**, quanto sobra de cada quil�
 
 Acesse o app em [kmliquido.netlify.app](https://kmliquido.netlify.app).
 
+### Instalar no celular
+
+O km líquido é um PWA: dá para instalá-lo na tela de início e usá-lo sem internet.
+
+- **iPhone**: abra o site no Safari, toque em **Compartilhar** e depois em **Adicionar à Tela
+  de Início**.
+- **Android**: abra o site no Chrome e toque em **Instalar app** (ou, no menu ⋮, **Adicionar à
+  tela inicial**).
+
+No iPhone, o app instalado guarda os dados separado do Safari: os valores do carro precisam ser
+preenchidos de novo na primeira vez.
+
 ## Funcionalidades
 
 - **Meu carro**: dados do veículo, da rotina e dos custos, com o pagamento do carro como
@@ -51,6 +63,8 @@ src/
   storage/     persistência local (localStorage)
   components/  componentes de interface compartilhados
   features/    telas: meu-carro, painel, avulsa (aba "Quanto sobrou") e doacao (pop-up)
+  pwa/         service worker (o build injeta a lista de arquivos; ver vite.config.ts)
+public/        ícones e manifest do PWA
 docs/          especificação das regras de cálculo
 ```
 
@@ -67,10 +81,15 @@ O app é estático (Vite) e está publicado na Netlify, em
 produção, e cada pull request ganha um Deploy Preview com link no próprio PR. A configuração
 de build fica em [`netlify.toml`](netlify.toml): `npm run build`, publicando `dist/`, com Node 24.
 
+O service worker só existe no build de produção. Para testá-lo localmente, rode
+`npm run build && npm run preview`. A cada deploy, ele ganha uma versão nova: o aparelho baixa
+o app de novo e apaga a cópia anterior.
+
 ## Roadmap
 
 - [x] Versão web: painel, calculadora avulsa e dados do carro
 - [x] Publicação na Netlify
+- [x] PWA: instalação na tela de início e uso offline
 - [ ] App Android (APK)
 - [ ] Publicação na Play Store
 - [ ] Diário real: registrar ganhos, km e abastecimentos e comparar com a estimativa
