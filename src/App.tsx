@@ -4,8 +4,14 @@ import { NavegacaoInferior, type Aba } from './components/NavegacaoInferior'
 import { calcularProjecao } from './core/calculo'
 import { PARAMETROS_PADRAO } from './core/parametros'
 import { Avulsa } from './features/avulsa/Avulsa'
+import { Doacao } from './features/doacao/Doacao'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
+import {
+  carregarFechamentoDoacao,
+  deveAbrirDoacao,
+  salvarFechamentoDoacao,
+} from './storage/doacao'
 import {
   apagarParametros,
   carregarParametros,
@@ -17,6 +23,13 @@ export default function App() {
   // Sem nada salvo, o carro ainda não foi configurado: o app começa por ele.
   const [aba, setAba] = useState<Aba>(() =>
     parametros === PARAMETROS_PADRAO ? 'carro' : 'painel',
+  )
+  const [doacaoAberta, setDoacaoAberta] = useState(() =>
+    deveAbrirDoacao(
+      parametros !== PARAMETROS_PADRAO,
+      carregarFechamentoDoacao(),
+      Date.now(),
+    ),
   )
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
@@ -30,6 +43,11 @@ export default function App() {
   function trocarAba(novaAba: Aba) {
     setAba(novaAba)
     window.scrollTo({ top: 0 })
+  }
+
+  function fecharDoacao() {
+    setDoacaoAberta(false)
+    salvarFechamentoDoacao(Date.now())
   }
 
   // As abas ficam montadas para não perder o que foi digitado ao trocar.
@@ -52,6 +70,7 @@ export default function App() {
         </div>
       </main>
       <NavegacaoInferior aba={aba} onChange={trocarAba} />
+      <Doacao aberta={doacaoAberta} onFechar={fecharDoacao} />
     </div>
   )
 }
