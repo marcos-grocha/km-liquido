@@ -5,7 +5,7 @@ export type Aba = 'carro' | 'painel' | 'avulsa'
 const ABAS: { id: Aba; rotulo: string; Icone: LucideIcon }[] = [
   { id: 'carro', rotulo: 'Meu carro', Icone: Car },
   { id: 'painel', rotulo: 'Painel', Icone: LayoutDashboard },
-  { id: 'avulsa', rotulo: 'Avulsa', Icone: Calculator },
+  { id: 'avulsa', rotulo: 'Quanto sobrou', Icone: Calculator },
 ]
 
 interface NavegacaoInferiorProps {

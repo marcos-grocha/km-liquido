@@ -122,10 +122,11 @@ Com custo por km de exatamente R$ 0,50 (combustível a R$ 7,00 e 14 km/L), os va
 ano do app batem com a planilha — e o lucro anual fica em 12.556,00, sem a diferença de
 arredondamento.
 
-## 5. Calculadora Avulsa
+## 5. Quanto sobrou
 
-Responde "fiz R$ X hoje, quanto sobrou?": quanto do bruto separar para o combustível e para a
-manutenção. Seguro, IPVA, financiamento e aluguel não entram.
+A aba responde "fiz R$ X hoje, quanto sobrou?": quanto do bruto separar para o combustível e
+para a manutenção. Seguro, IPVA, financiamento e aluguel não entram. No código, é o cálculo
+avulso (`calcularAvulsa`).
 
 - km = km informado ou, se em branco, bruto ÷ valor/km
 - combustível = km × custo/km
