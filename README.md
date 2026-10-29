@@ -8,12 +8,13 @@ O nome vem do indicador principal: o **km líquido**, quanto sobra de cada quil�
 
 ## Funcionalidades
 
+- **Meu carro**: dados do veículo, da rotina e dos custos, com o pagamento do carro como
+  financiamento (por mês) ou aluguel (por semana), salvos no próprio aparelho. O app abre
+  nesta aba enquanto nenhum valor foi editado.
 - **Painel**: lucro real do mês, hora líquida, km líquido e o demonstrativo do faturamento
   bruto até o lucro, por hora, dia, semana, mês ou ano.
-- **Avulsa**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e
+- **Quanto sobrou**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e
   para a manutenção. O km rodado é opcional; sem ele, a distância é estimada pelo valor por km.
-- **Meu carro**: dados do veículo, da rotina e dos custos, com o pagamento do carro como
-  financiamento (por mês) ou aluguel (por semana), salvos no próprio aparelho.
 
 ## Regras de cálculo
 
@@ -42,7 +43,7 @@ src/
   lib/         leitura e formatação de números em pt-BR
   storage/     persistência local (localStorage)
   components/  componentes de interface compartilhados
-  features/    telas: painel, avulsa e meu-carro
+  features/    telas: meu-carro, painel e avulsa (aba "Quanto sobrou")
 docs/          especificação das regras de cálculo
 ```
 

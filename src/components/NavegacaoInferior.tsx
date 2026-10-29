@@ -1,11 +1,11 @@
 import { Calculator, Car, LayoutDashboard, type LucideIcon } from 'lucide-react'
 
-export type Aba = 'painel' | 'avulsa' | 'carro'
+export type Aba = 'carro' | 'painel' | 'avulsa'
 
 const ABAS: { id: Aba; rotulo: string; Icone: LucideIcon }[] = [
-  { id: 'painel', rotulo: 'Painel', Icone: LayoutDashboard },
-  { id: 'avulsa', rotulo: 'Avulsa', Icone: Calculator },
   { id: 'carro', rotulo: 'Meu carro', Icone: Car },
+  { id: 'painel', rotulo: 'Painel', Icone: LayoutDashboard },
+  { id: 'avulsa', rotulo: 'Quanto sobrou', Icone: Calculator },
 ]
 
 interface NavegacaoInferiorProps {
