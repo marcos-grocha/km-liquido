@@ -1,5 +1,5 @@
 import { Check, Copy, Heart, MessageCircle } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 
 // A chave Pix é o celular do projeto, o mesmo número do WhatsApp.
 const CHAVE_PIX = '79999630944'
@@ -9,9 +9,11 @@ const WHATSAPP = `https://wa.me/5579999630944?text=${encodeURIComponent('Olá! S
 interface DoacaoProps {
   aberta: boolean
   onFechar: () => void
+  /** O coração do cabeçalho, para onde o pop-up volta ao fechar. */
+  coracao: RefObject<HTMLButtonElement | null>
 }
 
-export function Doacao({ aberta, onFechar }: DoacaoProps) {
+export function Doacao({ aberta, onFechar, coracao }: DoacaoProps) {
   const dialogo = useRef<HTMLDialogElement>(null)
   const chave = useRef<HTMLParagraphElement>(null)
   const [copiada, setCopiada] = useState(false)
@@ -23,6 +25,53 @@ export function Doacao({ aberta, onFechar }: DoacaoProps) {
     if (aberta && !el.open) el.showModal()
     if (!aberta && el.open) el.close()
   }, [aberta])
+
+  // Ao fechar, o cartão encolhe até o coração do cabeçalho, que pulsa ao recebê-lo:
+  // assim a pessoa vê onde o pop-up fica guardado.
+  function fechar() {
+    const el = dialogo.current
+    if (!el || el.hasAttribute('data-fechando')) return
+    const destino = coracao.current
+    if (
+      !destino ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      el.close()
+      return
+    }
+
+    const de = el.getBoundingClientRect()
+    const para = destino.getBoundingClientRect()
+    const dx = para.x + para.width / 2 - (de.x + de.width / 2)
+    const dy = para.y + para.height / 2 - (de.y + de.height / 2)
+    const escala = para.width / de.width
+
+    el.toggleAttribute('data-fechando', true)
+    const voo = el.animate(
+      [
+        { transform: 'none', opacity: 1 },
+        { opacity: 1, offset: 0.7 },
+        {
+          transform: `translate(${dx}px, ${dy}px) scale(${escala})`,
+          opacity: 0,
+        },
+      ],
+      { duration: 400, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' },
+    )
+    voo.onfinish = () => {
+      el.close()
+      voo.cancel()
+      el.toggleAttribute('data-fechando', false)
+      destino.animate(
+        [
+          { transform: 'scale(1)' },
+          { transform: 'scale(1.3)' },
+          { transform: 'scale(1)' },
+        ],
+        { duration: 300, easing: 'ease-out' },
+      )
+    }
+  }
 
   async function copiarChave() {
     try {
@@ -41,11 +90,18 @@ export function Doacao({ aberta, onFechar }: DoacaoProps) {
       aria-labelledby="doacao-titulo"
       aria-describedby="doacao-texto"
       onClose={onFechar}
+      // Esc ou o "voltar" do celular também fecham voltando para o coração, quando o
+      // navegador deixa segurar o fechamento.
+      onCancel={(e) => {
+        if (!e.cancelable) return
+        e.preventDefault()
+        fechar()
+      }}
       // Um toque no fundo escurecido, fora do cartão, também fecha.
       onClick={(e) => {
-        if (e.target === e.currentTarget) e.currentTarget.close()
+        if (e.target === e.currentTarget) fechar()
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-3xl bg-white text-slate-900 shadow-xl backdrop:bg-slate-950/60 dark:bg-slate-900 dark:text-slate-100"
+      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-3xl bg-white text-slate-900 shadow-xl backdrop:bg-slate-950/60 backdrop:transition-opacity backdrop:duration-400 data-fechando:backdrop:opacity-0 dark:bg-slate-900 dark:text-slate-100"
     >
       <div className="p-5">
         <div className="grid size-10 place-items-center rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300">
@@ -100,14 +156,15 @@ export function Doacao({ aberta, onFechar }: DoacaoProps) {
           Mandar mensagem no WhatsApp
         </a>
 
-        <form method="dialog" className="mt-2 text-center">
+        <div className="mt-2 text-center">
           <button
-            type="submit"
+            type="button"
+            onClick={fechar}
             className="rounded-full px-4 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             Agora não
           </button>
-        </form>
+        </div>
       </div>
     </dialog>
   )

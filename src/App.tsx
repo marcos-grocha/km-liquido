@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Cabecalho } from './components/Cabecalho'
 import { NavegacaoInferior, type Aba } from './components/NavegacaoInferior'
 import { calcularProjecao } from './core/calculo'
@@ -34,6 +34,7 @@ export default function App() {
     ),
   )
   const [pontinho, setPontinho] = useState(() => !carregarCoracaoTocado())
+  const coracao = useRef<HTMLButtonElement>(null)
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
   // Só fica salvo o que o motorista editou. Sem edição (ou depois de
@@ -65,6 +66,7 @@ export default function App() {
       <Cabecalho
         carro={parametros.carro}
         pontinho={pontinho}
+        coracao={coracao}
         onApoiar={abrirPeloCoracao}
       />
       <main className="px-4 pb-28">
@@ -83,7 +85,7 @@ export default function App() {
         </div>
       </main>
       <NavegacaoInferior aba={aba} onChange={trocarAba} />
-      <Doacao aberta={doacaoAberta} onFechar={fecharDoacao} />
+      <Doacao aberta={doacaoAberta} onFechar={fecharDoacao} coracao={coracao} />
     </div>
   )
 }

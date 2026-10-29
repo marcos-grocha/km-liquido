@@ -1,13 +1,20 @@
 import { Car, Heart } from 'lucide-react'
+import type { RefObject } from 'react'
 
 interface CabecalhoProps {
   carro: string
   /** Pontinho de notificação no coração, chamando para o pop-up de doação. */
   pontinho: boolean
+  coracao: RefObject<HTMLButtonElement | null>
   onApoiar: () => void
 }
 
-export function Cabecalho({ carro, pontinho, onApoiar }: CabecalhoProps) {
+export function Cabecalho({
+  carro,
+  pontinho,
+  coracao,
+  onApoiar,
+}: CabecalhoProps) {
   return (
     <header className="flex items-center justify-between gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
       <div className="flex shrink-0 items-center gap-2">
@@ -22,6 +29,7 @@ export function Cabecalho({ carro, pontinho, onApoiar }: CabecalhoProps) {
           </span>
         )}
         <button
+          ref={coracao}
           type="button"
           onClick={onApoiar}
           aria-label="Apoiar o projeto"
