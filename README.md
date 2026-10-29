@@ -6,6 +6,8 @@ fixos — por hora, dia, semana, mês e ano.
 
 O nome vem do indicador principal: o **km líquido**, quanto sobra de cada quilômetro rodado.
 
+Acesse o app em [kmliquido.netlify.app](https://kmliquido.netlify.app).
+
 ## Funcionalidades
 
 - **Meu carro**: dados do veículo, da rotina e dos custos, com o pagamento do carro como
@@ -55,14 +57,15 @@ docs/          especificação das regras de cálculo
 
 ## Deploy
 
-O app é estático (Vite) e roda na Vercel: ao importar o repositório em
-[vercel.com/new](https://vercel.com/new), a configuração de Vite é detectada automaticamente.
-Cada push na `main` publica em produção, e cada pull request ganha uma URL de pré-visualização.
+O app é estático (Vite) e está publicado na Netlify, em
+[kmliquido.netlify.app](https://kmliquido.netlify.app). Cada merge na `main` publica em
+produção, e cada pull request ganha um Deploy Preview com link no próprio PR. A configuração
+de build fica em [`netlify.toml`](netlify.toml): `npm run build`, publicando `dist/`, com Node 24.
 
 ## Roadmap
 
 - [x] Versão web: painel, calculadora avulsa e dados do carro
-- [ ] Publicação na Vercel
+- [x] Publicação na Netlify
 - [ ] App Android (APK)
 - [ ] Publicação na Play Store
 - [ ] Diário real: registrar ganhos, km e abastecimentos e comparar com a estimativa
