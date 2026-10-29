@@ -53,7 +53,10 @@ export default function App() {
   // As abas ficam montadas para não perder o que foi digitado ao trocar.
   return (
     <div className="mx-auto min-h-dvh max-w-md">
-      <Cabecalho carro={parametros.carro} />
+      <Cabecalho
+        carro={parametros.carro}
+        onApoiar={() => setDoacaoAberta(true)}
+      />
       <main className="px-4 pb-28">
         <div hidden={aba !== 'painel'}>
           <Painel projecao={projecao} parametros={parametros} />
