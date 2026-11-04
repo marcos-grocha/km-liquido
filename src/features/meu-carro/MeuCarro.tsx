@@ -46,26 +46,6 @@ const VEICULO: DefinicaoCampo[] = [
   },
 ]
 
-const ROTINA: DefinicaoCampo[] = [
-  {
-    campo: 'kmPorHora',
-    rotulo: 'Km por hora',
-    sufixo: 'km/h',
-    placeholder: sugestao('kmPorHora'),
-    dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
-  },
-  {
-    campo: 'valorPorKm',
-    rotulo: 'Valor por km',
-    prefixo: 'R$',
-    sufixo: '/km',
-    placeholder: sugestao('valorPorKm'),
-    dica: 'Faturamento bruto ÷ km total rodado, com e sem passageiro.',
-  },
-  { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
-  { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
-]
-
 const CUSTOS: DefinicaoCampo[] = [
   {
     campo: 'manutencaoPorKm',
@@ -101,6 +81,26 @@ const PAGAMENTO: Record<PagamentoDoCarro, DefinicaoCampo> = {
 const OPCOES_PAGAMENTO = (
   Object.keys(ROTULOS_PAGAMENTO) as PagamentoDoCarro[]
 ).map((valor) => ({ valor, rotulo: ROTULOS_PAGAMENTO[valor] }))
+
+const ROTINA: DefinicaoCampo[] = [
+  {
+    campo: 'kmPorHora',
+    rotulo: 'Km por hora',
+    sufixo: 'km/h',
+    placeholder: sugestao('kmPorHora'),
+    dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
+  },
+  {
+    campo: 'valorPorKm',
+    rotulo: 'Valor por km',
+    prefixo: 'R$',
+    sufixo: '/km',
+    placeholder: sugestao('valorPorKm'),
+    dica: 'Faturamento bruto ÷ km total rodado, com e sem passageiro.',
+  },
+  { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
+  { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
+]
 
 interface MeuCarroProps {
   parametros: Parametros
@@ -156,13 +156,6 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
       </Secao>
 
       <Secao
-        titulo="Rotina de trabalho"
-        resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
-      >
-        {campos(ROTINA)}
-      </Secao>
-
-      <Secao
         titulo="Custos do carro"
         resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`}
       >
@@ -181,6 +174,13 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
           />
         </div>
         {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
+      </Secao>
+
+      <Secao
+        titulo="Rotina de trabalho"
+        resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
+      >
+        {campos(ROTINA)}
       </Secao>
 
       <div className="flex flex-col items-center gap-1 text-center">
