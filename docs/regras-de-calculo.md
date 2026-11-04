@@ -25,10 +25,10 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 O **exemplo** é o da planilha e é a base dos casos de referência (§4 e §5). O **padrão do app**
 são os valores com que o app vem preenchido.
 
-O app guarda dois carros, Carro 01 e Carro 02. Cada um tem nome, consumo, combustível,
+O app guarda dois carros, o Principal e o Secundário. Cada um tem nome, consumo, combustível,
 manutenção, seguro, IPVA e pagamento; a rotina (km por hora, valor por km, horas por mês e dias
-por semana) vale para os dois, e as contas usam o carro em uso. O Carro 01 vem com o padrão da
-tabela acima. O Carro 02 vem como Dolphin GS: consumo 7, combustível 2, manutenção 0,03, seguro
+por semana) vale para os dois, e as contas usam o carro em uso. O Principal vem com o padrão da
+tabela acima. O Secundário vem como Dolphin GS: consumo 7, combustível 2, manutenção 0,03, seguro
 4.800 e IPVA 3.600, com o pagamento padrão.
 
 ## 2. Derivados

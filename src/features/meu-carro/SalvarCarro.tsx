@@ -11,7 +11,7 @@ interface SalvarCarroProps {
   onFechar: () => void
 }
 
-/** Pop-up que pergunta em qual posição, Carro 01 ou Carro 02, guardar o carro. */
+/** Pop-up que pergunta em qual posição, Principal ou Secundário, guardar o carro. */
 export function SalvarCarro({
   aberto,
   nomes,
@@ -70,7 +70,7 @@ export function SalvarCarro({
           ))}
         </div>
 
-        {/* Fica por último no DOM para o pop-up abrir com o foco no Carro 01, não no X. */}
+        {/* Fica por último no DOM para o pop-up abrir com o foco no Principal, não no X. */}
         <button
           type="button"
           onClick={() => dialogo.current?.close()}

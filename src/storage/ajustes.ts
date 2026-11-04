@@ -21,7 +21,7 @@ export function carregarAjustes(): Ajustes {
 
 /**
  * Monta os ajustes a partir do que estava salvo, no formato atual ou, sem ele, no
- * anterior: o carro antigo vira o Carro 01. Sem nada salvo, devolve o próprio
+ * anterior: o carro antigo vira o Principal. Sem nada salvo, devolve o próprio
  * `AJUSTES_PADRAO`.
  */
 export function interpretarAjustes(salvo: unknown, antigo: unknown): Ajustes {

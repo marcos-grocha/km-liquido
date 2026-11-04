@@ -17,12 +17,12 @@ export type CampoDoCarro = (typeof CAMPOS_DO_CARRO)[number]
 export type DadosDoCarro = Pick<Parametros, CampoDoCarro>
 export type Rotina = Omit<Parametros, CampoDoCarro>
 
-/** Posição do carro no app: 0 é o Carro 01 e 1 é o Carro 02. */
+/** Posição do carro no app: 0 é o Principal e 1 é o Secundário. */
 export type IndiceCarro = 0 | 1
 
 export const ROTULOS_CARRO: Record<IndiceCarro, string> = {
-  0: 'Carro 01',
-  1: 'Carro 02',
+  0: 'Principal',
+  1: 'Secundário',
 }
 
 /** Tudo o que o motorista configura: os dois carros, qual está em uso e a rotina. */
@@ -71,7 +71,7 @@ export function separar(parametros: Parametros): {
 
 const PADRAO = separar(PARAMETROS_PADRAO)
 
-/** O Carro 02 já vem preenchido com o Dolphin GS; o pagamento segue o padrão do app. */
+/** O Secundário já vem preenchido com o Dolphin GS; o pagamento segue o padrão do app. */
 export const CARRO_2_PADRAO: DadosDoCarro = {
   ...PADRAO.carro,
   carro: 'Dolphin GS',
@@ -82,7 +82,7 @@ export const CARRO_2_PADRAO: DadosDoCarro = {
   ipvaAnual: 3600,
 }
 
-/** Ajustes com que o app vem: o carro padrão como Carro 01, em uso. */
+/** Ajustes com que o app vem: o carro padrão como Principal, em uso. */
 export const AJUSTES_PADRAO: Ajustes = {
   carros: [PADRAO.carro, CARRO_2_PADRAO],
   carroAtivo: 0,

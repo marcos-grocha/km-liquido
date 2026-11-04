@@ -20,7 +20,7 @@ describe('interpretarAjustes', () => {
     expect(ajustes.rotina.horasPorMes).toBe(150)
   })
 
-  it('traz o carro do formato antigo como Carro 01, com o Dolphin como Carro 02', () => {
+  it('traz o carro do formato antigo como Principal, com o Dolphin como Secundário', () => {
     const antigo = { carro: 'HB20', consumoKmPorLitro: 12, horasPorMes: 180 }
     const ajustes = interpretarAjustes(null, antigo)
     expect(ajustes.carroAtivo).toBe(0)

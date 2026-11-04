@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Cabecalho } from './components/Cabecalho'
 import { NavegacaoInferior, type Aba } from './components/NavegacaoInferior'
 import { calcularProjecao } from './core/calculo'
-import { AJUSTES_PADRAO, parametrosDe } from './core/ajustes'
+import { AJUSTES_PADRAO, ROTULOS_CARRO, parametrosDe } from './core/ajustes'
 import { Avulsa } from './features/avulsa/Avulsa'
 import { Doacao } from './features/doacao/Doacao'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
@@ -34,6 +34,7 @@ export default function App() {
   // O pontinho no coração some quando a pessoa toca nele e volta a cada abertura do app.
   const [pontinho, setPontinho] = useState(true)
   const coracao = useRef<HTMLButtonElement>(null)
+  const [trocasDeCarro, setTrocasDeCarro] = useState(0)
   const parametros = useMemo(() => parametrosDe(ajustes), [ajustes])
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
 
@@ -47,6 +48,14 @@ export default function App() {
   function trocarAba(novaAba: Aba) {
     setAba(novaAba)
     window.scrollTo({ top: 0 })
+  }
+
+  function trocarCarro() {
+    setAjustes((atual) => ({
+      ...atual,
+      carroAtivo: atual.carroAtivo === 0 ? 1 : 0,
+    }))
+    setTrocasDeCarro((n) => n + 1)
   }
 
   function abrirPeloCoracao() {
@@ -64,6 +73,9 @@ export default function App() {
     <div className="mx-auto min-h-dvh max-w-md">
       <Cabecalho
         carro={parametros.carro}
+        posicaoCarro={ROTULOS_CARRO[ajustes.carroAtivo]}
+        trocas={trocasDeCarro}
+        onTrocarCarro={trocarCarro}
         pontinho={pontinho}
         coracao={coracao}
         onApoiar={abrirPeloCoracao}

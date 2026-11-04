@@ -188,10 +188,7 @@ export function MeuCarro({
               />
             </div>
           }
-          resumos={[
-            `Combustível por km: ${formatarMoeda(projecao.custoCombustivelPorKm)}`,
-            `Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`,
-          ]}
+          resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`}
         >
           <div className="col-span-2 flex items-end gap-2">
             <Campo
@@ -212,6 +209,10 @@ export function MeuCarro({
             </button>
           </div>
           {campos(VEICULO)}
+          <Resumo className="col-span-2">
+            Combustível por km: {formatarMoeda(projecao.custoCombustivelPorKm)}
+          </Resumo>
+          <hr className="col-span-2 border-slate-200 dark:border-slate-800" />
           {campos(CUSTOS)}
           <div className="col-span-2 space-y-1">
             <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
@@ -229,9 +230,7 @@ export function MeuCarro({
 
         <Secao
           titulo="Rotina de trabalho"
-          resumos={[
-            `Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`,
-          ]}
+          resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
         >
           {campos(ROTINA)}
         </Secao>
@@ -266,12 +265,11 @@ interface SecaoProps {
   titulo: string
   /** Controle que fica ao lado do título. */
   acao?: ReactNode
-  /** Linhas do resumo no pé da seção. */
-  resumos: string[]
+  resumo: string
   children: ReactNode
 }
 
-function Secao({ titulo, acao, resumos, children }: SecaoProps) {
+function Secao({ titulo, acao, resumo, children }: SecaoProps) {
   return (
     <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
       <div className="flex items-center justify-between gap-3">
@@ -279,14 +277,25 @@ function Secao({ titulo, acao, resumos, children }: SecaoProps) {
         {acao}
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3">{children}</div>
-      <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 tabular-nums dark:bg-emerald-950/60 dark:text-emerald-300">
-        {resumos.map((resumo) => (
-          <span key={resumo} className="block">
-            {resumo}
-          </span>
-        ))}
-      </p>
+      <Resumo className="mt-4">{resumo}</Resumo>
     </section>
+  )
+}
+
+/** Valor calculado a partir dos campos, em destaque. */
+function Resumo({
+  className,
+  children,
+}: {
+  className: string
+  children: ReactNode
+}) {
+  return (
+    <p
+      className={`rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 tabular-nums dark:bg-emerald-950/60 dark:text-emerald-300 ${className}`}
+    >
+      {children}
+    </p>
   )
 }
 

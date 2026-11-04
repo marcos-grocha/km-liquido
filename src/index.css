@@ -9,6 +9,26 @@ body {
   @apply bg-slate-100 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
 }
 
+@theme {
+  --animate-aviso-troca: aviso-troca 2.5s ease-out forwards;
+
+  /* Desce, fica um tempo na tela e some. */
+  @keyframes aviso-troca {
+    0% {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    10%,
+    80% {
+      opacity: 1;
+      transform: none;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
 /* Com um pop-up aberto, a página atrás dele não rola. */
 html:has(dialog[open]) {
   overflow: hidden;
