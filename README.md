@@ -22,9 +22,12 @@ preenchidos de novo na primeira vez.
 
 ## Funcionalidades
 
-- **Meu carro**: dados do veículo e dos custos, com o pagamento do carro como financiamento
-  (por mês) ou aluguel (por semana), e a rotina de trabalho, salvos no próprio aparelho. O
-  app abre nesta aba enquanto nenhum valor foi editado.
+- **Meu carro**: dois carros, Carro 01 e Carro 02, cada um com os dados do veículo e dos
+  custos, com o pagamento como financiamento (por mês) ou aluguel (por semana); a rotina de
+  trabalho vale para os dois. O seletor ao lado de "Veículo" troca o carro em uso, e o botão
+  Salvar guarda o carro do formulário numa das duas posições. O Carro 02 vem como Dolphin GS.
+  Tudo fica salvo no próprio aparelho, e o app abre nesta aba enquanto nenhum valor foi
+  editado.
 - **Painel**: lucro real do mês, hora líquida, km líquido e o demonstrativo do faturamento
   bruto até o lucro, por hora, dia, semana, mês ou ano.
 - **Quanto sobrou**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e

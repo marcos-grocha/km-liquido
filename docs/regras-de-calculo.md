@@ -25,6 +25,12 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 O **exemplo** é o da planilha e é a base dos casos de referência (§4 e §5). O **padrão do app**
 são os valores com que o app vem preenchido.
 
+O app guarda dois carros, Carro 01 e Carro 02. Cada um tem nome, consumo, combustível,
+manutenção, seguro, IPVA e pagamento; a rotina (km por hora, valor por km, horas por mês e dias
+por semana) vale para os dois, e as contas usam o carro em uso. O Carro 01 vem com o padrão da
+tabela acima. O Carro 02 vem como Dolphin GS: consumo 7, combustível 2, manutenção 0,03, seguro
+4.800 e IPVA 3.600, com o pagamento padrão.
+
 ## 2. Derivados
 
 | Valor          | Fórmula                | Exemplo |
@@ -154,6 +160,8 @@ avulso (`calcularAvulsa`).
 4. **Hora líquida e km líquido** ficam em destaque no app; a planilha não os mostra.
 5. **Aluguel.** A planilha só previa financiamento mensal. No app, o pagamento do carro pode ser
    financiamento (por mês) ou aluguel (por semana, R$ 500 por padrão).
+6. **Dois carros.** A planilha tinha um carro só. O app guarda dois e calcula com o que estiver
+   em uso, sempre com a mesma rotina.
 
 ## 7. Fora do escopo por enquanto
 
