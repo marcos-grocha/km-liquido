@@ -7,6 +7,14 @@ import {
 } from 'react'
 import { Campo } from '../../components/Campo'
 import { Segmentado } from '../../components/Segmentado'
+import {
+  AJUSTES_PADRAO,
+  ROTULOS_CARRO,
+  alterarParametro,
+  salvarCarroComo,
+  type Ajustes,
+  type IndiceCarro,
+} from '../../core/ajustes'
 import type { Projecao } from '../../core/calculo'
 import {
   PARAMETROS_PADRAO,
@@ -17,6 +25,7 @@ import {
   type Parametros,
 } from '../../core/parametros'
 import { formatarMoeda, formatarParaEdicao, lerNumero } from '../../lib/numero'
+import { SalvarCarro } from './SalvarCarro'
 
 interface DefinicaoCampo {
   campo: CampoNumerico
@@ -44,26 +53,6 @@ const VEICULO: DefinicaoCampo[] = [
     prefixo: 'R$',
     sufixo: '/L',
   },
-]
-
-const ROTINA: DefinicaoCampo[] = [
-  {
-    campo: 'kmPorHora',
-    rotulo: 'Km por hora',
-    sufixo: 'km/h',
-    placeholder: sugestao('kmPorHora'),
-    dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
-  },
-  {
-    campo: 'valorPorKm',
-    rotulo: 'Valor por km',
-    prefixo: 'R$',
-    sufixo: '/km',
-    placeholder: sugestao('valorPorKm'),
-    dica: 'Faturamento bruto ÷ km total rodado, com e sem passageiro.',
-  },
-  { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
-  { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
 ]
 
 const CUSTOS: DefinicaoCampo[] = [
@@ -102,19 +91,53 @@ const OPCOES_PAGAMENTO = (
   Object.keys(ROTULOS_PAGAMENTO) as PagamentoDoCarro[]
 ).map((valor) => ({ valor, rotulo: ROTULOS_PAGAMENTO[valor] }))
 
+const ROTINA: DefinicaoCampo[] = [
+  {
+    campo: 'kmPorHora',
+    rotulo: 'Km por hora',
+    sufixo: 'km/h',
+    placeholder: sugestao('kmPorHora'),
+    dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
+  },
+  {
+    campo: 'valorPorKm',
+    rotulo: 'Valor por km',
+    prefixo: 'R$',
+    sufixo: '/km',
+    placeholder: sugestao('valorPorKm'),
+    dica: 'Você deve considerar o km total rodado, com e sem passageiro.',
+  },
+  { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
+  { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
+]
+
+const OPCOES_CARRO = ([0, 1] as const).map((indice) => ({
+  valor: String(indice) as `${IndiceCarro}`,
+  rotulo: ROTULOS_CARRO[indice],
+}))
+
 interface MeuCarroProps {
+  ajustes: Ajustes
+  /** Os parâmetros do carro em uso, já com a rotina. */
   parametros: Parametros
   projecao: Projecao
-  onChange: Dispatch<SetStateAction<Parametros>>
+  onChange: Dispatch<SetStateAction<Ajustes>>
 }
 
-export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
+export function MeuCarro({
+  ajustes,
+  parametros,
+  projecao,
+  onChange,
+}: MeuCarroProps) {
   // Mudar a versão recria os campos com os valores restaurados.
   const [versao, setVersao] = useState(0)
+  const [escolhendoOndeSalvar, setEscolhendoOndeSalvar] = useState(false)
+  const [salvo, setSalvo] = useState(false)
   const { mes } = projecao.periodos
 
-  function alterar(campo: CampoNumerico, valor: number) {
-    onChange((atual) => ({ ...atual, [campo]: valor }))
+  function alterar<C extends keyof Parametros>(campo: C, valor: Parametros[C]) {
+    onChange((atual) => alterarParametro(atual, campo, valor))
   }
 
   function campos(definicoes: DefinicaoCampo[]) {
@@ -128,93 +151,151 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
     ))
   }
 
+  function salvarComo(destino: IndiceCarro) {
+    onChange((atual) => salvarCarroComo(atual, destino))
+    setEscolhendoOndeSalvar(false)
+    setSalvo(true)
+    setTimeout(() => setSalvo(false), 2000)
+  }
+
   function restaurarPadrao() {
     const confirmado = window.confirm(
-      'Voltar para os valores padrão? Os dados atuais serão substituídos.',
+      'Voltar para os valores padrão? Os dois carros e a rotina serão substituídos.',
     )
     if (!confirmado) return
-    onChange(PARAMETROS_PADRAO)
+    onChange(AJUSTES_PADRAO)
     setVersao((v) => v + 1)
   }
 
   return (
-    <div key={versao} className="space-y-4">
-      <Secao
-        titulo="Veículo"
-        resumo={`Combustível por km: ${formatarMoeda(projecao.custoCombustivelPorKm)}`}
-      >
-        <Campo
-          className="col-span-2"
-          rotulo="Nome do carro"
-          inputMode="text"
-          valor={parametros.carro}
-          placeholder="Ex.: Argo"
-          maxLength={30}
-          onChange={(carro) => onChange((atual) => ({ ...atual, carro }))}
-        />
-        {campos(VEICULO)}
-      </Secao>
-
-      <Secao
-        titulo="Rotina de trabalho"
-        resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
-      >
-        {campos(ROTINA)}
-      </Secao>
-
-      <Secao
-        titulo="Custos do carro"
-        resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`}
-      >
-        {campos(CUSTOS)}
-        <div className="col-span-2 space-y-1">
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
-            Pagamento do carro
-          </p>
-          <Segmentado
-            rotulo="Pagamento do carro"
-            opcoes={OPCOES_PAGAMENTO}
-            valor={parametros.pagamentoDoCarro}
-            onChange={(pagamentoDoCarro) =>
-              onChange((atual) => ({ ...atual, pagamentoDoCarro }))
-            }
-          />
-        </div>
-        {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
-      </Secao>
-
-      <div className="flex flex-col items-center gap-1 text-center">
-        <button
-          type="button"
-          onClick={restaurarPadrao}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+    <>
+      {/* Trocar de carro também recria os campos, agora com os dados do outro carro. */}
+      <div key={`${versao}-${ajustes.carroAtivo}`} className="space-y-4">
+        <Secao
+          titulo="Veículo"
+          acao={
+            <div className="w-44">
+              <Segmentado
+                rotulo="Carro em uso"
+                opcoes={OPCOES_CARRO}
+                valor={`${ajustes.carroAtivo}`}
+                onChange={(valor) =>
+                  onChange((atual) => ({
+                    ...atual,
+                    carroAtivo: Number(valor) as IndiceCarro,
+                  }))
+                }
+              />
+            </div>
+          }
+          resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`}
         >
-          <RotateCcw className="size-4" aria-hidden />
-          Restaurar valores padrão
-        </button>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Os dados ficam salvos só neste aparelho.
-        </p>
+          <div className="col-span-2 flex items-end gap-2">
+            <Campo
+              className="min-w-0 flex-1"
+              rotulo="Nome do carro"
+              inputMode="text"
+              valor={parametros.carro}
+              placeholder="Ex.: Argo"
+              maxLength={30}
+              onChange={(carro) => alterar('carro', carro)}
+            />
+            <button
+              type="button"
+              onClick={() => setEscolhendoOndeSalvar(true)}
+              className="h-11.5 shrink-0 rounded-xl bg-emerald-700 px-4 text-sm font-medium text-white hover:bg-emerald-800"
+            >
+              {salvo ? 'Salvo!' : 'Salvar'}
+            </button>
+          </div>
+          {campos(VEICULO)}
+          <Resumo className="col-span-2">
+            Combustível por km: {formatarMoeda(projecao.custoCombustivelPorKm)}
+          </Resumo>
+          <hr className="col-span-2 border-slate-200 dark:border-slate-800" />
+          {campos(CUSTOS)}
+          <div className="col-span-2 space-y-1">
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              Pagamento do carro
+            </p>
+            <Segmentado
+              rotulo="Pagamento do carro"
+              opcoes={OPCOES_PAGAMENTO}
+              valor={parametros.pagamentoDoCarro}
+              onChange={(pagamento) => alterar('pagamentoDoCarro', pagamento)}
+            />
+          </div>
+          {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
+        </Secao>
+
+        <Secao
+          titulo="Rotina de trabalho"
+          resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
+        >
+          {campos(ROTINA)}
+        </Secao>
+
+        <div className="flex flex-col items-center gap-1 text-center">
+          <button
+            type="button"
+            onClick={restaurarPadrao}
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <RotateCcw className="size-4" aria-hidden />
+            Restaurar valores padrão
+          </button>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Os dados ficam salvos só neste aparelho.
+          </p>
+        </div>
       </div>
-    </div>
+
+      <SalvarCarro
+        aberto={escolhendoOndeSalvar}
+        nomes={[ajustes.carros[0].carro, ajustes.carros[1].carro]}
+        carroAtivo={ajustes.carroAtivo}
+        onEscolher={salvarComo}
+        onFechar={() => setEscolhendoOndeSalvar(false)}
+      />
+    </>
   )
 }
 
 interface SecaoProps {
   titulo: string
+  /** Controle que fica ao lado do título. */
+  acao?: ReactNode
   resumo: string
   children: ReactNode
 }
 
-function Secao({ titulo, resumo, children }: SecaoProps) {
+function Secao({ titulo, acao, resumo, children }: SecaoProps) {
   return (
     <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
-      <h2 className="font-semibold">{titulo}</h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-semibold">{titulo}</h2>
+        {acao}
+      </div>
       <div className="mt-3 grid grid-cols-2 gap-3">{children}</div>
-      <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 tabular-nums dark:bg-emerald-950/60 dark:text-emerald-300">
-        {resumo}
-      </p>
+      <Resumo className="mt-4">{resumo}</Resumo>
     </section>
+  )
+}
+
+/** Valor calculado a partir dos campos, em destaque. */
+function Resumo({
+  className,
+  children,
+}: {
+  className: string
+  children: ReactNode
+}) {
+  return (
+    <p
+      className={`rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 tabular-nums dark:bg-emerald-950/60 dark:text-emerald-300 ${className}`}
+    >
+      {children}
+    </p>
   )
 }
 
