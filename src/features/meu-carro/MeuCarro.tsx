@@ -96,7 +96,7 @@ const ROTINA: DefinicaoCampo[] = [
     prefixo: 'R$',
     sufixo: '/km',
     placeholder: sugestao('valorPorKm'),
-    dica: 'Faturamento bruto ÷ km total rodado, com e sem passageiro.',
+    dica: 'Você deve considerar o km total rodado, com e sem passageiro.',
   },
   { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
   { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
