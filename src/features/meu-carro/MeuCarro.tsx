@@ -141,7 +141,10 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
     <div key={versao} className="space-y-4">
       <Secao
         titulo="Veículo"
-        resumo={`Combustível por km: ${formatarMoeda(projecao.custoCombustivelPorKm)}`}
+        resumos={[
+          `Combustível por km: ${formatarMoeda(projecao.custoCombustivelPorKm)}`,
+          `Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`,
+        ]}
       >
         <Campo
           className="col-span-2"
@@ -153,12 +156,6 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
           onChange={(carro) => onChange((atual) => ({ ...atual, carro }))}
         />
         {campos(VEICULO)}
-      </Secao>
-
-      <Secao
-        titulo="Custos do carro"
-        resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`}
-      >
         {campos(CUSTOS)}
         <div className="col-span-2 space-y-1">
           <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
@@ -178,7 +175,9 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
 
       <Secao
         titulo="Rotina de trabalho"
-        resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
+        resumos={[
+          `Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`,
+        ]}
       >
         {campos(ROTINA)}
       </Secao>
@@ -202,17 +201,22 @@ export function MeuCarro({ parametros, projecao, onChange }: MeuCarroProps) {
 
 interface SecaoProps {
   titulo: string
-  resumo: string
+  /** Linhas do resumo no pé da seção. */
+  resumos: string[]
   children: ReactNode
 }
 
-function Secao({ titulo, resumo, children }: SecaoProps) {
+function Secao({ titulo, resumos, children }: SecaoProps) {
   return (
     <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
       <h2 className="font-semibold">{titulo}</h2>
       <div className="mt-3 grid grid-cols-2 gap-3">{children}</div>
       <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 tabular-nums dark:bg-emerald-950/60 dark:text-emerald-300">
-        {resumo}
+        {resumos.map((resumo) => (
+          <span key={resumo} className="block">
+            {resumo}
+          </span>
+        ))}
       </p>
     </section>
   )
