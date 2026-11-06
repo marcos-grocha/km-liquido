@@ -37,6 +37,8 @@ preenchidos de novo na primeira vez.
   configurado e, uma vez fechado, só volta depois de uma semana. Ao fechar, encolhe de volta
   para o coração do cabeçalho, que abre o pop-up a qualquer momento e mostra um pontinho de
   notificação a cada abertura do app, até ser tocado.
+- **Tema claro e escuro**: segue o aparelho e pode ser trocado à mão pelo botão entre o nome
+  do carro e o coração. A escolha fica salva; escolher o tema do aparelho volta a segui-lo.
 
 ## Regras de cálculo
 
@@ -65,7 +67,8 @@ src/
   lib/         leitura e formatação de números em pt-BR
   storage/     persistência local (localStorage)
   components/  componentes de interface compartilhados
-  features/    telas: meu-carro, painel, avulsa (aba "Quanto sobrou") e doacao (pop-up)
+  features/    telas: meu-carro, painel, avulsa (aba "Quanto sobrou"), doacao (pop-up) e tema
+               (botão de tema claro e escuro)
   pwa/         service worker (o build injeta a lista de arquivos; ver vite.config.ts)
 public/        ícones e manifest do PWA
 docs/          especificação das regras de cálculo
