@@ -46,8 +46,8 @@ export function Painel({ projecao, parametros }: PainelProps) {
             {formatarMoeda(mes.lucro)}
           </p>
           <p className="mt-2 text-sm text-white/80">
-            {formatarMoeda(ano.lucro)} por ano ·{' '}
-            {formatarHoras(parametros.horasPorMes)} por mês
+            {formatarMoeda(ano.lucro)} por ano · {formatarHoras(mes.horas)} por
+            mês
           </p>
         </section>
 

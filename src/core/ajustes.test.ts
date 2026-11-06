@@ -4,6 +4,8 @@ import {
   CARRO_2_PADRAO,
   alterarParametro,
   parametrosDe,
+  restaurarCarros,
+  restaurarRotina,
   salvarCarroComo,
   type Ajustes,
 } from './ajustes'
@@ -18,7 +20,7 @@ describe('parametrosDe', () => {
     const parametros = parametrosDe({ ...AJUSTES_PADRAO, carroAtivo: 1 })
     expect(parametros).toMatchObject(CARRO_2_PADRAO)
     expect(parametros.kmPorHora).toBe(PARAMETROS_PADRAO.kmPorHora)
-    expect(parametros.horasPorMes).toBe(PARAMETROS_PADRAO.horasPorMes)
+    expect(parametros.horasPorSemana).toBe(PARAMETROS_PADRAO.horasPorSemana)
   })
 })
 
@@ -52,9 +54,9 @@ describe('alterarParametro', () => {
   })
 
   it('muda um campo da rotina para os dois carros', () => {
-    const ajustes = alterarParametro(comCarro2, 'horasPorMes', 100)
-    expect(parametrosDe(ajustes).horasPorMes).toBe(100)
-    expect(parametrosDe({ ...ajustes, carroAtivo: 0 }).horasPorMes).toBe(100)
+    const ajustes = alterarParametro(comCarro2, 'horasPorSemana', 40)
+    expect(parametrosDe(ajustes).horasPorSemana).toBe(40)
+    expect(parametrosDe({ ...ajustes, carroAtivo: 0 }).horasPorSemana).toBe(40)
   })
 })
 
@@ -70,5 +72,32 @@ describe('salvarCarroComo', () => {
   it('na própria posição, mantém tudo como está', () => {
     const ajustes = salvarCarroComo(AJUSTES_PADRAO, 0)
     expect(ajustes).toEqual(AJUSTES_PADRAO)
+  })
+})
+
+describe('restaurarCarros e restaurarRotina', () => {
+  const editado: Ajustes = alterarParametro(
+    alterarParametro({ ...AJUSTES_PADRAO, carroAtivo: 1 }, 'ipvaAnual', 1000),
+    'horasPorSemana',
+    40,
+  )
+
+  it('restaurar os carros mantém a rotina', () => {
+    const ajustes = restaurarCarros(editado)
+    expect(ajustes.carros).toBe(AJUSTES_PADRAO.carros)
+    expect(ajustes.carroAtivo).toBe(0)
+    expect(ajustes.rotina.horasPorSemana).toBe(40)
+  })
+
+  it('restaurar a rotina mantém os carros', () => {
+    const ajustes = restaurarRotina(editado)
+    expect(ajustes.rotina).toBe(AJUSTES_PADRAO.rotina)
+    expect(ajustes.carroAtivo).toBe(1)
+    expect(ajustes.carros[1].ipvaAnual).toBe(1000)
+  })
+
+  it('restaurando os dois, volta ao próprio padrão, sem nada para salvar', () => {
+    expect(restaurarRotina(restaurarCarros(editado))).toBe(AJUSTES_PADRAO)
+    expect(restaurarCarros(restaurarRotina(editado))).toBe(AJUSTES_PADRAO)
   })
 })

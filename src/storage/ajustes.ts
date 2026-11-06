@@ -84,7 +84,17 @@ function lerCarro(dados: unknown, padrao: DadosDoCarro): DadosDoCarro {
 
 function lerRotina(dados: unknown): Rotina {
   const rotina = { ...AJUSTES_PADRAO.rotina }
-  if (ehObjeto(dados)) copiarNumeros(rotina, dados)
+  if (!ehObjeto(dados)) return rotina
+  copiarNumeros(rotina, dados)
+  // Antes, a rotina guardava as horas por mês: viram as horas por semana
+  // equivalentes (12 meses ÷ 52 semanas), sem mudar nenhuma conta.
+  const porMes = dados.horasPorMes
+  if (!('horasPorSemana' in dados) && typeof porMes === 'number') {
+    const porSemana = (porMes * 12) / 52
+    if (validarCampo('horasPorSemana', porSemana) === null) {
+      rotina.horasPorSemana = porSemana
+    }
+  }
   return rotina
 }
 

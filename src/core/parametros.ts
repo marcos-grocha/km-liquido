@@ -5,7 +5,8 @@ export interface Parametros {
   kmPorHora: number
   /** Faturamento bruto ÷ km total rodado (com e sem passageiro), em R$/km. */
   valorPorKm: number
-  horasPorMes: number
+  /** Horas trabalhadas por semana; as horas por mês saem delas (52 semanas ÷ 12 meses). */
+  horasPorSemana: number
   diasPorSemana: number
   /** Em R$/L. */
   precoCombustivel: number
@@ -37,7 +38,7 @@ export const PARAMETROS_PADRAO: Parametros = {
   carro: 'Argo Drive',
   kmPorHora: 20,
   valorPorKm: 1.7,
-  horasPorMes: 192,
+  horasPorSemana: 44,
   diasPorSemana: 6,
   precoCombustivel: 6.95,
   consumoKmPorLitro: 13,
@@ -59,7 +60,8 @@ export interface Restricao {
 const RESTRICOES: Record<CampoNumerico, Restricao> = {
   kmPorHora: { min: 0, minExclusivo: true },
   valorPorKm: { min: 0, minExclusivo: true },
-  horasPorMes: { min: 0, minExclusivo: true },
+  // Uma semana tem 168 horas.
+  horasPorSemana: { min: 0, minExclusivo: true, max: 168 },
   diasPorSemana: { min: 1, max: 7 },
   precoCombustivel: { min: 0 },
   consumoKmPorLitro: { min: 0, minExclusivo: true },
@@ -86,10 +88,13 @@ export function validarValor(
   { min, minExclusivo, max }: Restricao,
 ): string | null {
   if (!Number.isFinite(valor)) return 'Informe um número.'
-  if (max !== undefined && (valor < min || valor > max)) {
-    return `Use um valor entre ${min} e ${max}.`
-  }
   if (minExclusivo && valor <= min) return 'Precisa ser maior que zero.'
+  if (max !== undefined && (valor < min || valor > max)) {
+    // Com o mínimo exclusivo, o "maior que zero" já foi conferido acima.
+    return minExclusivo
+      ? `Use um valor até ${max}.`
+      : `Use um valor entre ${min} e ${max}.`
+  }
   if (valor < min) return 'Não pode ser negativo.'
   return null
 }

@@ -27,11 +27,18 @@ export function formatarNumero(valor: number, casas = 1): string {
   })
 }
 
+/** Separa uma duração em horas inteiras e minutos, arredondada ao minuto: 34,6154 h → 34h e 37min. */
+export function separarHoras(duracao: number): {
+  horas: number
+  minutos: number
+} {
+  const totalMinutos = Math.round(duracao * 60)
+  return { horas: Math.floor(totalMinutos / 60), minutos: totalMinutos % 60 }
+}
+
 /** Duração em horas e minutos, arredondada ao minuto: "7h23min", "192h", "45min". */
-export function formatarHoras(horas: number): string {
-  const totalMinutos = Math.round(horas * 60)
-  const inteiras = Math.floor(totalMinutos / 60)
-  const minutos = totalMinutos % 60
+export function formatarHoras(duracao: number): string {
+  const { horas: inteiras, minutos } = separarHoras(duracao)
   if (minutos === 0) return `${formatarNumero(inteiras, 0)}h`
   if (inteiras === 0) return `${minutos}min`
   return `${formatarNumero(inteiras, 0)}h${String(minutos).padStart(2, '0')}min`

@@ -6,6 +6,7 @@ import {
   formatarParaEdicao,
   formatarPercentual,
   lerNumero,
+  separarHoras,
 } from './numero'
 
 describe('lerNumero', () => {
@@ -69,5 +70,16 @@ describe('formatação', () => {
     expect(formatarParaEdicao(1700)).toBe('1700')
     expect(formatarParaEdicao(6.95)).toBe('6,95')
     expect(formatarParaEdicao(0.1)).toBe('0,1')
+  })
+})
+
+describe('separarHoras', () => {
+  it.each([
+    [44, 44, 0],
+    [190 + 40 / 60, 190, 40],
+    [(150 * 12) / 52, 34, 37],
+    [1.9999, 2, 0],
+  ])('separa %d horas em %dh e %dmin', (duracao, horas, minutos) => {
+    expect(separarHoras(duracao)).toEqual({ horas, minutos })
   })
 })

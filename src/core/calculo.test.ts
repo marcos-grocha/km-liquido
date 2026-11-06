@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   calcularAvulsa,
   calcularProjecao,
+  diasPorMes,
+  horasPorMes,
   PERIODOS,
   type Periodo,
   type ResultadoPeriodo,
@@ -15,7 +17,8 @@ const exemplo: Parametros = {
   carro: 'Argo',
   kmPorHora: 20,
   valorPorKm: 1.5,
-  horasPorMes: 66,
+  // 66 horas por mês, como na planilha.
+  horasPorSemana: (66 * 12) / 52,
   diasPorSemana: 5,
   precoCombustivel: 6.95,
   consumoKmPorLitro: 14,
@@ -143,6 +146,23 @@ describe('calcularProjecao', () => {
       mes.combustivel + mes.manutencao,
       8,
     )
+  })
+
+  it('tira as horas e os dias por mês da semana, com os dias para baixo', () => {
+    expect(horasPorMes({ ...exemplo, horasPorSemana: 44 })).toBeCloseTo(
+      190.67,
+      2,
+    )
+    expect(diasPorMes({ ...exemplo, diasPorSemana: 6 })).toBe(26)
+    expect(diasPorMes({ ...exemplo, diasPorSemana: 5 })).toBe(21)
+    expect(diasPorMes({ ...exemplo, diasPorSemana: 7 })).toBe(30)
+  })
+
+  it('usa as horas por semana informadas no período "semana"', () => {
+    const { semana, mes } = calcularProjecao(exemplo).periodos
+
+    expect(semana.horas).toBe(exemplo.horasPorSemana)
+    expect(mes.horas).toBeCloseTo(66, 10)
   })
 
   it('mantém o calendário consistente: 52 semanas e 12 meses por ano', () => {

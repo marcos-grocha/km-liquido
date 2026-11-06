@@ -16,7 +16,7 @@ describe('validarCampo', () => {
   it.each<CampoNumerico>([
     'kmPorHora',
     'valorPorKm',
-    'horasPorMes',
+    'horasPorSemana',
     'consumoKmPorLitro',
   ])('exige %s maior que zero, porque ele divide outros valores', (campo) => {
     expect(validarCampo(campo, 0)).toBe('Precisa ser maior que zero.')
@@ -33,6 +33,14 @@ describe('validarCampo', () => {
   ])('aceita %s zerado, mas não negativo', (campo) => {
     expect(validarCampo(campo, 0)).toBeNull()
     expect(validarCampo(campo, -1)).toBe('Não pode ser negativo.')
+  })
+
+  it('limita as horas por semana às 168 horas de uma semana', () => {
+    expect(validarCampo('horasPorSemana', 168)).toBeNull()
+    expect(validarCampo('horasPorSemana', 168.5)).toBe('Use um valor até 168.')
+    expect(validarCampo('horasPorSemana', 0)).toBe(
+      'Precisa ser maior que zero.',
+    )
   })
 
   it('limita os dias por semana entre 1 e 7', () => {

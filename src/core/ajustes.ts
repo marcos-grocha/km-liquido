@@ -124,3 +124,29 @@ export function salvarCarroComo(
   carros[destino] = ajustes.carros[ajustes.carroAtivo]
   return { ...ajustes, carros, carroAtivo: destino }
 }
+
+/** Volta os dois carros ao padrão, com o Principal em uso; a rotina fica como está. */
+export function restaurarCarros(ajustes: Ajustes): Ajustes {
+  return padraoSeTudoPadrao({
+    ...ajustes,
+    carros: AJUSTES_PADRAO.carros,
+    carroAtivo: 0,
+  })
+}
+
+/** Volta a rotina ao padrão; os carros ficam como estão. */
+export function restaurarRotina(ajustes: Ajustes): Ajustes {
+  return padraoSeTudoPadrao({ ...ajustes, rotina: AJUSTES_PADRAO.rotina })
+}
+
+/**
+ * Com os carros e a rotina de volta ao padrão, devolve o próprio `AJUSTES_PADRAO`:
+ * o app volta a não ter nada salvo, como antes da primeira edição.
+ */
+function padraoSeTudoPadrao(ajustes: Ajustes): Ajustes {
+  const tudoPadrao =
+    ajustes.carros === AJUSTES_PADRAO.carros &&
+    ajustes.carroAtivo === AJUSTES_PADRAO.carroAtivo &&
+    ajustes.rotina === AJUSTES_PADRAO.rotina
+  return tudoPadrao ? AJUSTES_PADRAO : ajustes
+}

@@ -23,11 +23,16 @@ preenchidos de novo na primeira vez.
 ## Funcionalidades
 
 - **Meu carro**: dois carros, o Principal e o Secundário, cada um com os dados do veículo e
-  dos custos, com o pagamento como financiamento (por mês) ou aluguel (por semana); a rotina
-  de trabalho vale para os dois. O seletor ao lado de "Veículo" troca o carro em uso, assim
-  como um toque no nome do carro no cabeçalho, e o botão Salvar guarda o carro do formulário
-  numa das duas posições. O Secundário vem como Dolphin GS. Tudo fica salvo no próprio
-  aparelho, e o app abre nesta aba enquanto nenhum valor foi editado.
+  dos custos, com o pagamento como financiamento (por mês) ou aluguel (por semana). O seletor
+  ao lado de "Veículo" troca o carro em uso, assim como um toque no nome do carro no
+  cabeçalho, e o botão Salvar guarda o carro do formulário numa das duas posições. O
+  Secundário vem como Dolphin GS. Tudo fica salvo no próprio aparelho, e o app abre nesta aba
+  enquanto nenhum valor foi editado.
+- **Rotina**: a rotina de trabalho, que vale para os dois carros: km por hora, valor por km,
+  horas e minutos por semana e dias por semana. As horas e os minutos por mês e os dias por
+  mês (arredondados para baixo) aparecem calculados pelo app. Cada uma dessas duas abas tem o
+  seu "Restaurar valores padrão": o de Meu carro volta só os carros, e o da Rotina, só a
+  rotina.
 - **Painel**: lucro real do mês, hora líquida, km líquido e o demonstrativo do faturamento
   bruto até o lucro, por hora, dia, semana, mês ou ano.
 - **Quanto sobrou**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e
@@ -40,10 +45,11 @@ preenchidos de novo na primeira vez.
 - **Tema claro e escuro**: segue o aparelho e pode ser trocado à mão pelo botão entre o nome
   do carro e o coração. A escolha fica salva; escolher o tema do aparelho volta a segui-lo.
 - **Telas largas**: no computador ou no tablet deitado (1024 px ou mais, na horizontal), as
-  telas se abrem em colunas, com até 960 px de largura. No Meu carro, o card Veículo ocupa duas
-  colunas e a rotina a terceira; no Painel, os três cards de cima ficam numa coluna estreita e o
-  demonstrativo à direita; no Quanto sobrou, o resultado aparece ao lado do formulário. No
-  celular e no tablet em pé, o layout continua o mesmo.
+  telas se abrem em colunas, com até 960 px de largura. No Meu carro, o card Veículo se divide
+  em duas metades, com os custos fixos à direita; na Rotina, o card fica centralizado; no
+  Painel, os três cards de cima ficam numa coluna estreita e o demonstrativo à direita; no
+  Quanto sobrou, o resultado aparece ao lado do formulário. No celular e no tablet em pé, o
+  layout continua o mesmo.
 
 ## Regras de cálculo
 
@@ -72,8 +78,8 @@ src/
   lib/         leitura e formatação de números em pt-BR
   storage/     persistência local (localStorage)
   components/  componentes de interface compartilhados
-  features/    telas: meu-carro, painel, avulsa (aba "Quanto sobrou"), doacao (pop-up) e tema
-               (botão de tema claro e escuro)
+  features/    telas: meu-carro, rotina, painel, avulsa (aba "Quanto sobrou"), doacao (pop-up)
+               e tema (botão de tema claro e escuro)
   pwa/         service worker (o build injeta a lista de arquivos; ver vite.config.ts)
 public/        ícones e manifest do PWA
 docs/          especificação das regras de cálculo
