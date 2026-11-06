@@ -8,7 +8,7 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 
 | Campo                       |       Exemplo | Padrão do app | Unidade | Observação                                                 |
 | --------------------------- | ------------: | ------------: | ------- | ---------------------------------------------------------- |
-| Carro                       |          Argo |      Argo 1.0 | texto   |                                                            |
+| Carro                       |          Argo |    Argo Drive | texto   |                                                            |
 | KM por hora                 |            20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
 | Valor por KM                |          1,50 |          1,70 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
 | Horas por mês               |            66 |           192 | h       |                                                            |

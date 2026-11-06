@@ -114,10 +114,11 @@ const ROTINA: DefinicaoCampo[] = [
 
 /**
  * Cada metade do card Veículo. No celular, as duas se empilham na mesma grade;
- * em tela larga, o veículo e a manutenção ficam à esquerda e os custos fixos à direita.
+ * em tela larga, o veículo e a manutenção ficam à esquerda e os custos fixos à direita,
+ * alinhados pela base para os dois resumos ficarem na mesma altura.
  */
 const METADE =
-  'col-span-2 grid grid-cols-2 content-start gap-3 largo:col-span-1'
+  'col-span-2 grid grid-cols-2 content-start gap-3 largo:col-span-1 largo:content-end'
 
 const OPCOES_CARRO = ([0, 1] as const).map((indice) => ({
   valor: String(indice) as `${IndiceCarro}`,
