@@ -55,14 +55,15 @@ const VEICULO: DefinicaoCampo[] = [
   },
 ]
 
-const CUSTOS: DefinicaoCampo[] = [
-  {
-    campo: 'manutencaoPorKm',
-    rotulo: 'Manutenção',
-    prefixo: 'R$',
-    sufixo: '/km',
-    dica: 'Reserva para pneus, óleo, revisões e peças.',
-  },
+const MANUTENCAO: DefinicaoCampo = {
+  campo: 'manutencaoPorKm',
+  rotulo: 'Manutenção',
+  prefixo: 'R$',
+  sufixo: '/km',
+  dica: 'Reserva para pneus, óleo, revisões e peças.',
+}
+
+const CUSTOS_FIXOS: DefinicaoCampo[] = [
   { campo: 'seguroAnual', rotulo: 'Seguro', prefixo: 'R$', sufixo: '/ano' },
   { campo: 'ipvaAnual', rotulo: 'IPVA', prefixo: 'R$', sufixo: '/ano' },
 ]
@@ -110,6 +111,13 @@ const ROTINA: DefinicaoCampo[] = [
   { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
   { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
 ]
+
+/**
+ * Cada metade do card Veículo. No celular, as duas se empilham na mesma grade;
+ * em tela larga, o veículo e a manutenção ficam à esquerda e os custos fixos à direita.
+ */
+const METADE =
+  'col-span-2 grid grid-cols-2 content-start gap-3 largo:col-span-1'
 
 const OPCOES_CARRO = ([0, 1] as const).map((indice) => ({
   valor: String(indice) as `${IndiceCarro}`,
@@ -170,9 +178,14 @@ export function MeuCarro({
   return (
     <>
       {/* Trocar de carro também recria os campos, agora com os dados do outro carro. */}
-      <div key={`${versao}-${ajustes.carroAtivo}`} className="space-y-4">
+      {/* Em tela larga, o card Veículo ocupa duas colunas e a rotina a terceira. */}
+      <div
+        key={`${versao}-${ajustes.carroAtivo}`}
+        className="space-y-4 largo:grid largo:grid-cols-3 largo:items-start largo:gap-4 largo:space-y-0"
+      >
         <Secao
           titulo="Veículo"
+          className="largo:col-span-2"
           acao={
             <div className="w-44">
               <Segmentado
@@ -188,44 +201,57 @@ export function MeuCarro({
               />
             </div>
           }
-          resumo={`Custos fixos por mês: ${formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}`}
         >
-          <div className="col-span-2 flex items-end gap-2">
-            <Campo
-              className="min-w-0 flex-1"
-              rotulo="Nome do carro"
-              inputMode="text"
-              valor={parametros.carro}
-              placeholder="Ex.: Argo"
-              maxLength={30}
-              onChange={(carro) => alterar('carro', carro)}
-            />
-            <button
-              type="button"
-              onClick={() => setEscolhendoOndeSalvar(true)}
-              className="h-11.5 shrink-0 rounded-xl bg-emerald-700 px-4 text-sm font-medium text-white hover:bg-emerald-800"
-            >
-              {salvo ? 'Salvo!' : 'Salvar'}
-            </button>
+          <div className={METADE}>
+            <div className="col-span-2 flex items-end gap-2">
+              <Campo
+                className="min-w-0 flex-1"
+                rotulo="Nome do carro"
+                inputMode="text"
+                valor={parametros.carro}
+                placeholder="Ex.: Argo"
+                maxLength={30}
+                onChange={(carro) => alterar('carro', carro)}
+              />
+              <button
+                type="button"
+                onClick={() => setEscolhendoOndeSalvar(true)}
+                className="h-11.5 shrink-0 rounded-xl bg-emerald-700 px-4 text-sm font-medium text-white hover:bg-emerald-800"
+              >
+                {salvo ? 'Salvo!' : 'Salvar'}
+              </button>
+            </div>
+            {campos(VEICULO)}
+            <Resumo className="col-span-2">
+              Combustível por km:{' '}
+              {formatarMoeda(projecao.custoCombustivelPorKm)}
+            </Resumo>
+            <hr className="col-span-2 border-slate-200 dark:border-slate-800" />
+            {campos([MANUTENCAO])}
           </div>
-          {campos(VEICULO)}
-          <Resumo className="col-span-2">
-            Combustível por km: {formatarMoeda(projecao.custoCombustivelPorKm)}
-          </Resumo>
-          <hr className="col-span-2 border-slate-200 dark:border-slate-800" />
-          {campos(CUSTOS)}
-          <div className="col-span-2 space-y-1">
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
-              Pagamento do carro
-            </p>
-            <Segmentado
-              rotulo="Pagamento do carro"
-              opcoes={OPCOES_PAGAMENTO}
-              valor={parametros.pagamentoDoCarro}
-              onChange={(pagamento) => alterar('pagamentoDoCarro', pagamento)}
-            />
+          <div
+            className={`${METADE} largo:border-l largo:border-slate-200 largo:pl-6 dark:largo:border-slate-800`}
+          >
+            {campos(CUSTOS_FIXOS)}
+            <div className="col-span-2 space-y-1">
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                Pagamento do carro
+              </p>
+              <Segmentado
+                rotulo="Pagamento do carro"
+                opcoes={OPCOES_PAGAMENTO}
+                valor={parametros.pagamentoDoCarro}
+                onChange={(pagamento) => alterar('pagamentoDoCarro', pagamento)}
+              />
+            </div>
+            {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
+            <Resumo className="col-span-2 mt-1">
+              Custos fixos por mês:{' '}
+              {formatarMoeda(
+                mes.seguro + mes.ipva + mes.financiamentoOuAluguel,
+              )}
+            </Resumo>
           </div>
-          {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
         </Secao>
 
         <Secao
@@ -235,7 +261,7 @@ export function MeuCarro({
           {campos(ROTINA)}
         </Secao>
 
-        <div className="flex flex-col items-center gap-1 text-center">
+        <div className="flex flex-col items-center gap-1 text-center largo:col-span-3">
           <button
             type="button"
             onClick={restaurarPadrao}
@@ -265,19 +291,25 @@ interface SecaoProps {
   titulo: string
   /** Controle que fica ao lado do título. */
   acao?: ReactNode
-  resumo: string
+  /** Sem ele, o resumo fica por conta dos próprios campos. */
+  resumo?: string
+  className?: string
   children: ReactNode
 }
 
-function Secao({ titulo, acao, resumo, children }: SecaoProps) {
+function Secao({ titulo, acao, resumo, className = '', children }: SecaoProps) {
   return (
-    <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
+    <section
+      className={`rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900 ${className}`}
+    >
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-semibold">{titulo}</h2>
         {acao}
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-3">{children}</div>
-      <Resumo className="mt-4">{resumo}</Resumo>
+      <div className="mt-3 grid grid-cols-2 gap-3 largo:gap-x-6">
+        {children}
+      </div>
+      {resumo && <Resumo className="mt-4">{resumo}</Resumo>}
     </section>
   )
 }
