@@ -130,8 +130,19 @@ describe('calcularProjecao', () => {
     const projecao = calcularProjecao(exemplo)
 
     expect(projecao.custoCombustivelPorKm).toBeCloseTo(0.4964, 4)
+    expect(projecao.custoPorKm).toBeCloseTo(0.5964, 4)
     expect(projecao.faturamentoPorHora).toBe(30)
     expect(projecao.kmLiquido).toBeCloseTo(0.8, 2)
+  })
+
+  it('o custo por km de Meu carro soma o combustível e a manutenção de cada km', () => {
+    const projecao = calcularProjecao(exemplo)
+    const { mes } = projecao.periodos
+
+    expect(projecao.custoPorKm * mes.km).toBeCloseTo(
+      mes.combustivel + mes.manutencao,
+      8,
+    )
   })
 
   it('mantém o calendário consistente: 52 semanas e 12 meses por ano', () => {

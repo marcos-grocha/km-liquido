@@ -222,12 +222,12 @@ export function MeuCarro({
               </button>
             </div>
             {campos(VEICULO)}
-            <Resumo className="col-span-2">
-              Combustível por km:{' '}
-              {formatarMoeda(projecao.custoCombustivelPorKm)}
-            </Resumo>
-            <hr className="col-span-2 border-slate-200 dark:border-slate-800" />
             {campos([MANUTENCAO])}
+            <Resumo className="col-span-2">
+              Custo por km: {formatarMoeda(projecao.custoPorKm)}
+            </Resumo>
+            {/* Em tela larga, a linha vertical entre as metades já separa os custos fixos. */}
+            <hr className="col-span-2 border-slate-200 largo:hidden dark:border-slate-800" />
           </div>
           <div
             className={`${METADE} largo:border-l largo:border-slate-200 largo:pl-6 dark:largo:border-slate-800`}

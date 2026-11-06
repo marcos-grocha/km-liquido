@@ -33,10 +33,14 @@ tabela acima. O Secundário vem como Dolphin GS: consumo 7, combustível 2, manu
 
 ## 2. Derivados
 
-| Valor          | Fórmula                | Exemplo |
-| -------------- | ---------------------- | ------: |
-| Custo por KM   | combustível ÷ economia |  0,4964 |
-| Valor por hora | km/h × valor/km        |   30,00 |
+| Valor              | Fórmula                        | Exemplo |
+| ------------------ | ------------------------------ | ------: |
+| Combustível por KM | combustível ÷ economia         |  0,4964 |
+| Custo por KM       | combustível/km + manutenção/km |  0,5964 |
+| Valor por hora     | km/h × valor/km                |   30,00 |
+
+O custo por KM aparece em Meu carro, no card Veículo. Ele é só para exibição: as métricas por
+período (§3) calculam o combustível e a manutenção separados, cada um na sua linha.
 
 ## 3. Métricas por período
 
@@ -58,7 +62,7 @@ Para um período com `h` horas e fração do mês `f = h ÷ horas por mês`:
 | ------------------------ | ------------------------------------------------------ |
 | Quilometragem            | km/h × h                                               |
 | Faturamento bruto        | km × valor/km                                          |
-| Gasto com combustível    | km × custo/km                                          |
+| Gasto com combustível    | km × combustível/km                                    |
 | Faturamento líquido      | bruto − combustível                                    |
 | Manutenção               | km × manutenção/km                                     |
 | Seguro                   | seguro/ano ÷ 12 × f                                    |
@@ -80,7 +84,7 @@ Indicadores em destaque:
 Forma fechada do lucro mensal:
 
 ```
-lucro = horas × km/h × (valor/km − custo/km − manutenção/km) − (seguro + IPVA) ÷ 12 − financiamento ou aluguel mensal
+lucro = horas × km/h × (valor/km − combustível/km − manutenção/km) − (seguro + IPVA) ÷ 12 − financiamento ou aluguel mensal
       = 66 × 20 × (1,50 − 0,4964 − 0,10) − 1.700 ÷ 12 − 0
       = 1.192,71 − 141,67
       = 1.051,05
@@ -124,7 +128,7 @@ em −R$ 1.115,62 por mês.
 | Conservador   |      |       |        | 1.046,33 |    12.556 |
 | Lucro final   |      |       |        | 1.046,33 | 12.555,96 |
 
-Com custo por km de exatamente R$ 0,50 (combustível a R$ 7,00 e 14 km/L), os valores de mês e
+Com combustível por km de exatamente R$ 0,50 (combustível a R$ 7,00 e 14 km/L), os valores de mês e
 ano do app batem com a planilha — e o lucro anual fica em 12.556,00, sem a diferença de
 arredondamento.
 
@@ -135,21 +139,21 @@ para a manutenção. Seguro, IPVA, financiamento e aluguel não entram. No códi
 avulso (`calcularAvulsa`).
 
 - km = km informado ou, se em branco, bruto ÷ valor/km
-- combustível = km × custo/km
+- combustível = km × combustível/km
 - líquido = bruto − combustível
 - manutenção = km × manutenção/km
 - TOTAL = manutenção
 - faturamento responsável (sobra) = líquido − TOTAL
 
-| Caso                                  |    km | Combustível | Líquido | Manutenção | Sobra |
-| ------------------------------------- | ----: | ----------: | ------: | ---------: | ----: |
-| Planilha (bruto 94,29; custo/km 0,50) | 62,86 |       31,43 |   62,86 |       6,29 | 56,57 |
-| App (bruto 94,29; custo/km 0,4964)    | 62,86 |       31,21 |   63,08 |       6,29 | 56,80 |
-| App (bruto 100,00; 80 km informados)  | 80,00 |       39,71 |   60,29 |       8,00 | 52,29 |
+| Caso                                        |    km | Combustível | Líquido | Manutenção | Sobra |
+| ------------------------------------------- | ----: | ----------: | ------: | ---------: | ----: |
+| Planilha (bruto 94,29; combustível/km 0,50) | 62,86 |       31,43 |   62,86 |       6,29 | 56,57 |
+| App (bruto 94,29; combustível/km 0,4964)    | 62,86 |       31,21 |   63,08 |       6,29 | 56,80 |
+| App (bruto 100,00; 80 km informados)        | 80,00 |       39,71 |   60,29 |       8,00 | 52,29 |
 
 ## 6. Diferenças entre o app e a planilha
 
-1. **Sem arredondamento no meio da conta.** A planilha arredonda o custo por km (0,4964 → 0,50,
+1. **Sem arredondamento no meio da conta.** A planilha arredonda o combustível por km (0,4964 → 0,50,
    +R$ 4,71/mês de combustível) e o lucro mensal antes do × 12 (12.555,96 em vez de 12.556,00).
    O app calcula com precisão total e arredonda só na exibição.
 2. **Calendário.** A planilha fixa 21 dias/mês e 5 dias/semana, e semana × 52 não fecha com o

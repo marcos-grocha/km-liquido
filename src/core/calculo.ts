@@ -30,6 +30,11 @@ export interface ResultadoPeriodo {
 
 export interface Projecao {
   custoCombustivelPorKm: number
+  /**
+   * Combustível + manutenção por km, mostrado em Meu carro. Só para exibição: os
+   * períodos calculam o combustível e a manutenção separados.
+   */
+  custoPorKm: number
   faturamentoPorHora: number
   periodos: Record<Periodo, ResultadoPeriodo>
   /** Lucro de cada km rodado. */
@@ -61,14 +66,14 @@ function horasPorPeriodo(p: Parametros): Record<Periodo, number> {
 
 function calcularPeriodo(
   p: Parametros,
-  custoPorKm: number,
+  combustivelPorKm: number,
   horas: number,
 ): ResultadoPeriodo {
   // Os custos mensais são rateados pelas horas trabalhadas no período.
   const fracaoDoMes = horas / p.horasPorMes
   const km = p.kmPorHora * horas
   const faturamentoBruto = km * p.valorPorKm
-  const combustivel = km * custoPorKm
+  const combustivel = km * combustivelPorKm
   const faturamentoLiquido = faturamentoBruto - combustivel
   const manutencao = km * p.manutencaoPorKm
   const seguro = (p.seguroAnual / MESES_POR_ANO) * fracaoDoMes
@@ -93,9 +98,9 @@ function calcularPeriodo(
 }
 
 export function calcularProjecao(p: Parametros): Projecao {
-  const custoPorKm = custoCombustivelPorKm(p)
+  const combustivelPorKm = custoCombustivelPorKm(p)
   const horas = horasPorPeriodo(p)
-  const periodo = (h: number) => calcularPeriodo(p, custoPorKm, h)
+  const periodo = (h: number) => calcularPeriodo(p, combustivelPorKm, h)
   const periodos: Record<Periodo, ResultadoPeriodo> = {
     hora: periodo(horas.hora),
     dia: periodo(horas.dia),
@@ -104,7 +109,8 @@ export function calcularProjecao(p: Parametros): Projecao {
     ano: periodo(horas.ano),
   }
   return {
-    custoCombustivelPorKm: custoPorKm,
+    custoCombustivelPorKm: combustivelPorKm,
+    custoPorKm: combustivelPorKm + p.manutencaoPorKm,
     faturamentoPorHora: p.kmPorHora * p.valorPorKm,
     periodos,
     kmLiquido: periodos.mes.lucro / periodos.mes.km,
