@@ -39,6 +39,11 @@ preenchidos de novo na primeira vez.
   notificação a cada abertura do app, até ser tocado.
 - **Tema claro e escuro**: segue o aparelho e pode ser trocado à mão pelo botão entre o nome
   do carro e o coração. A escolha fica salva; escolher o tema do aparelho volta a segui-lo.
+- **Telas largas**: no computador ou no tablet deitado (1024 px ou mais, na horizontal), as
+  telas se abrem em colunas, com até 960 px de largura. No Meu carro, o card Veículo ocupa duas
+  colunas e a rotina a terceira; no Painel, os três cards de cima ficam numa coluna estreita e o
+  demonstrativo à direita; no Quanto sobrou, o resultado aparece ao lado do formulário. No
+  celular e no tablet em pé, o layout continua o mesmo.
 
 ## Regras de cálculo
 

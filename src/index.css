@@ -15,6 +15,12 @@
   }
 }
 
+/*
+ * Telas muito largas (computador, tablet deitado): as telas se abrem em colunas.
+ * Celulares e tablets em pé continuam com o layout de uma coluna.
+ */
+@custom-variant largo (@media (width >= 64rem) and (orientation: landscape));
+
 :root {
   color-scheme: light dark;
   -webkit-tap-highlight-color: transparent;

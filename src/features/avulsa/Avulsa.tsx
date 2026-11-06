@@ -37,8 +37,9 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
           km: km.valor,
         })
 
+  // Em tela larga, o resultado aparece à direita do formulário.
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 largo:grid largo:grid-cols-2 largo:items-start largo:gap-4 largo:space-y-0">
       <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
         <h2 className="font-semibold">Quanto você fez?</h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -73,7 +74,8 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
           rotuloPagamento={ROTULOS_PAGAMENTO[parametros.pagamentoDoCarro]}
         />
       ) : (
-        <p className="px-6 text-center text-sm text-slate-500 dark:text-slate-400">
+        // Em tela larga, o aviso vira um card quase transparente no lugar do resultado.
+        <p className="px-6 text-center text-sm text-slate-500 largo:flex largo:items-center largo:justify-center largo:self-stretch largo:rounded-3xl largo:bg-white/40 dark:text-slate-400 dark:largo:bg-slate-900/40">
           Digite o faturamento bruto para ver quanto separar.
         </p>
       )}

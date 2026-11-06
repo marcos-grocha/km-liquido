@@ -70,7 +70,7 @@ export default function App() {
 
   // As abas ficam montadas para não perder o que foi digitado ao trocar.
   return (
-    <div className="mx-auto min-h-dvh max-w-md">
+    <div className="mx-auto min-h-dvh max-w-md largo:max-w-240">
       <Cabecalho
         carro={parametros.carro}
         posicaoCarro={ROTULOS_CARRO[ajustes.carroAtivo]}

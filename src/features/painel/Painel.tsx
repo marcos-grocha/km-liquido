@@ -31,37 +31,41 @@ export function Painel({ projecao, parametros }: PainelProps) {
   const [periodo, setPeriodo] = useState<Periodo>('mes')
   const { hora, mes, ano } = projecao.periodos
 
+  // Em tela larga, os três cards de cima se empilham numa coluna estreita e o
+  // demonstrativo vai para a direita.
   return (
-    <div className="space-y-4">
-      <section
-        className={`rounded-3xl p-5 text-white shadow-lg ${mes.lucro < 0 ? 'bg-rose-600' : 'bg-emerald-700'}`}
-      >
-        <h2 className="text-sm font-medium text-white/80">
-          Lucro real por mês
-        </h2>
-        <p className="mt-1 text-4xl font-bold tracking-tight tabular-nums">
-          {formatarMoeda(mes.lucro)}
-        </p>
-        <p className="mt-2 text-sm text-white/80">
-          {formatarMoeda(ano.lucro)} por ano ·{' '}
-          {formatarHoras(parametros.horasPorMes)} por mês
-        </p>
-      </section>
+    <div className="space-y-4 largo:grid largo:grid-cols-5 largo:items-start largo:gap-4 largo:space-y-0">
+      <div className="space-y-4 largo:col-span-2">
+        <section
+          className={`rounded-3xl p-5 text-white shadow-lg ${mes.lucro < 0 ? 'bg-rose-600' : 'bg-emerald-700'}`}
+        >
+          <h2 className="text-sm font-medium text-white/80">
+            Lucro real por mês
+          </h2>
+          <p className="mt-1 text-4xl font-bold tracking-tight tabular-nums">
+            {formatarMoeda(mes.lucro)}
+          </p>
+          <p className="mt-2 text-sm text-white/80">
+            {formatarMoeda(ano.lucro)} por ano ·{' '}
+            {formatarHoras(parametros.horasPorMes)} por mês
+          </p>
+        </section>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Indicador
-          titulo="Hora líquida"
-          valor={hora.lucro}
-          bruto={projecao.faturamentoPorHora}
-        />
-        <Indicador
-          titulo="KM líquido"
-          valor={projecao.kmLiquido}
-          bruto={parametros.valorPorKm}
-        />
+        <div className="grid grid-cols-2 gap-3 largo:grid-cols-1 largo:gap-4">
+          <Indicador
+            titulo="Hora líquida"
+            valor={hora.lucro}
+            bruto={projecao.faturamentoPorHora}
+          />
+          <Indicador
+            titulo="KM líquido"
+            valor={projecao.kmLiquido}
+            bruto={parametros.valorPorKm}
+          />
+        </div>
       </div>
 
-      <section className="rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900">
+      <section className="rounded-3xl bg-white p-4 shadow-sm largo:col-span-3 dark:bg-slate-900">
         <Segmentado
           rotulo="Período"
           opcoes={OPCOES_PERIODO}
