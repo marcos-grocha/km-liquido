@@ -25,7 +25,7 @@ preenchidos de novo na primeira vez.
 - **Meu carro**: dois carros, o Principal e o Secundário, cada um com os dados do veículo e
   dos custos, com o pagamento como financiamento (por mês) ou aluguel (por semana). O seletor
   ao lado de "Veículo" troca o carro em uso, assim como um toque no nome do carro no
-  cabeçalho, e o botão Salvar guarda o carro do formulário numa das duas posições. O
+  cabeçalho. Cada alteração fica salva na hora, no carro em uso, sem botão de salvar. O
   Secundário vem como Dolphin GS. Tudo fica salvo no próprio aparelho, e o app abre nesta aba
   enquanto nenhum valor foi editado.
 - **Rotina**: a rotina de trabalho, que vale para os dois carros: km por hora, valor por km,

@@ -6,7 +6,6 @@ import {
   parametrosDe,
   restaurarCarros,
   restaurarRotina,
-  salvarCarroComo,
   type Ajustes,
 } from './ajustes'
 import { CAMPOS_NUMERICOS, PARAMETROS_PADRAO, validarCampo } from './parametros'
@@ -57,21 +56,6 @@ describe('alterarParametro', () => {
     const ajustes = alterarParametro(comCarro2, 'horasPorSemana', 40)
     expect(parametrosDe(ajustes).horasPorSemana).toBe(40)
     expect(parametrosDe({ ...ajustes, carroAtivo: 0 }).horasPorSemana).toBe(40)
-  })
-})
-
-describe('salvarCarroComo', () => {
-  it('copia o carro em uso para a outra posição e passa a usá-la', () => {
-    const editado = alterarParametro(AJUSTES_PADRAO, 'carro', 'Onix')
-    const ajustes = salvarCarroComo(editado, 1)
-    expect(ajustes.carroAtivo).toBe(1)
-    expect(ajustes.carros[1]).toEqual(editado.carros[0])
-    expect(ajustes.carros[0].carro).toBe('Onix')
-  })
-
-  it('na própria posição, mantém tudo como está', () => {
-    const ajustes = salvarCarroComo(AJUSTES_PADRAO, 0)
-    expect(ajustes).toEqual(AJUSTES_PADRAO)
   })
 })
 
