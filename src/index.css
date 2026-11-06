@@ -1,8 +1,31 @@
 @import 'tailwindcss';
 
+/*
+ * Modo escuro: segue o aparelho, a não ser que o botão do cabeçalho tenha
+ * forçado um tema no <html> (data-theme="light" ou "dark").
+ */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:not([data-theme='light'], [data-theme='light'] *)) {
+      @slot;
+    }
+  }
+}
+
 :root {
   color-scheme: light dark;
   -webkit-tap-highlight-color: transparent;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 body {
@@ -25,6 +48,32 @@ body {
     }
     100% {
       opacity: 0;
+    }
+  }
+
+  /* Botão de tema: o ícone novo entra girando e uma onda sai do botão. */
+  --animate-tema-girar: tema-girar 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-tema-onda: tema-onda 0.6s ease-out;
+
+  @keyframes tema-girar {
+    from {
+      opacity: 0;
+      transform: rotate(-120deg) scale(0.3);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes tema-onda {
+    from {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.9);
     }
   }
 }
