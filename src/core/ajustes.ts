@@ -115,16 +115,6 @@ export function alterarParametro<C extends keyof Parametros>(
   return { ...ajustes, carros }
 }
 
-/** Guarda o carro em uso na posição escolhida, que passa a ser a do carro em uso. */
-export function salvarCarroComo(
-  ajustes: Ajustes,
-  destino: IndiceCarro,
-): Ajustes {
-  const carros: Ajustes['carros'] = [...ajustes.carros]
-  carros[destino] = ajustes.carros[ajustes.carroAtivo]
-  return { ...ajustes, carros, carroAtivo: destino }
-}
-
 /** Volta os dois carros ao padrão, com o Principal em uso; a rotina fica como está. */
 export function restaurarCarros(ajustes: Ajustes): Ajustes {
   return padraoSeTudoPadrao({

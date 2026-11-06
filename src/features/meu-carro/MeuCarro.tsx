@@ -9,7 +9,6 @@ import {
   ROTULOS_CARRO,
   alterarParametro,
   restaurarCarros,
-  salvarCarroComo,
   type Ajustes,
   type IndiceCarro,
 } from '../../core/ajustes'
@@ -20,7 +19,6 @@ import {
   type Parametros,
 } from '../../core/parametros'
 import { formatarMoeda } from '../../lib/numero'
-import { SalvarCarro } from './SalvarCarro'
 
 const VEICULO: DefinicaoCampo[] = [
   { campo: 'consumoKmPorLitro', rotulo: 'Consumo', sufixo: 'km/L' },
@@ -98,8 +96,6 @@ export function MeuCarro({
 }: MeuCarroProps) {
   // Mudar a versão recria os campos com os valores restaurados.
   const [versao, setVersao] = useState(0)
-  const [escolhendoOndeSalvar, setEscolhendoOndeSalvar] = useState(false)
-  const [salvo, setSalvo] = useState(false)
   const { mes } = projecao.periodos
 
   function alterar<C extends keyof Parametros>(campo: C, valor: Parametros[C]) {
@@ -116,106 +112,78 @@ export function MeuCarro({
     )
   }
 
-  function salvarComo(destino: IndiceCarro) {
-    onChange((atual) => salvarCarroComo(atual, destino))
-    setEscolhendoOndeSalvar(false)
-    setSalvo(true)
-    setTimeout(() => setSalvo(false), 2000)
-  }
-
   function restaurarPadrao() {
     onChange(restaurarCarros)
     setVersao((v) => v + 1)
   }
 
+  // Trocar de carro também recria os campos, agora com os dados do outro carro.
   return (
-    <>
-      {/* Trocar de carro também recria os campos, agora com os dados do outro carro. */}
-      <div key={`${versao}-${ajustes.carroAtivo}`} className="space-y-4">
-        <Secao
-          titulo="Veículo"
-          classeGrade="largo:gap-x-6"
-          acao={
-            <div className="w-44">
-              <Segmentado
-                rotulo="Carro em uso"
-                opcoes={OPCOES_CARRO}
-                valor={`${ajustes.carroAtivo}`}
-                onChange={(valor) =>
-                  onChange((atual) => ({
-                    ...atual,
-                    carroAtivo: Number(valor) as IndiceCarro,
-                  }))
-                }
-              />
-            </div>
-          }
+    <div key={`${versao}-${ajustes.carroAtivo}`} className="space-y-4">
+      <Secao
+        titulo="Veículo"
+        classeGrade="largo:gap-x-6"
+        acao={
+          <div className="w-44">
+            <Segmentado
+              rotulo="Carro em uso"
+              opcoes={OPCOES_CARRO}
+              valor={`${ajustes.carroAtivo}`}
+              onChange={(valor) =>
+                onChange((atual) => ({
+                  ...atual,
+                  carroAtivo: Number(valor) as IndiceCarro,
+                }))
+              }
+            />
+          </div>
+        }
+      >
+        <div className={METADE}>
+          <Campo
+            className="col-span-2"
+            rotulo="Nome do carro"
+            inputMode="text"
+            valor={parametros.carro}
+            placeholder="Ex.: Argo"
+            maxLength={30}
+            onChange={(carro) => alterar('carro', carro)}
+          />
+          {campos(VEICULO)}
+          {campos([MANUTENCAO])}
+          <Resumo className="col-span-2">
+            Custo por km: {formatarMoeda(projecao.custoPorKm)}
+          </Resumo>
+          {/* Em tela larga, a linha vertical entre as metades já separa os custos fixos. */}
+          <hr className="col-span-2 border-slate-200 largo:hidden dark:border-slate-800" />
+        </div>
+        <div
+          className={`${METADE} largo:border-l largo:border-slate-200 largo:pl-6 dark:largo:border-slate-800`}
         >
-          <div className={METADE}>
-            <div className="col-span-2 flex items-end gap-2">
-              <Campo
-                className="min-w-0 flex-1"
-                rotulo="Nome do carro"
-                inputMode="text"
-                valor={parametros.carro}
-                placeholder="Ex.: Argo"
-                maxLength={30}
-                onChange={(carro) => alterar('carro', carro)}
-              />
-              <button
-                type="button"
-                onClick={() => setEscolhendoOndeSalvar(true)}
-                className="h-11.5 shrink-0 rounded-xl bg-emerald-700 px-4 text-sm font-medium text-white hover:bg-emerald-800"
-              >
-                {salvo ? 'Salvo!' : 'Salvar'}
-              </button>
-            </div>
-            {campos(VEICULO)}
-            {campos([MANUTENCAO])}
-            <Resumo className="col-span-2">
-              Custo por km: {formatarMoeda(projecao.custoPorKm)}
-            </Resumo>
-            {/* Em tela larga, a linha vertical entre as metades já separa os custos fixos. */}
-            <hr className="col-span-2 border-slate-200 largo:hidden dark:border-slate-800" />
+          {campos(CUSTOS_FIXOS)}
+          <div className="col-span-2 space-y-1">
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              Pagamento do carro
+            </p>
+            <Segmentado
+              rotulo="Pagamento do carro"
+              opcoes={OPCOES_PAGAMENTO}
+              valor={parametros.pagamentoDoCarro}
+              onChange={(pagamento) => alterar('pagamentoDoCarro', pagamento)}
+            />
           </div>
-          <div
-            className={`${METADE} largo:border-l largo:border-slate-200 largo:pl-6 dark:largo:border-slate-800`}
-          >
-            {campos(CUSTOS_FIXOS)}
-            <div className="col-span-2 space-y-1">
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                Pagamento do carro
-              </p>
-              <Segmentado
-                rotulo="Pagamento do carro"
-                opcoes={OPCOES_PAGAMENTO}
-                valor={parametros.pagamentoDoCarro}
-                onChange={(pagamento) => alterar('pagamentoDoCarro', pagamento)}
-              />
-            </div>
-            {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
-            <Resumo className="col-span-2 mt-1">
-              Custos fixos por mês:{' '}
-              {formatarMoeda(
-                mes.seguro + mes.ipva + mes.financiamentoOuAluguel,
-              )}
-            </Resumo>
-          </div>
-        </Secao>
+          {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
+          <Resumo className="col-span-2 mt-1">
+            Custos fixos por mês:{' '}
+            {formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}
+          </Resumo>
+        </div>
+      </Secao>
 
-        <RestaurarPadrao
-          confirmacao="Voltar para os valores padrão? Os dois carros serão substituídos."
-          onRestaurar={restaurarPadrao}
-        />
-      </div>
-
-      <SalvarCarro
-        aberto={escolhendoOndeSalvar}
-        nomes={[ajustes.carros[0].carro, ajustes.carros[1].carro]}
-        carroAtivo={ajustes.carroAtivo}
-        onEscolher={salvarComo}
-        onFechar={() => setEscolhendoOndeSalvar(false)}
+      <RestaurarPadrao
+        confirmacao="Voltar para os valores padrão? Os dois carros serão substituídos."
+        onRestaurar={restaurarPadrao}
       />
-    </>
+    </div>
   )
 }
