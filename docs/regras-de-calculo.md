@@ -15,7 +15,7 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 | Dias trabalhados por semana |             5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
 | Valor do combustível        |          6,95 |          6,95 | R$/L    |                                                            |
 | Economia do veículo         |            14 |            13 | km/L    |                                                            |
-| Manutenção por KM           |          0,10 |          0,20 | R$/km   |                                                            |
+| Manutenção por KM           |          0,10 |          0,15 | R$/km   |                                                            |
 | Seguro por ano              |             0 |             0 | R$      |                                                            |
 | IPVA por ano                |         1.700 |         1.500 | R$      |                                                            |
 | Pagamento do carro          | financiamento | financiamento | —       | só no app: financiamento ou aluguel                        |
@@ -28,7 +28,7 @@ são os valores com que o app vem preenchido.
 O app guarda dois carros, o Principal e o Secundário. Cada um tem nome, consumo, combustível,
 manutenção, seguro, IPVA e pagamento; a rotina (km por hora, valor por km, horas por mês e dias
 por semana) vale para os dois, e as contas usam o carro em uso. O Principal vem com o padrão da
-tabela acima. O Secundário vem como Dolphin GS: consumo 7, combustível 2, manutenção 0,03, seguro
+tabela acima. O Secundário vem como Dolphin GS: consumo 7, combustível 2, manutenção 0,05, seguro
 4.800 e IPVA 3.600, com o pagamento padrão.
 
 ## 2. Derivados

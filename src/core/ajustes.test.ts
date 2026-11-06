@@ -28,7 +28,7 @@ describe('CARRO_2_PADRAO', () => {
       carro: 'Dolphin GS',
       consumoKmPorLitro: 7,
       precoCombustivel: 2,
-      manutencaoPorKm: 0.03,
+      manutencaoPorKm: 0.05,
       seguroAnual: 4800,
       ipvaAnual: 3600,
     })
