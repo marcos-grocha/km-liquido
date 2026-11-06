@@ -6,28 +6,28 @@ centavo. As diferenças intencionais entre o app e a planilha estão na §6.
 
 ## 1. Entradas
 
-| Campo                       |       Exemplo | Padrão do app | Unidade | Observação                                                 |
-| --------------------------- | ------------: | ------------: | ------- | ---------------------------------------------------------- |
-| Carro                       |          Argo |    Argo Drive | texto   |                                                            |
-| KM por hora                 |            20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
-| Valor por KM                |          1,50 |          1,70 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
-| Horas por mês               |            66 |           192 | h       |                                                            |
-| Dias trabalhados por semana |             5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
-| Valor do combustível        |          6,95 |          6,95 | R$/L    |                                                            |
-| Economia do veículo         |            14 |            13 | km/L    |                                                            |
-| Manutenção por KM           |          0,10 |          0,15 | R$/km   |                                                            |
-| Seguro por ano              |             0 |             0 | R$      |                                                            |
-| IPVA por ano                |         1.700 |         1.500 | R$      |                                                            |
-| Pagamento do carro          | financiamento | financiamento | —       | só no app: financiamento ou aluguel                        |
-| Financiamento por mês       |             0 |             0 | R$      | quando o pagamento é financiamento                         |
-| Aluguel por semana          |             — |           500 | R$      | só no app; quando o pagamento é aluguel                    |
+| Campo                       |        Exemplo | Padrão do app | Unidade | Observação                                                 |
+| --------------------------- | -------------: | ------------: | ------- | ---------------------------------------------------------- |
+| Carro                       |           Argo |    Argo Drive | texto   |                                                            |
+| KM por hora                 |             20 |            20 | km/h    | média rodada por hora trabalhada, com e sem passageiro     |
+| Valor por KM                |           1,50 |          1,70 | R$/km   | faturamento bruto ÷ km total rodado (com e sem passageiro) |
+| Horas por semana            | 15,23 (66/mês) |            44 | h       | até 168; a planilha pedia horas por mês (§3)               |
+| Dias trabalhados por semana |              5 |             6 | dias    | só no app; distribui as horas entre dia e semana           |
+| Valor do combustível        |           6,95 |          6,95 | R$/L    |                                                            |
+| Economia do veículo         |             14 |            13 | km/L    |                                                            |
+| Manutenção por KM           |           0,10 |          0,15 | R$/km   |                                                            |
+| Seguro por ano              |              0 |             0 | R$      |                                                            |
+| IPVA por ano                |          1.700 |         1.500 | R$      |                                                            |
+| Pagamento do carro          |  financiamento | financiamento | —       | só no app: financiamento ou aluguel                        |
+| Financiamento por mês       |              0 |             0 | R$      | quando o pagamento é financiamento                         |
+| Aluguel por semana          |              — |           500 | R$      | só no app; quando o pagamento é aluguel                    |
 
 O **exemplo** é o da planilha e é a base dos casos de referência (§4 e §5). O **padrão do app**
 são os valores com que o app vem preenchido.
 
 O app guarda dois carros, o Principal e o Secundário. Cada um tem nome, consumo, combustível,
-manutenção, seguro, IPVA e pagamento; a rotina (km por hora, valor por km, horas por mês e dias
-por semana) vale para os dois, e as contas usam o carro em uso. O Principal vem com o padrão da
+manutenção, seguro, IPVA e pagamento; a rotina (km por hora, valor por km, horas por semana e
+dias por semana) vale para os dois, e as contas usam o carro em uso. O Principal vem com o padrão da
 tabela acima. O Secundário vem como Dolphin GS: consumo 7, combustível 2, manutenção 0,05, seguro
 4.800 e IPVA 3.600, com o pagamento padrão.
 
@@ -44,17 +44,26 @@ período (§3) calculam o combustível e a manutenção separados, cada um na su
 
 ## 3. Métricas por período
 
-Cada período é medido em horas trabalhadas:
+Cada período é medido em horas trabalhadas, a partir das horas por semana:
 
 | Período | Horas                    | Exemplo |
 | ------- | ------------------------ | ------: |
 | hora    | 1                        |       1 |
-| mês     | horas por mês            |      66 |
-| ano     | mês × 12                 |     792 |
-| semana  | ano ÷ 52                 |   15,23 |
+| semana  | horas por semana         |   15,23 |
+| ano     | semana × 52              |     792 |
+| mês     | ano ÷ 12                 |      66 |
 | dia     | semana ÷ dias por semana |    3,05 |
 
-Na tela, as horas aparecem em horas e minutos, arredondadas ao minuto (3,05 h → 3h03min).
+As horas por mês (semana × 52 ÷ 12) e os dias por mês (dias por semana × 52 ÷ 12) aparecem na
+aba Rotina, calculados pelo app; o motorista informa só as horas e os dias por semana. A
+planilha pedia as horas por mês: o exemplo de 66 h/mês equivale a 66 × 12 ÷ 52 = 15,23 h/semana.
+Dados salvos com horas por mês, de versões anteriores do app, viram as horas por semana
+equivalentes ao abrir, sem mudar nenhuma conta.
+
+Na tela, as horas aparecem em horas e minutos, arredondadas ao minuto (3,05 h → 3h03min),
+inclusive na aba Rotina: as horas por semana são informadas em dois campos, horas e minutos,
+e as horas por mês aparecem do mesmo jeito. Os dias por mês aparecem arredondados para baixo,
+só com dias completos (5 dias por semana dão 21,67, que aparecem como 21).
 
 Para um período com `h` horas e fração do mês `f = h ÷ horas por mês`:
 

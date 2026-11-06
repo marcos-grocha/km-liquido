@@ -20,7 +20,7 @@ describe('parametrosDe', () => {
     const parametros = parametrosDe({ ...AJUSTES_PADRAO, carroAtivo: 1 })
     expect(parametros).toMatchObject(CARRO_2_PADRAO)
     expect(parametros.kmPorHora).toBe(PARAMETROS_PADRAO.kmPorHora)
-    expect(parametros.horasPorMes).toBe(PARAMETROS_PADRAO.horasPorMes)
+    expect(parametros.horasPorSemana).toBe(PARAMETROS_PADRAO.horasPorSemana)
   })
 })
 
@@ -54,9 +54,9 @@ describe('alterarParametro', () => {
   })
 
   it('muda um campo da rotina para os dois carros', () => {
-    const ajustes = alterarParametro(comCarro2, 'horasPorMes', 100)
-    expect(parametrosDe(ajustes).horasPorMes).toBe(100)
-    expect(parametrosDe({ ...ajustes, carroAtivo: 0 }).horasPorMes).toBe(100)
+    const ajustes = alterarParametro(comCarro2, 'horasPorSemana', 40)
+    expect(parametrosDe(ajustes).horasPorSemana).toBe(40)
+    expect(parametrosDe({ ...ajustes, carroAtivo: 0 }).horasPorSemana).toBe(40)
   })
 })
 
@@ -78,15 +78,15 @@ describe('salvarCarroComo', () => {
 describe('restaurarCarros e restaurarRotina', () => {
   const editado: Ajustes = alterarParametro(
     alterarParametro({ ...AJUSTES_PADRAO, carroAtivo: 1 }, 'ipvaAnual', 1000),
-    'horasPorMes',
-    100,
+    'horasPorSemana',
+    40,
   )
 
   it('restaurar os carros mantém a rotina', () => {
     const ajustes = restaurarCarros(editado)
     expect(ajustes.carros).toBe(AJUSTES_PADRAO.carros)
     expect(ajustes.carroAtivo).toBe(0)
-    expect(ajustes.rotina.horasPorMes).toBe(100)
+    expect(ajustes.rotina.horasPorSemana).toBe(40)
   })
 
   it('restaurar a rotina mantém os carros', () => {

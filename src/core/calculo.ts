@@ -52,15 +52,27 @@ function pagamentoMensalDoCarro(p: Parametros): number {
     : p.financiamentoMensal
 }
 
+/** Horas trabalhadas por mês: as horas por semana × 52 semanas ÷ 12 meses. */
+export function horasPorMes(p: Parametros): number {
+  return (p.horasPorSemana * SEMANAS_POR_ANO) / MESES_POR_ANO
+}
+
+/**
+ * Dias trabalhados por mês, no mesmo calendário, arredondados para baixo: só conta
+ * o dia completo (5 dias por semana dão 21,67, que fica 21). Só para exibição.
+ */
+export function diasPorMes(p: Parametros): number {
+  return Math.floor((p.diasPorSemana * SEMANAS_POR_ANO) / MESES_POR_ANO)
+}
+
 function horasPorPeriodo(p: Parametros): Record<Periodo, number> {
-  const ano = p.horasPorMes * MESES_POR_ANO
-  const semana = ano / SEMANAS_POR_ANO
+  const semana = p.horasPorSemana
   return {
     hora: 1,
     dia: semana / p.diasPorSemana,
     semana,
-    mes: p.horasPorMes,
-    ano,
+    mes: horasPorMes(p),
+    ano: semana * SEMANAS_POR_ANO,
   }
 }
 
@@ -70,7 +82,7 @@ function calcularPeriodo(
   horas: number,
 ): ResultadoPeriodo {
   // Os custos mensais são rateados pelas horas trabalhadas no período.
-  const fracaoDoMes = horas / p.horasPorMes
+  const fracaoDoMes = horas / horasPorMes(p)
   const km = p.kmPorHora * horas
   const faturamentoBruto = km * p.valorPorKm
   const combustivel = km * combustivelPorKm

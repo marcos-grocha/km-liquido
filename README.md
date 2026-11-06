@@ -28,9 +28,11 @@ preenchidos de novo na primeira vez.
   cabeçalho, e o botão Salvar guarda o carro do formulário numa das duas posições. O
   Secundário vem como Dolphin GS. Tudo fica salvo no próprio aparelho, e o app abre nesta aba
   enquanto nenhum valor foi editado.
-- **Rotina**: a rotina de trabalho (km por hora, valor por km, horas por mês e dias por
-  semana), que vale para os dois carros. Cada uma dessas duas abas tem o seu "Restaurar
-  valores padrão": o de Meu carro volta só os carros, e o da Rotina, só a rotina.
+- **Rotina**: a rotina de trabalho, que vale para os dois carros: km por hora, valor por km,
+  horas e minutos por semana e dias por semana. As horas e os minutos por mês e os dias por
+  mês (arredondados para baixo) aparecem calculados pelo app. Cada uma dessas duas abas tem o
+  seu "Restaurar valores padrão": o de Meu carro volta só os carros, e o da Rotina, só a
+  rotina.
 - **Painel**: lucro real do mês, hora líquida, km líquido e o demonstrativo do faturamento
   bruto até o lucro, por hora, dia, semana, mês ou ano.
 - **Quanto sobrou**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e

@@ -4,18 +4,15 @@ interface SecaoProps {
   titulo: string
   /** Controle que fica ao lado do título. */
   acao?: ReactNode
-  /** Sem ele, o resumo fica por conta dos próprios campos. */
-  resumo?: string
   /** Classes extras da grade de campos. */
   classeGrade?: string
   children: ReactNode
 }
 
-/** Card de uma tela de ajustes: título, campos em duas colunas e o resumo. */
+/** Card de uma tela de ajustes: título e campos em duas colunas, com os resumos entre eles. */
 export function Secao({
   titulo,
   acao,
-  resumo,
   classeGrade = '',
   children,
 }: SecaoProps) {
@@ -28,7 +25,6 @@ export function Secao({
       <div className={`mt-3 grid grid-cols-2 gap-3 ${classeGrade}`}>
         {children}
       </div>
-      {resumo && <Resumo className="mt-4">{resumo}</Resumo>}
     </section>
   )
 }
