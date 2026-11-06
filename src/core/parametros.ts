@@ -41,7 +41,7 @@ export const PARAMETROS_PADRAO: Parametros = {
   diasPorSemana: 6,
   precoCombustivel: 6.95,
   consumoKmPorLitro: 13,
-  manutencaoPorKm: 0.2,
+  manutencaoPorKm: 0.15,
   seguroAnual: 0,
   ipvaAnual: 1500,
   pagamentoDoCarro: 'financiamento',
