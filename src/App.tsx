@@ -7,6 +7,7 @@ import { Avulsa } from './features/avulsa/Avulsa'
 import { Doacao } from './features/doacao/Doacao'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
+import { Rotina } from './features/rotina/Rotina'
 import {
   carregarFechamentoDoacao,
   deveAbrirDoacao,
@@ -81,6 +82,13 @@ export default function App() {
         onApoiar={abrirPeloCoracao}
       />
       <main className="px-4 pb-28">
+        <div hidden={aba !== 'rotina'}>
+          <Rotina
+            parametros={parametros}
+            projecao={projecao}
+            onChange={setAjustes}
+          />
+        </div>
         <div hidden={aba !== 'painel'}>
           <Painel projecao={projecao} parametros={parametros} />
         </div>

@@ -4,6 +4,8 @@ import {
   CARRO_2_PADRAO,
   alterarParametro,
   parametrosDe,
+  restaurarCarros,
+  restaurarRotina,
   salvarCarroComo,
   type Ajustes,
 } from './ajustes'
@@ -70,5 +72,32 @@ describe('salvarCarroComo', () => {
   it('na própria posição, mantém tudo como está', () => {
     const ajustes = salvarCarroComo(AJUSTES_PADRAO, 0)
     expect(ajustes).toEqual(AJUSTES_PADRAO)
+  })
+})
+
+describe('restaurarCarros e restaurarRotina', () => {
+  const editado: Ajustes = alterarParametro(
+    alterarParametro({ ...AJUSTES_PADRAO, carroAtivo: 1 }, 'ipvaAnual', 1000),
+    'horasPorMes',
+    100,
+  )
+
+  it('restaurar os carros mantém a rotina', () => {
+    const ajustes = restaurarCarros(editado)
+    expect(ajustes.carros).toBe(AJUSTES_PADRAO.carros)
+    expect(ajustes.carroAtivo).toBe(0)
+    expect(ajustes.rotina.horasPorMes).toBe(100)
+  })
+
+  it('restaurar a rotina mantém os carros', () => {
+    const ajustes = restaurarRotina(editado)
+    expect(ajustes.rotina).toBe(AJUSTES_PADRAO.rotina)
+    expect(ajustes.carroAtivo).toBe(1)
+    expect(ajustes.carros[1].ipvaAnual).toBe(1000)
+  })
+
+  it('restaurando os dois, volta ao próprio padrão, sem nada para salvar', () => {
+    expect(restaurarRotina(restaurarCarros(editado))).toBe(AJUSTES_PADRAO)
+    expect(restaurarCarros(restaurarRotina(editado))).toBe(AJUSTES_PADRAO)
   })
 })

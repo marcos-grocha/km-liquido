@@ -1,49 +1,26 @@
-import { RotateCcw } from 'lucide-react'
-import {
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import { Campo } from '../../components/Campo'
+import { Campos } from '../../components/CampoParametro'
+import { RestaurarPadrao } from '../../components/RestaurarPadrao'
+import { Resumo, Secao } from '../../components/Secao'
 import { Segmentado } from '../../components/Segmentado'
+import { sugestao, type DefinicaoCampo } from '../../components/campos'
 import {
-  AJUSTES_PADRAO,
   ROTULOS_CARRO,
   alterarParametro,
+  restaurarCarros,
   salvarCarroComo,
   type Ajustes,
   type IndiceCarro,
 } from '../../core/ajustes'
 import type { Projecao } from '../../core/calculo'
 import {
-  PARAMETROS_PADRAO,
   ROTULOS_PAGAMENTO,
-  validarCampo,
-  type CampoNumerico,
   type PagamentoDoCarro,
   type Parametros,
 } from '../../core/parametros'
-import { formatarMoeda, formatarParaEdicao, lerNumero } from '../../lib/numero'
+import { formatarMoeda } from '../../lib/numero'
 import { SalvarCarro } from './SalvarCarro'
-
-interface DefinicaoCampo {
-  campo: CampoNumerico
-  rotulo: string
-  prefixo?: string
-  sufixo?: string
-  /** Aparece quando o campo está vazio. */
-  placeholder?: string
-  /** Campos com dica ocupam a linha inteira. */
-  dica?: string
-  /** Esconde o rótulo na tela quando o contexto já identifica o campo. */
-  ocultarRotulo?: boolean
-}
-
-/** Placeholder com o valor padrão do campo como sugestão. */
-function sugestao(campo: CampoNumerico): string {
-  return `${formatarParaEdicao(PARAMETROS_PADRAO[campo])} é uma sugestão realista`
-}
 
 const VEICULO: DefinicaoCampo[] = [
   { campo: 'consumoKmPorLitro', rotulo: 'Consumo', sufixo: 'km/L' },
@@ -92,26 +69,6 @@ const OPCOES_PAGAMENTO = (
   Object.keys(ROTULOS_PAGAMENTO) as PagamentoDoCarro[]
 ).map((valor) => ({ valor, rotulo: ROTULOS_PAGAMENTO[valor] }))
 
-const ROTINA: DefinicaoCampo[] = [
-  {
-    campo: 'kmPorHora',
-    rotulo: 'Km por hora',
-    sufixo: 'km/h',
-    placeholder: sugestao('kmPorHora'),
-    dica: 'Média rodada por hora trabalhada, com e sem passageiro.',
-  },
-  {
-    campo: 'valorPorKm',
-    rotulo: 'Valor por km',
-    prefixo: 'R$',
-    sufixo: '/km',
-    placeholder: sugestao('valorPorKm'),
-    dica: 'Você deve considerar o km total rodado, com e sem passageiro.',
-  },
-  { campo: 'horasPorMes', rotulo: 'Horas por mês', sufixo: 'h' },
-  { campo: 'diasPorSemana', rotulo: 'Dias por semana', sufixo: 'dias' },
-]
-
 /**
  * Cada metade do card Veículo. No celular, as duas se empilham na mesma grade;
  * em tela larga, o veículo e a manutenção ficam à esquerda e os custos fixos à direita,
@@ -127,7 +84,7 @@ const OPCOES_CARRO = ([0, 1] as const).map((indice) => ({
 
 interface MeuCarroProps {
   ajustes: Ajustes
-  /** Os parâmetros do carro em uso, já com a rotina. */
+  /** Os parâmetros do carro em uso. */
   parametros: Parametros
   projecao: Projecao
   onChange: Dispatch<SetStateAction<Ajustes>>
@@ -150,14 +107,13 @@ export function MeuCarro({
   }
 
   function campos(definicoes: DefinicaoCampo[]) {
-    return definicoes.map((definicao) => (
-      <CampoParametro
-        key={definicao.campo}
-        {...definicao}
-        valor={parametros[definicao.campo]}
+    return (
+      <Campos
+        definicoes={definicoes}
+        parametros={parametros}
         onChange={alterar}
       />
-    ))
+    )
   }
 
   function salvarComo(destino: IndiceCarro) {
@@ -168,25 +124,17 @@ export function MeuCarro({
   }
 
   function restaurarPadrao() {
-    const confirmado = window.confirm(
-      'Voltar para os valores padrão? Os dois carros e a rotina serão substituídos.',
-    )
-    if (!confirmado) return
-    onChange(AJUSTES_PADRAO)
+    onChange(restaurarCarros)
     setVersao((v) => v + 1)
   }
 
   return (
     <>
       {/* Trocar de carro também recria os campos, agora com os dados do outro carro. */}
-      {/* Em tela larga, o card Veículo ocupa duas colunas e a rotina a terceira. */}
-      <div
-        key={`${versao}-${ajustes.carroAtivo}`}
-        className="space-y-4 largo:grid largo:grid-cols-3 largo:items-start largo:gap-4 largo:space-y-0"
-      >
+      <div key={`${versao}-${ajustes.carroAtivo}`} className="space-y-4">
         <Secao
           titulo="Veículo"
-          className="largo:col-span-2"
+          classeGrade="largo:gap-x-6"
           acao={
             <div className="w-44">
               <Segmentado
@@ -255,26 +203,10 @@ export function MeuCarro({
           </div>
         </Secao>
 
-        <Secao
-          titulo="Rotina de trabalho"
-          resumo={`Faturamento por hora: ${formatarMoeda(projecao.faturamentoPorHora)}`}
-        >
-          {campos(ROTINA)}
-        </Secao>
-
-        <div className="flex flex-col items-center gap-1 text-center largo:col-span-3">
-          <button
-            type="button"
-            onClick={restaurarPadrao}
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
-          >
-            <RotateCcw className="size-4" aria-hidden />
-            Restaurar valores padrão
-          </button>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Os dados ficam salvos só neste aparelho.
-          </p>
-        </div>
+        <RestaurarPadrao
+          confirmacao="Voltar para os valores padrão? Os dois carros serão substituídos."
+          onRestaurar={restaurarPadrao}
+        />
       </div>
 
       <SalvarCarro
@@ -285,96 +217,5 @@ export function MeuCarro({
         onFechar={() => setEscolhendoOndeSalvar(false)}
       />
     </>
-  )
-}
-
-interface SecaoProps {
-  titulo: string
-  /** Controle que fica ao lado do título. */
-  acao?: ReactNode
-  /** Sem ele, o resumo fica por conta dos próprios campos. */
-  resumo?: string
-  className?: string
-  children: ReactNode
-}
-
-function Secao({ titulo, acao, resumo, className = '', children }: SecaoProps) {
-  return (
-    <section
-      className={`rounded-3xl bg-white p-4 shadow-sm dark:bg-slate-900 ${className}`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="font-semibold">{titulo}</h2>
-        {acao}
-      </div>
-      <div className="mt-3 grid grid-cols-2 gap-3 largo:gap-x-6">
-        {children}
-      </div>
-      {resumo && <Resumo className="mt-4">{resumo}</Resumo>}
-    </section>
-  )
-}
-
-/** Valor calculado a partir dos campos, em destaque. */
-function Resumo({
-  className,
-  children,
-}: {
-  className: string
-  children: ReactNode
-}) {
-  return (
-    <p
-      className={`rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800 tabular-nums dark:bg-emerald-950/60 dark:text-emerald-300 ${className}`}
-    >
-      {children}
-    </p>
-  )
-}
-
-interface CampoParametroProps extends DefinicaoCampo {
-  valor: number
-  onChange: (campo: CampoNumerico, valor: number) => void
-}
-
-/**
- * Campo numérico que só repassa o valor quando ele é válido. Em branco, mantém
- * o último valor válido e o devolve ao campo quando ele perde o foco.
- */
-function CampoParametro({
-  campo,
-  valor,
-  onChange,
-  dica,
-  ...visual
-}: CampoParametroProps) {
-  const [texto, setTexto] = useState(() => formatarParaEdicao(valor))
-  const [erro, setErro] = useState<string | null>(null)
-
-  function alterarTexto(novoTexto: string) {
-    setTexto(novoTexto)
-    if (novoTexto.trim() === '') {
-      setErro(null)
-      return
-    }
-    const numero = lerNumero(novoTexto)
-    const mensagem =
-      numero === null ? 'Informe um número.' : validarCampo(campo, numero)
-    setErro(mensagem)
-    if (numero !== null && mensagem === null) onChange(campo, numero)
-  }
-
-  return (
-    <Campo
-      {...visual}
-      className={dica ? 'col-span-2' : undefined}
-      dica={dica}
-      valor={texto}
-      erro={erro}
-      onChange={alterarTexto}
-      onBlur={() => {
-        if (!erro) setTexto(formatarParaEdicao(valor))
-      }}
-    />
   )
 }
