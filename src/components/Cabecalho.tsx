@@ -1,5 +1,6 @@
 import { ArrowLeftRight, Car, Heart } from 'lucide-react'
 import { useEffect, useRef, type RefObject } from 'react'
+import { BotaoTema } from '../features/tema/BotaoTema'
 
 interface CabecalhoProps {
   carro: string
@@ -46,7 +47,7 @@ export function Cabecalho({
   }, [trocas])
 
   return (
-    <header className="flex items-center justify-between gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
+    <header className="flex items-center justify-between gap-2 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
       <div className="flex shrink-0 items-center gap-2">
         <img src="/favicon.svg" alt="" className="size-8" />
         <h1 className="text-lg font-bold tracking-tight">km líquido</h1>
@@ -58,7 +59,7 @@ export function Cabecalho({
           onClick={onTrocarCarro}
           aria-label={`${nome}, carro ${posicaoCarro.toLowerCase()}. Tocar troca de carro.`}
           title="Trocar de carro"
-          className="flex min-w-0 items-center gap-1.5 rounded-full bg-white px-3 py-1 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+          className="flex min-w-0 items-center gap-1 rounded-full bg-white px-2.5 py-1 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           <Car className="size-4 shrink-0" aria-hidden />
           <span className="truncate">{nome}</span>
@@ -67,6 +68,7 @@ export function Cabecalho({
             aria-hidden
           />
         </button>
+        <BotaoTema />
         <button
           ref={coracao}
           type="button"

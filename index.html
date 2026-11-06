@@ -19,6 +19,15 @@
     <meta name="apple-mobile-web-app-title" content="km líquido" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>km líquido</title>
+    <!-- Tema escolhido no botão do cabeçalho, aplicado antes da tela aparecer (sem piscar o outro). -->
+    <script>
+      try {
+        var tema = localStorage.getItem('km-liquido:tema:v1')
+        if (tema === 'claro' || tema === 'escuro')
+          document.documentElement.dataset.theme =
+            tema === 'escuro' ? 'dark' : 'light'
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
