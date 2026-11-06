@@ -34,7 +34,7 @@ export type CampoNumerico = Exclude<
 
 /** Valores com que o app vem preenchido. */
 export const PARAMETROS_PADRAO: Parametros = {
-  carro: 'Argo 1.0',
+  carro: 'Argo Drive',
   kmPorHora: 20,
   valorPorKm: 1.7,
   horasPorMes: 192,
