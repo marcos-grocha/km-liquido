@@ -92,9 +92,12 @@ export function Cabecalho({
         {trocas > 0 && (
           <span
             key={trocas}
-            className="animate-aviso-troca rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg dark:bg-white dark:text-slate-900"
+            className="animate-aviso-troca flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg dark:bg-white dark:text-slate-900"
           >
-            Trocou para o {posicaoCarro}: {nome}
+            {/* As mesmas setinhas do botão; o leitor de tela continua ouvindo a frase. */}
+            <ArrowLeftRight className="size-4 shrink-0" aria-hidden />
+            <span className="sr-only">Trocou para o </span>
+            {posicaoCarro}: {nome}
           </span>
         )}
       </p>
