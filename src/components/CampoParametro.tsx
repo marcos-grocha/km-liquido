@@ -4,9 +4,9 @@ import {
   type CampoNumerico,
   type Parametros,
 } from '../core/parametros'
-import { formatarParaEdicao, lerNumero } from '../lib/numero'
+import { formatarEntrada, lerDigitacao } from '../lib/numero'
 import { Campo } from './Campo'
-import type { DefinicaoCampo } from './campos'
+import { FORMATOS, type DefinicaoCampo } from './campos'
 
 type AoAlterar = (campo: CampoNumerico, valor: number) => void
 
@@ -48,7 +48,8 @@ function CampoParametro({
   dica,
   ...visual
 }: CampoParametroProps) {
-  const [texto, setTexto] = useState(() => formatarParaEdicao(valor))
+  const formato = FORMATOS[campo]
+  const [texto, setTexto] = useState(() => formatarEntrada(valor, formato))
   const [erro, setErro] = useState<string | null>(null)
 
   function alterarTexto(novoTexto: string) {
@@ -57,7 +58,7 @@ function CampoParametro({
       setErro(null)
       return
     }
-    const numero = lerNumero(novoTexto)
+    const numero = lerDigitacao(novoTexto, formato)
     const mensagem =
       numero === null ? 'Informe um número.' : validarCampo(campo, numero)
     setErro(mensagem)
@@ -69,11 +70,12 @@ function CampoParametro({
       {...visual}
       className={dica ? 'col-span-2' : undefined}
       dica={dica}
+      formato={formato}
       valor={texto}
       erro={erro}
       onChange={alterarTexto}
       onBlur={() => {
-        if (!erro) setTexto(formatarParaEdicao(valor))
+        if (!erro) setTexto(formatarEntrada(valor, formato))
       }}
     />
   )

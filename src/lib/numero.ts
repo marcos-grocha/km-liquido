@@ -44,41 +44,129 @@ export function formatarHoras(duracao: number): string {
   return `${formatarNumero(inteiras, 0)}h${String(minutos).padStart(2, '0')}min`
 }
 
-/** Texto para um campo editável: sem separador de milhar ("1700", "6,95"). */
-export function formatarParaEdicao(valor: number): string {
+/** Como um campo numérico aceita e mostra o valor. */
+export interface FormatoNumero {
+  /** Casas decimais aceitas na digitação; 0 aceita só inteiros. */
+  casas: number
+  /** Casas completadas com zeros fora da edição: 2 nos valores em reais ("1.500,00"). */
+  casasFixas?: number
+  /**
+   * O ponto digitado vale como vírgula, nos campos de valores pequenos, como o
+   * preço por litro ("6.959" é 6,959). Sem isso, o ponto é o separador de milhar,
+   * que o próprio campo coloca enquanto a pessoa digita ("1.500,00").
+   */
+  pontoDecimal?: boolean
+}
+
+/** Valores em reais, como seguro, IPVA, parcela e aluguel: "1.500,00". */
+export const FORMATO_REAIS: FormatoNumero = { casas: 2, casasFixas: 2 }
+
+/** Preços por unidade, como R$/L e R$/km: "6,959", "1,70". */
+export const FORMATO_PRECO_UNITARIO: FormatoNumero = {
+  casas: 3,
+  casasFixas: 2,
+  pontoDecimal: true,
+}
+
+/** Medidas pequenas com fração, como km/h e km/L: "12,5". */
+export const FORMATO_DECIMAL: FormatoNumero = { casas: 2, pontoDecimal: true }
+
+/** Quilômetros rodados, que passam de mil: "1.200", "85,5". */
+export const FORMATO_KM: FormatoNumero = { casas: 1 }
+
+/** Só números inteiros, como dias, horas e minutos. */
+export const FORMATO_INTEIRO: FormatoNumero = { casas: 0 }
+
+/** Acima disso, os dígitos da parte inteira são descartados. */
+const MAXIMO_DIGITOS_INTEIROS = 9
+
+/** Texto inicial de um campo: "1.500", "1.500,50", "6,959". */
+export function formatarEntrada(valor: number, formato: FormatoNumero): string {
   return valor.toLocaleString('pt-BR', {
-    useGrouping: false,
-    maximumFractionDigits: 4,
+    useGrouping: !formato.pontoDecimal,
+    minimumFractionDigits: Number.isInteger(valor)
+      ? 0
+      : (formato.casasFixas ?? 0),
+    maximumFractionDigits: formato.casas,
   })
 }
 
-/**
- * Converte o texto digitado em número, ignorando unidades ("R$", "km").
- * Vírgula ou ponto valem como separador decimal; com os dois presentes, o
- * último é o decimal ("1.700,50" ou "1,700.50"), e um separador repetido é de
- * milhar ("1.000.000").
- */
-export function lerNumero(texto: string): number | null {
-  const limpo = texto.replace(/[^\d.,-]/g, '')
-  if (!/\d/.test(limpo)) return null
+/** Completa as casas fixas com zeros, para o campo fora de edição: "1.500" vira "1.500,00". */
+export function completarCasas(texto: string, formato: FormatoNumero): string {
+  const casas = formato.casasFixas
+  if (!casas || !/\d/.test(texto)) return texto
+  const [inteiro, fracao = ''] = texto.split(',')
+  return `${inteiro || '0'},${fracao.padEnd(casas, '0')}`
+}
 
-  const posicaoDecimal = Math.max(
-    limpo.lastIndexOf(','),
-    limpo.lastIndexOf('.'),
-  )
-  let normalizado = limpo
-  if (posicaoDecimal >= 0) {
-    const decimal = limpo[posicaoDecimal]
-    const repetido = limpo.indexOf(decimal) !== posicaoDecimal
-    const inteiro = limpo.slice(0, posicaoDecimal).replace(/[.,]/g, '')
-    const fracao = limpo.slice(posicaoDecimal + 1)
-    const outroSeparador = /[.,]/.test(
-      limpo.slice(0, posicaoDecimal).replaceAll(decimal, ''),
-    )
-    normalizado =
-      repetido && !outroSeparador ? inteiro + fracao : `${inteiro}.${fracao}`
+/**
+ * Reescreve o que foi digitado no formato do campo, a cada tecla: aceita só
+ * dígitos e um separador decimal, coloca o ponto de milhar e corta as casas que
+ * passam do limite. Também devolve onde o cursor deve ficar, na mesma posição
+ * relativa aos dígitos ("1500" vira "1.500", com o cursor no fim).
+ */
+export function formatarDigitacao(
+  texto: string,
+  formato: FormatoNumero,
+  cursor = texto.length,
+): { texto: string; cursor: number } {
+  const formatado = normalizar(texto, formato)
+  const antesDoCursor = normalizar(texto.slice(0, cursor), formato)
+  return {
+    texto: formatado,
+    cursor: posicaoApos(formatado, contarSignificativos(antesDoCursor)),
+  }
+}
+
+/** Lê o texto de um campo no formato dele: "1.500,50" vira 1500,5. */
+export function lerDigitacao(
+  texto: string,
+  formato: FormatoNumero,
+): number | null {
+  const normalizado = normalizar(texto, formato)
+  if (normalizado === '') return null
+  const valor = Number(normalizado.replaceAll('.', '').replace(',', '.'))
+  return Number.isFinite(valor) ? valor : null
+}
+
+function normalizar(texto: string, formato: FormatoNumero): string {
+  const separadorDecimal = formato.pontoDecimal ? /[.,]/ : /,/
+  let inteiro = ''
+  let fracao: string | null = null
+  for (const caractere of texto) {
+    if (/\d/.test(caractere)) {
+      if (fracao === null) inteiro += caractere
+      else fracao += caractere
+    } else if (
+      fracao === null &&
+      formato.casas > 0 &&
+      separadorDecimal.test(caractere)
+    ) {
+      fracao = ''
+    }
   }
 
-  const valor = Number(normalizado)
-  return Number.isFinite(valor) ? valor : null
+  inteiro = inteiro.replace(/^0+(?=\d)/, '').slice(0, MAXIMO_DIGITOS_INTEIROS)
+  if (fracao === null) return agrupar(inteiro, formato)
+  return `${agrupar(inteiro || '0', formato)},${fracao.slice(0, formato.casas)}`
+}
+
+function agrupar(inteiro: string, formato: FormatoNumero): string {
+  return formato.pontoDecimal
+    ? inteiro
+    : inteiro.replace(/\B(?=(\d{3})+$)/g, '.')
+}
+
+/** Dígitos e vírgula: tudo menos o ponto de milhar, que o campo põe e tira sozinho. */
+function contarSignificativos(texto: string): number {
+  return texto.replaceAll('.', '').length
+}
+
+function posicaoApos(texto: string, significativos: number): number {
+  let contados = 0
+  for (let i = 0; i < texto.length && contados < significativos; i++) {
+    if (texto[i] !== '.') contados++
+    if (contados === significativos) return i + 1
+  }
+  return significativos === 0 ? 0 : texto.length
 }

@@ -1,4 +1,9 @@
-import { useId } from 'react'
+import { useId, useState, type ChangeEvent } from 'react'
+import {
+  completarCasas,
+  formatarDigitacao,
+  type FormatoNumero,
+} from '../lib/numero'
 
 interface CampoProps {
   rotulo: string
@@ -10,7 +15,13 @@ interface CampoProps {
   onBlur?: () => void
   /** Valor calculado pelo app: aparece em verde, como os resumos, e não recebe toque nem digitação. */
   somenteLeitura?: boolean
-  inputMode?: 'decimal' | 'text'
+  /** Sem ele, sai do formato: numérico só para inteiros e decimal para os outros. */
+  inputMode?: 'decimal' | 'numeric' | 'text'
+  /**
+   * Formata o número enquanto a pessoa digita ("1500" vira "1.500") e completa as
+   * casas fixas quando o campo perde o foco ("1.500,00").
+   */
+  formato?: FormatoNumero
   prefixo?: string
   sufixo?: string
   dica?: string
@@ -34,7 +45,8 @@ export function Campo({
   onChange,
   onBlur,
   somenteLeitura,
-  inputMode = 'decimal',
+  inputMode,
+  formato,
   prefixo,
   sufixo,
   dica,
@@ -47,12 +59,36 @@ export function Campo({
 }: CampoProps) {
   const id = useId()
   const idAjuda = `${id}-ajuda`
+  const [focado, setFocado] = useState(false)
+  const exibido = formato && !focado ? completarCasas(valor, formato) : valor
   const ajuda = idMensagem ? undefined : (erro ?? dica)
   const descritoPor =
     idMensagem && erro ? idMensagem : ajuda ? idAjuda : undefined
   const moldura = somenteLeitura
     ? 'border-transparent bg-emerald-50 dark:bg-emerald-950/60'
     : `bg-white transition-shadow focus-within:ring-2 dark:bg-slate-950 ${erro ? 'border-rose-500 focus-within:ring-rose-500/25' : 'border-slate-300 focus-within:border-emerald-600 focus-within:ring-emerald-600/20 dark:border-slate-700'}`
+
+  function digitar(evento: ChangeEvent<HTMLInputElement>) {
+    const campo = evento.target
+    if (formato) {
+      const { texto, cursor } = formatarDigitacao(
+        campo.value,
+        formato,
+        campo.selectionStart ?? campo.value.length,
+      )
+      // Delete sobre o ponto de milhar: o ponto volta, e o cursor passa para depois dele.
+      const pularPonto =
+        texto === exibido &&
+        (evento.nativeEvent as InputEvent).inputType === 'deleteContentForward'
+      const novoCursor = pularPonto
+        ? Math.min(cursor + 1, texto.length)
+        : cursor
+      // Formata já no elemento, para o cursor ficar junto do que foi digitado.
+      campo.value = texto
+      campo.setSelectionRange(novoCursor, novoCursor)
+    }
+    onChange?.(campo.value)
+  }
 
   return (
     <div className={className}>
@@ -77,13 +113,19 @@ export function Campo({
         <input
           id={id}
           type="text"
-          inputMode={inputMode}
+          inputMode={
+            inputMode ?? (formato?.casas === 0 ? 'numeric' : 'decimal')
+          }
           autoComplete="off"
-          value={valor}
+          value={exibido}
           placeholder={placeholder}
           maxLength={maxLength}
-          onChange={(evento) => onChange?.(evento.target.value)}
-          onBlur={onBlur}
+          onChange={digitar}
+          onFocus={() => setFocado(true)}
+          onBlur={() => {
+            setFocado(false)
+            onBlur?.()
+          }}
           readOnly={somenteLeitura}
           tabIndex={somenteLeitura ? -1 : undefined}
           aria-invalid={erro ? true : undefined}

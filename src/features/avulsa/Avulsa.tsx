@@ -12,13 +12,20 @@ import {
   formatarMoeda,
   formatarNumero,
   formatarPercentual,
-  lerNumero,
+  FORMATO_KM,
+  FORMATO_REAIS,
+  lerDigitacao,
+  type FormatoNumero,
 } from '../../lib/numero'
 
 /** Lê um campo opcional: em branco vira `undefined`, sem erro. */
-function interpretar(texto: string, restricao: Restricao) {
+function interpretar(
+  texto: string,
+  formato: FormatoNumero,
+  restricao: Restricao,
+) {
   if (texto.trim() === '') return { valor: undefined, erro: null }
-  const valor = lerNumero(texto)
+  const valor = lerDigitacao(texto, formato)
   const erro =
     valor === null ? 'Informe um número.' : validarValor(valor, restricao)
   return { valor: erro ? undefined : (valor ?? undefined), erro }
@@ -27,8 +34,8 @@ function interpretar(texto: string, restricao: Restricao) {
 export function Avulsa({ parametros }: { parametros: Parametros }) {
   const [brutoTexto, setBrutoTexto] = useState('')
   const [kmTexto, setKmTexto] = useState('')
-  const bruto = interpretar(brutoTexto, { min: 0 })
-  const km = interpretar(kmTexto, { min: 0, minExclusivo: true })
+  const bruto = interpretar(brutoTexto, FORMATO_REAIS, { min: 0 })
+  const km = interpretar(kmTexto, FORMATO_KM, { min: 0, minExclusivo: true })
   const resultado =
     bruto.valor === undefined || km.erro
       ? null
@@ -50,6 +57,7 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
             rotulo="Faturamento bruto"
             prefixo="R$"
             placeholder="0,00"
+            formato={FORMATO_REAIS}
             valor={brutoTexto}
             onChange={setBrutoTexto}
             erro={bruto.erro}
@@ -60,6 +68,7 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
             placeholder={
               resultado?.kmEstimado ? formatarNumero(resultado.km) : undefined
             }
+            formato={FORMATO_KM}
             valor={kmTexto}
             onChange={setKmTexto}
             erro={km.erro}

@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { lerNumero, separarHoras } from '../lib/numero'
+import { FORMATO_INTEIRO, lerDigitacao, separarHoras } from '../lib/numero'
 import { Campo } from './Campo'
 
 interface CampoHorasProps {
@@ -48,26 +48,17 @@ export function CampoHoras({
       setErros({ horas: null, minutos: null })
       return
     }
-    const horas = lerNumero(novos.horas)
-    const minutos = lerNumero(novos.minutos)
-    const erroHoras =
-      horas !== null && Number.isInteger(horas) && horas >= 0
-        ? null
-        : 'Use horas inteiras.'
-    const erroMinutos =
-      minutos !== null &&
-      Number.isInteger(minutos) &&
-      minutos >= 0 &&
-      minutos <= 59
-        ? null
-        : 'Use de 0 a 59 minutos.'
+    // O formato inteiro só deixa digitar números, então os dois já são inteiros.
+    const horas = lerDigitacao(novos.horas, FORMATO_INTEIRO) ?? 0
+    const minutos = lerDigitacao(novos.minutos, FORMATO_INTEIRO) ?? 0
+    const erroMinutos = minutos <= 59 ? null : 'Use de 0 a 59 minutos.'
     let erroTotal: string | null = null
-    if (horas !== null && minutos !== null && !erroHoras && !erroMinutos) {
+    if (!erroMinutos) {
       const total = horas + minutos / 60
       erroTotal = validar?.(total) ?? null
       if (!erroTotal) onChange?.(total)
     }
-    setErros({ horas: erroHoras ?? erroTotal, minutos: erroMinutos })
+    setErros({ horas: erroTotal, minutos: erroMinutos })
   }
 
   function restaurar() {
@@ -90,6 +81,7 @@ export function CampoHoras({
           ocultarRotulo
           compacto
           maxLength={3}
+          formato={FORMATO_INTEIRO}
           valor={exibidos.horas}
           sufixo="h"
           somenteLeitura={somenteLeitura}
@@ -103,6 +95,7 @@ export function CampoHoras({
           ocultarRotulo
           compacto
           maxLength={2}
+          formato={FORMATO_INTEIRO}
           valor={exibidos.minutos}
           sufixo="min"
           somenteLeitura={somenteLeitura}
