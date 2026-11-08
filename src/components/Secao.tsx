@@ -35,24 +35,35 @@ export interface AlertaResumo {
   mensagem: string
 }
 
+const PENDENTE = {
+  nivel: 'pendente',
+  mensagem: 'Preencha os campos em vermelho',
+} as const
+
 const CORES_RESUMO = {
   normal:
     'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
   atencao:
     'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
   erro: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+  pendente:
+    'bg-slate-100 text-slate-500 dark:bg-slate-800/60 dark:text-slate-400',
 }
 
 /** Valor calculado a partir dos campos, em destaque. */
 export function Resumo({
   className,
-  alerta,
+  alerta: alertaDoValor,
+  pendente,
   children,
 }: {
   className: string
   alerta?: AlertaResumo | null
+  /** O cálculo depende de um campo com erro: o balão fica cinza e pede para corrigir. Quem chama passa o valor zerado. */
+  pendente?: boolean
   children: ReactNode
 }) {
+  const alerta = pendente ? PENDENTE : alertaDoValor
   // A mensagem fica na mesma linha, encostada à direita; em tela estreita, ela
   // quebra em duas linhas ali mesmo, sem descer para baixo do valor.
   return (

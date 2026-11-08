@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
   validarCampo,
   type CampoNumerico,
@@ -9,15 +9,23 @@ import { Campo } from './Campo'
 import { FORMATOS, type DefinicaoCampo } from './campos'
 
 type AoAlterar = (campo: CampoNumerico, valor: number) => void
+/** Chamado quando o campo passa a ter erro e quando deixa de ter. Precisa ser estável. */
+type AoMarcarErro = (campo: CampoNumerico, comErro: boolean) => void
 
 interface CamposProps {
   definicoes: DefinicaoCampo[]
   parametros: Parametros
   onChange: AoAlterar
+  onErro?: AoMarcarErro
 }
 
 /** Um campo para cada definição, com os valores atuais dos parâmetros. */
-export function Campos({ definicoes, parametros, onChange }: CamposProps) {
+export function Campos({
+  definicoes,
+  parametros,
+  onChange,
+  onErro,
+}: CamposProps) {
   return (
     <>
       {definicoes.map((definicao) => (
@@ -26,6 +34,7 @@ export function Campos({ definicoes, parametros, onChange }: CamposProps) {
           {...definicao}
           valor={parametros[definicao.campo]}
           onChange={onChange}
+          onErro={onErro}
         />
       ))}
     </>
@@ -35,6 +44,7 @@ export function Campos({ definicoes, parametros, onChange }: CamposProps) {
 interface CampoParametroProps extends DefinicaoCampo {
   valor: number
   onChange: AoAlterar
+  onErro?: AoMarcarErro
 }
 
 /**
@@ -46,6 +56,7 @@ function CampoParametro({
   campo,
   valor,
   onChange,
+  onErro,
   dica,
   ...visual
 }: CampoParametroProps) {
@@ -54,6 +65,15 @@ function CampoParametro({
   const [erro, setErro] = useState<string | null>(null)
   // Valor de quando o campo ganhou o foco: com erro, é ele que vale nas contas.
   const valorAoFocar = useRef(valor)
+  const temErro = erro !== null
+
+  // Enquanto há erro, a tela deixa pendentes os cálculos que dependem do campo.
+  // Antes da pintura, para o cálculo não aparecer um instante sem o cinza.
+  useLayoutEffect(() => {
+    if (!temErro || !onErro) return
+    onErro(campo, true)
+    return () => onErro(campo, false)
+  }, [temErro, campo, onErro])
 
   function alterarTexto(novoTexto: string) {
     setTexto(novoTexto)

@@ -16,6 +16,8 @@ interface CampoProps {
   onBlur?: () => void
   /** Valor calculado pelo app: aparece em verde, como os resumos, e não recebe toque nem digitação. */
   somenteLeitura?: boolean
+  /** Valor calculado que depende de um campo com erro: o só leitura fica em cinza. */
+  pendente?: boolean
   /** Sem ele, sai do formato: numérico só para inteiros e decimal para os outros. */
   inputMode?: 'decimal' | 'numeric' | 'text'
   /**
@@ -47,6 +49,7 @@ export function Campo({
   onFocus,
   onBlur,
   somenteLeitura,
+  pendente,
   inputMode,
   formato,
   prefixo,
@@ -66,8 +69,11 @@ export function Campo({
   const ajuda = idMensagem ? undefined : (erro ?? dica)
   const descritoPor =
     idMensagem && erro ? idMensagem : ajuda ? idAjuda : undefined
+  const corDoCalculado = pendente
+    ? 'text-slate-400 dark:text-slate-500'
+    : 'text-emerald-800 dark:text-emerald-300'
   const moldura = somenteLeitura
-    ? 'border-transparent bg-emerald-50 dark:bg-emerald-950/60'
+    ? `border-transparent ${pendente ? 'bg-slate-100 dark:bg-slate-800/60' : 'bg-emerald-50 dark:bg-emerald-950/60'}`
     : `bg-white transition-shadow focus-within:ring-2 dark:bg-slate-950 ${erro ? 'border-rose-500 focus-within:ring-rose-500/25' : 'border-slate-300 focus-within:border-emerald-600 focus-within:ring-emerald-600/20 dark:border-slate-700'}`
 
   function digitar(evento: ChangeEvent<HTMLInputElement>) {
@@ -135,11 +141,11 @@ export function Campo({
           tabIndex={somenteLeitura ? -1 : undefined}
           aria-invalid={erro ? true : undefined}
           aria-describedby={descritoPor}
-          className={`w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-sm placeholder:text-slate-400 ${somenteLeitura ? 'pointer-events-none font-medium text-emerald-800 select-none dark:text-emerald-300' : ''}`}
+          className={`w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-sm placeholder:text-slate-400 ${somenteLeitura ? `pointer-events-none font-medium select-none ${corDoCalculado}` : ''}`}
         />
         {sufixo && (
           <span
-            className={`shrink-0 text-sm ${somenteLeitura ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}
+            className={`shrink-0 text-sm ${somenteLeitura ? (pendente ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-700 dark:text-emerald-400') : 'text-slate-500 dark:text-slate-400'}`}
           >
             {sufixo}
           </span>

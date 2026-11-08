@@ -1,10 +1,16 @@
 import { Fuel, Wrench, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
+import { AvisoCamposEmVermelho } from '../../components/AvisoCamposEmVermelho'
 import { Campo } from '../../components/Campo'
+import type {
+  AbaComErro,
+  CamposComErro,
+} from '../../components/useCamposComErro'
 import { calcularAvulsa, type ResultadoAvulsa } from '../../core/calculo'
 import {
   ROTULOS_PAGAMENTO,
   validarValor,
+  type CampoNumerico,
   type Parametros,
   type Restricao,
 } from '../../core/parametros'
@@ -31,18 +37,39 @@ function interpretar(
   return { valor: erro ? undefined : (valor ?? undefined), erro }
 }
 
-export function Avulsa({ parametros }: { parametros: Parametros }) {
+/** Combustível e manutenção do carro em uso entram sempre na conta. */
+const CAMPOS_DA_CONTA: CampoNumerico[] = [
+  'consumoKmPorLitro',
+  'precoCombustivel',
+  'manutencaoPorKm',
+]
+
+interface AvulsaProps {
+  parametros: Parametros
+  /** Campo em vermelho que entra na conta deixa o resultado zerado, em cinza. */
+  camposComErro: CamposComErro
+}
+
+export function Avulsa({ parametros, camposComErro }: AvulsaProps) {
   const [brutoTexto, setBrutoTexto] = useState('')
   const [kmTexto, setKmTexto] = useState('')
   const bruto = interpretar(brutoTexto, FORMATO_REAIS, { min: 0 })
   const km = interpretar(kmTexto, FORMATO_KM, { min: 0, minExclusivo: true })
+  const kmEstimado = km.valor === undefined
+  // Sem o km, ele é estimado pelo valor por km da Rotina, que passa a contar.
+  const abasComErro = camposComErro.abasComErro(
+    ...CAMPOS_DA_CONTA,
+    ...(kmEstimado ? (['valorPorKm'] as const) : []),
+  )
   const resultado =
     bruto.valor === undefined || km.erro
       ? null
-      : calcularAvulsa(parametros, {
-          faturamentoBruto: bruto.valor,
-          km: km.valor,
-        })
+      : abasComErro.length > 0
+        ? { ...RESULTADO_ZERADO, kmEstimado }
+        : calcularAvulsa(parametros, {
+            faturamentoBruto: bruto.valor,
+            km: km.valor,
+          })
 
   // Em tela larga, o resultado aparece à direita do formulário.
   return (
@@ -81,6 +108,7 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
         <Resultado
           resultado={resultado}
           rotuloPagamento={ROTULOS_PAGAMENTO[parametros.pagamentoDoCarro]}
+          abasComErro={abasComErro}
         />
       ) : (
         // Em tela larga, o aviso vira um card quase transparente no lugar do resultado.
@@ -92,13 +120,38 @@ export function Avulsa({ parametros }: { parametros: Parametros }) {
   )
 }
 
+/** O resultado com algum campo da conta em vermelho: tudo zerado. */
+const RESULTADO_ZERADO: ResultadoAvulsa = {
+  km: 0,
+  kmEstimado: false,
+  faturamentoBruto: 0,
+  combustivel: 0,
+  faturamentoLiquido: 0,
+  manutencao: 0,
+  faturamentoResponsavel: 0,
+}
+
+const COR_PENDENTE = 'text-slate-400 dark:text-slate-500'
+
 interface ResultadoProps {
   resultado: ResultadoAvulsa
   /** "Financiamento" ou "Aluguel", conforme o pagamento do carro. */
   rotuloPagamento: string
+  /** Abas com campo da conta em vermelho: o resultado fica em cinza e aponta para elas. */
+  abasComErro: AbaComErro[]
 }
 
-function Resultado({ resultado: r, rotuloPagamento }: ResultadoProps) {
+function Resultado({
+  resultado: r,
+  rotuloPagamento,
+  abasComErro,
+}: ResultadoProps) {
+  const pendente = abasComErro.length > 0
+  const corDaSobra = pendente
+    ? 'bg-slate-500 dark:bg-slate-700'
+    : r.faturamentoResponsavel < 0
+      ? 'bg-rose-600'
+      : 'bg-emerald-700'
   const fracaoDoBruto = (valor: number) =>
     r.faturamentoBruto > 0
       ? formatarPercentual(valor / r.faturamentoBruto)
@@ -112,18 +165,18 @@ function Resultado({ resultado: r, rotuloPagamento }: ResultadoProps) {
           rotulo="Separe para o combustível"
           valor={r.combustivel}
           fracao={fracaoDoBruto(r.combustivel)}
+          pendente={pendente}
         />
         <Reserva
           Icone={Wrench}
           rotulo="Separe para a manutenção"
           valor={r.manutencao}
           fracao={fracaoDoBruto(r.manutencao)}
+          pendente={pendente}
         />
       </div>
 
-      <div
-        className={`mt-3 rounded-2xl p-4 text-white ${r.faturamentoResponsavel < 0 ? 'bg-rose-600' : 'bg-emerald-700'}`}
-      >
+      <div className={`mt-3 rounded-2xl p-4 text-white ${corDaSobra}`}>
         <p className="flex justify-between text-sm text-white/80">
           <span>Sobra</span>
           <span>{fracaoDoBruto(r.faturamentoResponsavel)}</span>
@@ -131,8 +184,15 @@ function Resultado({ resultado: r, rotuloPagamento }: ResultadoProps) {
         <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">
           {formatarMoeda(r.faturamentoResponsavel)}
         </p>
-        <p className="mt-1 text-xs text-white/80">
-          Antes de seguro, IPVA e {rotuloPagamento.toLowerCase()}.
+        <p
+          className="mt-1 text-xs text-white/80"
+          role={pendente ? 'status' : undefined}
+        >
+          {pendente ? (
+            <AvisoCamposEmVermelho abas={abasComErro} />
+          ) : (
+            `Antes de seguro, IPVA e ${rotuloPagamento.toLowerCase()}.`
+          )}
         </p>
       </div>
 
@@ -149,12 +209,15 @@ interface ReservaProps {
   rotulo: string
   valor: number
   fracao: string | null
+  pendente: boolean
 }
 
-function Reserva({ Icone, rotulo, valor, fracao }: ReservaProps) {
+function Reserva({ Icone, rotulo, valor, fracao, pendente }: ReservaProps) {
   return (
     <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3 dark:bg-slate-800/60">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+      <span
+        className={`grid size-10 shrink-0 place-items-center rounded-xl ${pendente ? `bg-slate-200 dark:bg-slate-700/60 ${COR_PENDENTE}` : 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300'}`}
+      >
         <Icone className="size-5" aria-hidden />
       </span>
       <div className="min-w-0 flex-1">
@@ -165,7 +228,9 @@ function Reserva({ Icone, rotulo, valor, fracao }: ReservaProps) {
           </p>
         )}
       </div>
-      <p className="text-lg font-semibold tabular-nums">
+      <p
+        className={`text-lg font-semibold tabular-nums ${pendente ? COR_PENDENTE : ''}`}
+      >
         {formatarMoeda(valor)}
       </p>
     </div>

@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { FORMATO_INTEIRO, lerDigitacao, separarHoras } from '../lib/numero'
 import { Campo } from './Campo'
 
@@ -8,9 +8,13 @@ interface CampoHorasProps {
   valor: number
   /** Valor calculado pelo app: os dois campos aparecem apagados. */
   somenteLeitura?: boolean
+  /** Valor calculado que depende de um campo com erro: fica em cinza. */
+  pendente?: boolean
   onChange?: (horas: number) => void
   /** Confere o total em horas; devolve a mensagem de erro ou `null`. */
   validar?: (horas: number) => string | null
+  /** Chamado quando o campo passa a ter erro e quando deixa de ter. Precisa ser estável. */
+  onErro?: (comErro: boolean) => void
 }
 
 interface Partes {
@@ -28,8 +32,10 @@ export function CampoHoras({
   rotulo,
   valor,
   somenteLeitura,
+  pendente,
   onChange,
   validar,
+  onErro,
 }: CampoHorasProps) {
   const id = useId()
   const idErro = `${id}-erro`
@@ -42,6 +48,15 @@ export function CampoHoras({
   const valorAoFocar = useRef(valor)
   // Só leitura acompanha o valor calculado; editável mostra o que foi digitado.
   const exibidos = somenteLeitura ? paraTexto(valor) : textos
+  const temErro = Boolean(erros.horas || erros.minutos)
+
+  // Enquanto há erro, a tela deixa pendentes os cálculos que dependem do campo.
+  // Antes da pintura, para o cálculo não aparecer um instante sem o cinza.
+  useLayoutEffect(() => {
+    if (!temErro || !onErro) return
+    onErro(true)
+    return () => onErro(false)
+  }, [temErro, onErro])
 
   function alterar(parte: keyof Partes, texto: string) {
     const novos = { ...textos, [parte]: texto }
@@ -93,6 +108,7 @@ export function CampoHoras({
           valor={exibidos.horas}
           sufixo="h"
           somenteLeitura={somenteLeitura}
+          pendente={pendente}
           erro={erros.horas}
           idMensagem={idErro}
           onChange={(texto) => alterar('horas', texto)}
@@ -108,6 +124,7 @@ export function CampoHoras({
           valor={exibidos.minutos}
           sufixo="min"
           somenteLeitura={somenteLeitura}
+          pendente={pendente}
           erro={erros.minutos}
           idMensagem={idErro}
           onChange={(texto) => alterar('minutos', texto)}
