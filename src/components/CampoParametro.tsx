@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   validarCampo,
   type CampoNumerico,
@@ -38,8 +38,9 @@ interface CampoParametroProps extends DefinicaoCampo {
 }
 
 /**
- * Campo numérico que só repassa o valor quando ele é válido. Em branco, mantém
- * o último valor válido e o devolve ao campo quando ele perde o foco.
+ * Campo numérico que só repassa o valor quando ele é válido. Em branco vale
+ * zero; nos campos que não aceitam zero, como o consumo, o campo fica zerado e
+ * acusa o erro.
  */
 function CampoParametro({
   campo,
@@ -51,18 +52,20 @@ function CampoParametro({
   const formato = FORMATOS[campo]
   const [texto, setTexto] = useState(() => formatarEntrada(valor, formato))
   const [erro, setErro] = useState<string | null>(null)
+  // Valor de quando o campo ganhou o foco: com erro, é ele que vale nas contas.
+  const valorAoFocar = useRef(valor)
 
   function alterarTexto(novoTexto: string) {
     setTexto(novoTexto)
-    if (novoTexto.trim() === '') {
-      setErro(null)
-      return
-    }
-    const numero = lerDigitacao(novoTexto, formato)
+    const numero =
+      novoTexto.trim() === '' ? 0 : lerDigitacao(novoTexto, formato)
     const mensagem =
       numero === null ? 'Informe um número.' : validarCampo(campo, numero)
     setErro(mensagem)
     if (numero !== null && mensagem === null) onChange(campo, numero)
+    // Sem isso, apagar "20" de trás para frente deixaria o "2" nas contas.
+    else if (valor !== valorAoFocar.current)
+      onChange(campo, valorAoFocar.current)
   }
 
   return (
@@ -74,8 +77,13 @@ function CampoParametro({
       valor={texto}
       erro={erro}
       onChange={alterarTexto}
+      onFocus={() => {
+        valorAoFocar.current = valor
+      }}
       onBlur={() => {
-        if (!erro) setTexto(formatarEntrada(valor, formato))
+        // Em branco, mostra o zero; com erro, ele continua acusado.
+        if (texto.trim() === '') setTexto(formatarEntrada(0, formato))
+        else if (!erro) setTexto(formatarEntrada(valor, formato))
       }}
     />
   )

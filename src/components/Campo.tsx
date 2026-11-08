@@ -12,6 +12,7 @@ interface CampoProps {
   valor: string
   /** Sem ele, o campo precisa ser `somenteLeitura`. */
   onChange?: (valor: string) => void
+  onFocus?: () => void
   onBlur?: () => void
   /** Valor calculado pelo app: aparece em verde, como os resumos, e não recebe toque nem digitação. */
   somenteLeitura?: boolean
@@ -43,6 +44,7 @@ export function Campo({
   ocultarRotulo,
   valor,
   onChange,
+  onFocus,
   onBlur,
   somenteLeitura,
   inputMode,
@@ -121,7 +123,10 @@ export function Campo({
           placeholder={placeholder}
           maxLength={maxLength}
           onChange={digitar}
-          onFocus={() => setFocado(true)}
+          onFocus={() => {
+            setFocado(true)
+            onFocus?.()
+          }}
           onBlur={() => {
             setFocado(false)
             onBlur?.()

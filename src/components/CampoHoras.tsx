@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { FORMATO_INTEIRO, lerDigitacao, separarHoras } from '../lib/numero'
 import { Campo } from './Campo'
 
@@ -21,8 +21,8 @@ interface Partes {
 /**
  * Duração em dois campos estreitos lado a lado, horas e minutos, sem fração de
  * hora; o par ocupa uma coluna da grade, como um campo comum. Como nos outros
- * campos, em branco mantém o último valor válido e o devolve ao campo quando
- * ele perde o foco.
+ * campos, em branco vale zero ("44" e minutos em branco são 44h); se o total
+ * zerado não vale, o campo fica zerado e acusa o erro.
  */
 export function CampoHoras({
   rotulo,
@@ -38,31 +38,39 @@ export function CampoHoras({
     horas: null,
     minutos: null,
   })
+  // Valor de quando um dos campos ganhou o foco: com erro, é ele que vale nas contas.
+  const valorAoFocar = useRef(valor)
   // Só leitura acompanha o valor calculado; editável mostra o que foi digitado.
   const exibidos = somenteLeitura ? paraTexto(valor) : textos
 
   function alterar(parte: keyof Partes, texto: string) {
     const novos = { ...textos, [parte]: texto }
     setTextos(novos)
-    if (novos.horas.trim() === '' || novos.minutos.trim() === '') {
-      setErros({ horas: null, minutos: null })
-      return
-    }
-    // O formato inteiro só deixa digitar números, então os dois já são inteiros.
+    // O formato inteiro só deixa digitar números, então os dois já são inteiros;
+    // em branco, vale zero.
     const horas = lerDigitacao(novos.horas, FORMATO_INTEIRO) ?? 0
     const minutos = lerDigitacao(novos.minutos, FORMATO_INTEIRO) ?? 0
     const erroMinutos = minutos <= 59 ? null : 'Use de 0 a 59 minutos.'
-    let erroTotal: string | null = null
-    if (!erroMinutos) {
-      const total = horas + minutos / 60
-      erroTotal = validar?.(total) ?? null
-      if (!erroTotal) onChange?.(total)
-    }
+    const total = horas + minutos / 60
+    const erroTotal = erroMinutos ? null : (validar?.(total) ?? null)
+    if (!erroMinutos && !erroTotal) onChange?.(total)
+    // Sem isso, apagar "44" de trás para frente deixaria o "4" nas contas.
+    else if (valor !== valorAoFocar.current) onChange?.(valorAoFocar.current)
     setErros({ horas: erroTotal, minutos: erroMinutos })
+  }
+
+  function guardarValor() {
+    valorAoFocar.current = valor
   }
 
   function restaurar() {
     if (!erros.horas && !erros.minutos) setTextos(paraTexto(valor))
+    // Com erro, o que ficou em branco mostra o zero.
+    else
+      setTextos(({ horas, minutos }) => ({
+        horas: horas.trim() || '0',
+        minutos: minutos.trim() || '0',
+      }))
   }
 
   const erro = erros.horas ?? erros.minutos
@@ -88,6 +96,7 @@ export function CampoHoras({
           erro={erros.horas}
           idMensagem={idErro}
           onChange={(texto) => alterar('horas', texto)}
+          onFocus={guardarValor}
           onBlur={restaurar}
         />
         <Campo
@@ -102,6 +111,7 @@ export function CampoHoras({
           erro={erros.minutos}
           idMensagem={idErro}
           onChange={(texto) => alterar('minutos', texto)}
+          onFocus={guardarValor}
           onBlur={restaurar}
         />
       </div>
