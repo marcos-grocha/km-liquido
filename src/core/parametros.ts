@@ -98,3 +98,36 @@ export function validarValor(
   if (valor < min) return 'Não pode ser negativo.'
   return null
 }
+
+/** Um dia tem 24 horas. */
+const HORAS_POR_DIA = 24
+/** Acima disso, o dia de trabalho é longo demais para dirigir. */
+const HORAS_INDICADAS_POR_DIA = 12
+
+/** Aviso sobre as horas por dia: "atencao" passa de 12h; "erro" passa de 24h e não cabe no dia. */
+export interface AvisoHorasPorDia {
+  nivel: 'atencao' | 'erro'
+  mensagem: string
+}
+
+/**
+ * Confere as horas por dia que saem das horas e dos dias por semana; `null` até
+ * 12h. Não bloqueia: as contas seguem com o que foi informado.
+ */
+export function avisoHorasPorDia({
+  horasPorSemana,
+  diasPorSemana,
+}: Pick<
+  Parametros,
+  'horasPorSemana' | 'diasPorSemana'
+>): AvisoHorasPorDia | null {
+  // Compara em minutos, como as horas aparecem na tela (144h01 em 6 dias mostra "24h").
+  const minutosPorDia = Math.round((horasPorSemana / diasPorSemana) * 60)
+  if (minutosPorDia > HORAS_POR_DIA * 60) {
+    return { nivel: 'erro', mensagem: 'Um dia tem só 24 horas' }
+  }
+  if (minutosPorDia > HORAS_INDICADAS_POR_DIA * 60) {
+    return { nivel: 'atencao', mensagem: 'Não é indicado dirigir +12h/dia' }
+  }
+  return null
+}

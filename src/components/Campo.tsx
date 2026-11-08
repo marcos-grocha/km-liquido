@@ -1,4 +1,9 @@
-import { useId } from 'react'
+import { useId, useState, type ChangeEvent } from 'react'
+import {
+  completarCasas,
+  formatarDigitacao,
+  type FormatoNumero,
+} from '../lib/numero'
 
 interface CampoProps {
   rotulo: string
@@ -7,10 +12,19 @@ interface CampoProps {
   valor: string
   /** Sem ele, o campo precisa ser `somenteLeitura`. */
   onChange?: (valor: string) => void
+  onFocus?: () => void
   onBlur?: () => void
   /** Valor calculado pelo app: aparece em verde, como os resumos, e não recebe toque nem digitação. */
   somenteLeitura?: boolean
-  inputMode?: 'decimal' | 'text'
+  /** Valor calculado que depende de um campo com erro: o só leitura fica em cinza. */
+  pendente?: boolean
+  /** Sem ele, sai do formato: numérico só para inteiros e decimal para os outros. */
+  inputMode?: 'decimal' | 'numeric' | 'text'
+  /**
+   * Formata o número enquanto a pessoa digita ("1500" vira "1.500") e completa as
+   * casas fixas quando o campo perde o foco ("1.500,00").
+   */
+  formato?: FormatoNumero
   prefixo?: string
   sufixo?: string
   dica?: string
@@ -32,9 +46,12 @@ export function Campo({
   ocultarRotulo,
   valor,
   onChange,
+  onFocus,
   onBlur,
   somenteLeitura,
-  inputMode = 'decimal',
+  pendente,
+  inputMode,
+  formato,
   prefixo,
   sufixo,
   dica,
@@ -47,12 +64,39 @@ export function Campo({
 }: CampoProps) {
   const id = useId()
   const idAjuda = `${id}-ajuda`
+  const [focado, setFocado] = useState(false)
+  const exibido = formato && !focado ? completarCasas(valor, formato) : valor
   const ajuda = idMensagem ? undefined : (erro ?? dica)
   const descritoPor =
     idMensagem && erro ? idMensagem : ajuda ? idAjuda : undefined
+  const corDoCalculado = pendente
+    ? 'text-slate-400 dark:text-slate-500'
+    : 'text-emerald-800 dark:text-emerald-300'
   const moldura = somenteLeitura
-    ? 'border-transparent bg-emerald-50 dark:bg-emerald-950/60'
+    ? `border-transparent ${pendente ? 'bg-slate-100 dark:bg-slate-800/60' : 'bg-emerald-50 dark:bg-emerald-950/60'}`
     : `bg-white transition-shadow focus-within:ring-2 dark:bg-slate-950 ${erro ? 'border-rose-500 focus-within:ring-rose-500/25' : 'border-slate-300 focus-within:border-emerald-600 focus-within:ring-emerald-600/20 dark:border-slate-700'}`
+
+  function digitar(evento: ChangeEvent<HTMLInputElement>) {
+    const campo = evento.target
+    if (formato) {
+      const { texto, cursor } = formatarDigitacao(
+        campo.value,
+        formato,
+        campo.selectionStart ?? campo.value.length,
+      )
+      // Delete sobre o ponto de milhar: o ponto volta, e o cursor passa para depois dele.
+      const pularPonto =
+        texto === exibido &&
+        (evento.nativeEvent as InputEvent).inputType === 'deleteContentForward'
+      const novoCursor = pularPonto
+        ? Math.min(cursor + 1, texto.length)
+        : cursor
+      // Formata já no elemento, para o cursor ficar junto do que foi digitado.
+      campo.value = texto
+      campo.setSelectionRange(novoCursor, novoCursor)
+    }
+    onChange?.(campo.value)
+  }
 
   return (
     <div className={className}>
@@ -77,22 +121,31 @@ export function Campo({
         <input
           id={id}
           type="text"
-          inputMode={inputMode}
+          inputMode={
+            inputMode ?? (formato?.casas === 0 ? 'numeric' : 'decimal')
+          }
           autoComplete="off"
-          value={valor}
+          value={exibido}
           placeholder={placeholder}
           maxLength={maxLength}
-          onChange={(evento) => onChange?.(evento.target.value)}
-          onBlur={onBlur}
+          onChange={digitar}
+          onFocus={() => {
+            setFocado(true)
+            onFocus?.()
+          }}
+          onBlur={() => {
+            setFocado(false)
+            onBlur?.()
+          }}
           readOnly={somenteLeitura}
           tabIndex={somenteLeitura ? -1 : undefined}
           aria-invalid={erro ? true : undefined}
           aria-describedby={descritoPor}
-          className={`w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-sm placeholder:text-slate-400 ${somenteLeitura ? 'pointer-events-none font-medium text-emerald-800 select-none dark:text-emerald-300' : ''}`}
+          className={`w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-sm placeholder:text-slate-400 ${somenteLeitura ? `pointer-events-none font-medium select-none ${corDoCalculado}` : ''}`}
         />
         {sufixo && (
           <span
-            className={`shrink-0 text-sm ${somenteLeitura ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}
+            className={`shrink-0 text-sm ${somenteLeitura ? (pendente ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-700 dark:text-emerald-400') : 'text-slate-500 dark:text-slate-400'}`}
           >
             {sufixo}
           </span>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Cabecalho } from './components/Cabecalho'
 import { NavegacaoInferior, type Aba } from './components/NavegacaoInferior'
+import { useCamposComErro } from './components/useCamposComErro'
 import { calcularProjecao } from './core/calculo'
 import { AJUSTES_PADRAO, ROTULOS_CARRO, parametrosDe } from './core/ajustes'
 import { Avulsa } from './features/avulsa/Avulsa'
@@ -38,6 +39,8 @@ export default function App() {
   const [trocasDeCarro, setTrocasDeCarro] = useState(0)
   const parametros = useMemo(() => parametrosDe(ajustes), [ajustes])
   const projecao = useMemo(() => calcularProjecao(parametros), [parametros])
+  // Campos em vermelho em Meu carro e Rotina: deixam os cálculos pendentes, inclusive no Painel.
+  const camposComErro = useCamposComErro()
 
   // Só fica salvo o que o motorista editou. Sem edição (ou depois de
   // restaurar), vale o padrão atual do app, mesmo que ele mude numa versão nova.
@@ -86,20 +89,26 @@ export default function App() {
           <Rotina
             parametros={parametros}
             projecao={projecao}
+            camposComErro={camposComErro}
             onChange={setAjustes}
           />
         </div>
         <div hidden={aba !== 'painel'}>
-          <Painel projecao={projecao} parametros={parametros} />
+          <Painel
+            projecao={projecao}
+            parametros={parametros}
+            camposComErro={camposComErro}
+          />
         </div>
         <div hidden={aba !== 'avulsa'}>
-          <Avulsa parametros={parametros} />
+          <Avulsa parametros={parametros} camposComErro={camposComErro} />
         </div>
         <div hidden={aba !== 'carro'}>
           <MeuCarro
             ajustes={ajustes}
             parametros={parametros}
             projecao={projecao}
+            camposComErro={camposComErro}
             onChange={setAjustes}
           />
         </div>

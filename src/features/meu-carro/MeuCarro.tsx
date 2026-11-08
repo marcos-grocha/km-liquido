@@ -5,6 +5,7 @@ import { RestaurarPadrao } from '../../components/RestaurarPadrao'
 import { Resumo, Secao } from '../../components/Secao'
 import { Segmentado } from '../../components/Segmentado'
 import { sugestao, type DefinicaoCampo } from '../../components/campos'
+import type { CamposComErro } from '../../components/useCamposComErro'
 import {
   ROTULOS_CARRO,
   alterarParametro,
@@ -85,6 +86,7 @@ interface MeuCarroProps {
   /** Os parâmetros do carro em uso. */
   parametros: Parametros
   projecao: Projecao
+  camposComErro: CamposComErro
   onChange: Dispatch<SetStateAction<Ajustes>>
 }
 
@@ -92,11 +94,25 @@ export function MeuCarro({
   ajustes,
   parametros,
   projecao,
+  camposComErro,
   onChange,
 }: MeuCarroProps) {
   // Mudar a versão recria os campos com os valores restaurados.
   const [versao, setVersao] = useState(0)
   const { mes } = projecao.periodos
+  // Com algum campo em vermelho, os cálculos que dependem dele ficam zerados e em cinza.
+  const { algumComErro, marcarErro } = camposComErro
+  const custoPorKmPendente = algumComErro(
+    'consumoKmPorLitro',
+    'precoCombustivel',
+    'manutencaoPorKm',
+  )
+  const custosFixosPendentes = algumComErro(
+    'seguroAnual',
+    'ipvaAnual',
+    'financiamentoMensal',
+    'aluguelSemanal',
+  )
 
   function alterar<C extends keyof Parametros>(campo: C, valor: Parametros[C]) {
     onChange((atual) => alterarParametro(atual, campo, valor))
@@ -108,6 +124,7 @@ export function MeuCarro({
         definicoes={definicoes}
         parametros={parametros}
         onChange={alterar}
+        onErro={marcarErro}
       />
     )
   }
@@ -151,8 +168,9 @@ export function MeuCarro({
           />
           {campos(VEICULO)}
           {campos([MANUTENCAO])}
-          <Resumo className="col-span-2">
-            Custo por km: {formatarMoeda(projecao.custoPorKm)}
+          <Resumo className="col-span-2" pendente={custoPorKmPendente}>
+            Custo por km:{' '}
+            {formatarMoeda(custoPorKmPendente ? 0 : projecao.custoPorKm)}
           </Resumo>
           {/* Em tela larga, a linha vertical entre as metades já separa os custos fixos. */}
           <hr className="col-span-2 border-slate-200 largo:hidden dark:border-slate-800" />
@@ -173,9 +191,13 @@ export function MeuCarro({
             />
           </div>
           {campos([PAGAMENTO[parametros.pagamentoDoCarro]])}
-          <Resumo className="col-span-2 mt-1">
+          <Resumo className="col-span-2 mt-1" pendente={custosFixosPendentes}>
             Custos fixos por mês:{' '}
-            {formatarMoeda(mes.seguro + mes.ipva + mes.financiamentoOuAluguel)}
+            {formatarMoeda(
+              custosFixosPendentes
+                ? 0
+                : mes.seguro + mes.ipva + mes.financiamentoOuAluguel,
+            )}
           </Resumo>
         </div>
       </Secao>
