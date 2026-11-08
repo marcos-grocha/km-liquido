@@ -11,7 +11,11 @@ import {
   type Ajustes,
 } from '../../core/ajustes'
 import { diasPorMes, type Projecao } from '../../core/calculo'
-import { validarCampo, type Parametros } from '../../core/parametros'
+import {
+  avisoHorasPorDia,
+  validarCampo,
+  type Parametros,
+} from '../../core/parametros'
 import { formatarHoras, formatarMoeda } from '../../lib/numero'
 
 const MEDIAS: DefinicaoCampo[] = [
@@ -96,7 +100,7 @@ export function Rotina({ parametros, projecao, onChange }: RotinaProps) {
           sufixo="dias"
         />
         {/* Depende das horas e dos dias por semana, logo acima. */}
-        <Resumo className="col-span-2">
+        <Resumo className="col-span-2" alerta={avisoHorasPorDia(parametros)}>
           Horas por dia: {formatarHoras(projecao.periodos.dia.horas)}
         </Resumo>
       </Secao>
