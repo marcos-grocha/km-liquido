@@ -13,6 +13,8 @@ interface CabecalhoProps {
   pontinho: boolean
   coracao: RefObject<HTMLButtonElement | null>
   onApoiar: () => void
+  /** Toque no ícone ou no nome do app: volta para a tela inicial. */
+  onInicio: () => void
 }
 
 export function Cabecalho({
@@ -23,6 +25,7 @@ export function Cabecalho({
   pontinho,
   coracao,
   onApoiar,
+  onInicio,
 }: CabecalhoProps) {
   const botaoCarro = useRef<HTMLButtonElement>(null)
   const nome = carro.trim() || posicaoCarro
@@ -48,10 +51,18 @@ export function Cabecalho({
 
   return (
     <header className="flex items-center justify-between gap-2 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
-      <div className="flex shrink-0 items-center gap-2">
-        <img src="/favicon.svg" alt="" className="size-8" />
-        <h1 className="text-lg font-bold tracking-tight">km líquido</h1>
-      </div>
+      <h1 className="shrink-0">
+        <button
+          type="button"
+          onClick={onInicio}
+          aria-label="km líquido: voltar para a tela inicial"
+          title="Voltar para a tela inicial"
+          className="flex items-center gap-2 rounded-xl text-lg font-bold tracking-tight"
+        >
+          <img src="/favicon.svg" alt="" className="size-8" />
+          km líquido
+        </button>
+      </h1>
       <div className="flex min-w-0 items-center gap-2">
         <button
           ref={botaoCarro}
