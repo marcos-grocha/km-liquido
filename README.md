@@ -22,12 +22,14 @@ preenchidos de novo na primeira vez.
 
 ## Funcionalidades
 
+- **Tela inicial**: a cada abertura do app, o ícone e o nome do app com dois botões: "Comece
+  por aqui", que leva a Meu carro, e "Ir para os resultados", que leva ao Painel. Nela não
+  aparecem o cabeçalho, a navegação de baixo nem o pop-up de doação.
 - **Meu carro**: dois carros, o Principal e o Secundário, cada um com os dados do veículo e
   dos custos, com o pagamento como financiamento (por mês) ou aluguel (por semana). O seletor
   ao lado de "Veículo" troca o carro em uso, assim como um toque no nome do carro no
   cabeçalho. Cada alteração fica salva na hora, no carro em uso, sem botão de salvar. O
-  Secundário vem como Dolphin GS. Tudo fica salvo no próprio aparelho, e o app abre nesta aba
-  enquanto nenhum valor foi editado.
+  Secundário vem como Dolphin GS. Tudo fica salvo no próprio aparelho.
 - **Rotina**: a rotina de trabalho, que vale para os dois carros: km por hora, valor por km,
   horas e minutos por semana e dias por semana. As horas e os minutos por mês e os dias por
   mês (arredondados para baixo) aparecem calculados pelo app. Cada uma dessas duas abas tem o
@@ -78,8 +80,8 @@ src/
   lib/         leitura e formatação de números em pt-BR
   storage/     persistência local (localStorage)
   components/  componentes de interface compartilhados
-  features/    telas: meu-carro, rotina, painel, avulsa (aba "Quanto sobrou"), doacao (pop-up)
-               e tema (botão de tema claro e escuro)
+  features/    telas: inicio (tela inicial), meu-carro, rotina, painel, avulsa (aba "Quanto
+               sobrou"), doacao (pop-up) e tema (botão de tema claro e escuro)
   pwa/         service worker (o build injeta a lista de arquivos; ver vite.config.ts)
 public/        ícones e manifest do PWA
 docs/          especificação das regras de cálculo

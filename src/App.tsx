@@ -6,6 +6,7 @@ import { calcularProjecao } from './core/calculo'
 import { AJUSTES_PADRAO, ROTULOS_CARRO, parametrosDe } from './core/ajustes'
 import { Avulsa } from './features/avulsa/Avulsa'
 import { Doacao } from './features/doacao/Doacao'
+import { TelaInicial } from './features/inicio/TelaInicial'
 import { MeuCarro } from './features/meu-carro/MeuCarro'
 import { Painel } from './features/painel/Painel'
 import { Rotina } from './features/rotina/Rotina'
@@ -22,10 +23,8 @@ import {
 
 export default function App() {
   const [ajustes, setAjustes] = useState(carregarAjustes)
-  // Sem nada salvo, o carro ainda não foi configurado: o app começa por ele.
-  const [aba, setAba] = useState<Aba>(() =>
-    ajustes === AJUSTES_PADRAO ? 'carro' : 'painel',
-  )
+  // A cada abertura, o app começa pela tela inicial (null), que leva a Meu carro ou ao Painel.
+  const [aba, setAba] = useState<Aba | null>(null)
   const [doacaoAberta, setDoacaoAberta] = useState(() =>
     deveAbrirDoacao(
       ajustes !== AJUSTES_PADRAO,
@@ -70,6 +69,16 @@ export default function App() {
   function fecharDoacao() {
     setDoacaoAberta(false)
     salvarFechamentoDoacao(Date.now())
+  }
+
+  // Na tela inicial não há cabeçalho, navegação nem pop-up de doação.
+  if (aba === null) {
+    return (
+      <TelaInicial
+        onComecar={() => trocarAba('carro')}
+        onResultados={() => trocarAba('painel')}
+      />
+    )
   }
 
   // As abas ficam montadas para não perder o que foi digitado ao trocar.
