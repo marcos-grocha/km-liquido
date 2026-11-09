@@ -49,10 +49,10 @@ preenchidos de novo na primeira vez.
   do carro e o coração. A escolha fica salva; escolher o tema do aparelho volta a segui-lo.
 - **Telas largas**: no computador ou no tablet deitado (1024 px ou mais, na horizontal), as
   telas se abrem em colunas, com até 960 px de largura. No Meu carro, o card Veículo se divide
-  em duas metades, com os custos fixos à direita; na Rotina, o card fica centralizado; no
-  Painel, os três cards de cima ficam numa coluna estreita e o demonstrativo à direita; no
-  Quanto sobrou, o resultado aparece ao lado do formulário. No celular e no tablet em pé, o
-  layout continua o mesmo.
+  em duas metades, com os custos fixos à direita; na Rotina, as horas e os dias ficam à
+  esquerda e o km por hora e o valor por km à direita; no Painel, os três cards de cima ficam
+  numa coluna estreita e o demonstrativo à direita; no Quanto sobrou, o resultado aparece ao
+  lado do formulário. No celular e no tablet em pé, o layout continua o mesmo.
 
 ## Regras de cálculo
 

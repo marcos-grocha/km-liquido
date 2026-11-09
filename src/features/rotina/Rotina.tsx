@@ -9,7 +9,12 @@ import { CampoHoras } from '../../components/CampoHoras'
 import { Campos } from '../../components/CampoParametro'
 import { RestaurarPadrao } from '../../components/RestaurarPadrao'
 import { Resumo, Secao } from '../../components/Secao'
-import { sugestao, type DefinicaoCampo } from '../../components/campos'
+import {
+  METADE,
+  METADE_DIREITA,
+  sugestao,
+  type DefinicaoCampo,
+} from '../../components/campos'
 import type { CamposComErro } from '../../components/useCamposComErro'
 import {
   alterarParametro,
@@ -84,60 +89,68 @@ export function Rotina({
     setVersao((v) => v + 1)
   }
 
-  // Em tela larga, o card fica centralizado, com a largura do celular.
+  // No celular, as horas e os dias vêm primeiro e as médias por km depois; em tela
+  // larga, as horas e os dias ficam à esquerda e as médias à direita, como em Meu carro.
   return (
-    <div key={versao} className="space-y-4 largo:mx-auto largo:max-w-md">
-      <Secao titulo="Rotina de trabalho">
-        <Campos
-          definicoes={MEDIAS}
-          parametros={parametros}
-          onChange={alterar}
-          onErro={marcarErro}
-        />
-        {/* Depende só do km por hora e do valor por km, logo acima. */}
-        <Resumo className="col-span-2" pendente={faturamentoPendente}>
-          Faturamento por hora:{' '}
-          {formatarMoeda(faturamentoPendente ? 0 : projecao.faturamentoPorHora)}
-        </Resumo>
-        <hr className="col-span-2 border-slate-200 dark:border-slate-800" />
-        {/* A semana é informada; o mês ao lado é calculado pelo app, como nos dias. */}
-        <CampoHoras
-          rotulo="Horas por semana"
-          valor={parametros.horasPorSemana}
-          validar={(horas) => validarCampo('horasPorSemana', horas)}
-          onChange={(horas) => alterar('horasPorSemana', horas)}
-          onErro={marcarErroDasHoras}
-        />
-        <CampoHoras
-          rotulo="Horas por mês"
-          valor={horasPendentes ? 0 : projecao.periodos.mes.horas}
-          somenteLeitura
-          pendente={horasPendentes}
-        />
-        <Campos
-          definicoes={[DIAS_POR_SEMANA]}
-          parametros={parametros}
-          onChange={alterar}
-          onErro={marcarErro}
-        />
-        <Campo
-          rotulo="Dias por mês"
-          somenteLeitura
-          pendente={diasPendentes}
-          valor={diasPendentes ? '0' : String(diasPorMes(parametros))}
-          sufixo="dias"
-        />
-        {/* Depende das horas e dos dias por semana, logo acima. */}
-        <Resumo
-          className="col-span-2"
-          pendente={horasPorDiaPendentes}
-          alerta={avisoHorasPorDia(parametros)}
-        >
-          Horas por dia:{' '}
-          {formatarHoras(
-            horasPorDiaPendentes ? 0 : projecao.periodos.dia.horas,
-          )}
-        </Resumo>
+    <div key={versao} className="space-y-4">
+      <Secao titulo="Rotina de trabalho" classeGrade="largo:gap-x-6">
+        <div className={METADE}>
+          {/* A semana é informada; o mês ao lado é calculado pelo app, como nos dias. */}
+          <CampoHoras
+            rotulo="Horas por semana"
+            valor={parametros.horasPorSemana}
+            validar={(horas) => validarCampo('horasPorSemana', horas)}
+            onChange={(horas) => alterar('horasPorSemana', horas)}
+            onErro={marcarErroDasHoras}
+          />
+          <CampoHoras
+            rotulo="Horas por mês"
+            valor={horasPendentes ? 0 : projecao.periodos.mes.horas}
+            somenteLeitura
+            pendente={horasPendentes}
+          />
+          <Campos
+            definicoes={[DIAS_POR_SEMANA]}
+            parametros={parametros}
+            onChange={alterar}
+            onErro={marcarErro}
+          />
+          <Campo
+            rotulo="Dias por mês"
+            somenteLeitura
+            pendente={diasPendentes}
+            valor={diasPendentes ? '0' : String(diasPorMes(parametros))}
+            sufixo="dias"
+          />
+          {/* Depende das horas e dos dias por semana, logo acima. */}
+          <Resumo
+            className="col-span-2"
+            pendente={horasPorDiaPendentes}
+            alerta={avisoHorasPorDia(parametros)}
+          >
+            Horas por dia:{' '}
+            {formatarHoras(
+              horasPorDiaPendentes ? 0 : projecao.periodos.dia.horas,
+            )}
+          </Resumo>
+          {/* Em tela larga, a linha vertical entre as metades já separa as médias. */}
+          <hr className="col-span-2 border-slate-200 largo:hidden dark:border-slate-800" />
+        </div>
+        <div className={METADE_DIREITA}>
+          <Campos
+            definicoes={MEDIAS}
+            parametros={parametros}
+            onChange={alterar}
+            onErro={marcarErro}
+          />
+          {/* Depende só do km por hora e do valor por km, logo acima. */}
+          <Resumo className="col-span-2" pendente={faturamentoPendente}>
+            Faturamento por hora:{' '}
+            {formatarMoeda(
+              faturamentoPendente ? 0 : projecao.faturamentoPorHora,
+            )}
+          </Resumo>
+        </div>
       </Secao>
 
       <RestaurarPadrao
