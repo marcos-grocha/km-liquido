@@ -55,12 +55,12 @@ export function Cabecalho({
         <button
           type="button"
           onClick={onInicio}
-          aria-label="km líquido: voltar para a tela inicial"
+          aria-label="KmL, km líquido: voltar para a tela inicial"
           title="Voltar para a tela inicial"
           className="flex items-center gap-2 rounded-xl text-lg font-bold tracking-tight"
         >
           <img src="/favicon.svg" alt="" className="size-8" />
-          km líquido
+          KmL
         </button>
       </h1>
       <div className="flex min-w-0 items-center gap-2">
