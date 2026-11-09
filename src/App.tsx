@@ -115,6 +115,7 @@ export default function App() {
               projecao={projecao}
               camposComErro={camposComErro}
               onChange={setAjustes}
+              onAvancar={() => trocarAba('painel')}
             />
           </div>
           <div hidden={aba !== 'painel'}>
@@ -134,6 +135,7 @@ export default function App() {
               projecao={projecao}
               camposComErro={camposComErro}
               onChange={setAjustes}
+              onAvancar={() => trocarAba('rotina')}
             />
           </div>
         </main>

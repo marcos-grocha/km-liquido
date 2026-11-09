@@ -59,6 +59,8 @@ interface RotinaProps {
   projecao: Projecao
   camposComErro: CamposComErro
   onChange: Dispatch<SetStateAction<Ajustes>>
+  /** Vai para a próxima aba, Painel. */
+  onAvancar: () => void
 }
 
 export function Rotina({
@@ -66,6 +68,7 @@ export function Rotina({
   projecao,
   camposComErro,
   onChange,
+  onAvancar,
 }: RotinaProps) {
   // Mudar a versão recria os campos com os valores restaurados.
   const [versao, setVersao] = useState(0)
@@ -156,6 +159,7 @@ export function Rotina({
       <RestaurarPadrao
         confirmacao="Voltar para os valores padrão? A rotina de trabalho será substituída."
         onRestaurar={restaurarPadrao}
+        proxima={{ nome: 'Painel', onIr: onAvancar }}
       />
     </div>
   )

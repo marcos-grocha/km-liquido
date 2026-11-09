@@ -85,6 +85,8 @@ interface MeuCarroProps {
   projecao: Projecao
   camposComErro: CamposComErro
   onChange: Dispatch<SetStateAction<Ajustes>>
+  /** Vai para a próxima aba, Rotina. */
+  onAvancar: () => void
 }
 
 export function MeuCarro({
@@ -93,6 +95,7 @@ export function MeuCarro({
   projecao,
   camposComErro,
   onChange,
+  onAvancar,
 }: MeuCarroProps) {
   // Mudar a versão recria os campos com os valores restaurados.
   const [versao, setVersao] = useState(0)
@@ -200,6 +203,7 @@ export function MeuCarro({
       <RestaurarPadrao
         confirmacao="Voltar para os valores padrão? Os dois carros serão substituídos."
         onRestaurar={restaurarPadrao}
+        proxima={{ nome: 'Rotina', onIr: onAvancar }}
       />
     </div>
   )
