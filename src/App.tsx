@@ -23,8 +23,10 @@ import {
 
 export default function App() {
   const [ajustes, setAjustes] = useState(carregarAjustes)
-  // A cada abertura, o app começa pela tela inicial (null), que leva a Meu carro ou ao Painel.
-  const [aba, setAba] = useState<Aba | null>(null)
+  // A cada abertura, o app começa pela tela inicial, que leva a Meu carro ou ao
+  // Painel; o ícone do cabeçalho volta para ela.
+  const [inicio, setInicio] = useState(true)
+  const [aba, setAba] = useState<Aba>('painel')
   const [doacaoAberta, setDoacaoAberta] = useState(() =>
     deveAbrirDoacao(
       ajustes !== AJUSTES_PADRAO,
@@ -53,6 +55,16 @@ export default function App() {
     window.scrollTo({ top: 0 })
   }
 
+  function sairDoInicio(para: Aba) {
+    setInicio(false)
+    trocarAba(para)
+  }
+
+  function voltarAoInicio() {
+    setInicio(true)
+    window.scrollTo({ top: 0 })
+  }
+
   function trocarCarro() {
     setAjustes((atual) => ({
       ...atual,
@@ -71,59 +83,67 @@ export default function App() {
     salvarFechamentoDoacao(Date.now())
   }
 
-  // Na tela inicial não há cabeçalho, navegação nem pop-up de doação.
-  if (aba === null) {
-    return (
-      <TelaInicial
-        onComecar={() => trocarAba('carro')}
-        onResultados={() => trocarAba('painel')}
-      />
-    )
-  }
-
-  // As abas ficam montadas para não perder o que foi digitado ao trocar.
+  // Na tela inicial não há cabeçalho, navegação nem pop-up de doação. O resto do
+  // app só fica escondido, e as abas continuam montadas para não perder o que foi
+  // digitado ao trocar de aba ou passar pela tela inicial.
   return (
-    <div className="mx-auto min-h-dvh max-w-md largo:max-w-240">
-      <Cabecalho
-        carro={parametros.carro}
-        posicaoCarro={ROTULOS_CARRO[ajustes.carroAtivo]}
-        trocas={trocasDeCarro}
-        onTrocarCarro={trocarCarro}
-        pontinho={pontinho}
-        coracao={coracao}
-        onApoiar={abrirPeloCoracao}
-      />
-      <main className="px-4 pb-28">
-        <div hidden={aba !== 'rotina'}>
-          <Rotina
-            parametros={parametros}
-            projecao={projecao}
-            camposComErro={camposComErro}
-            onChange={setAjustes}
-          />
-        </div>
-        <div hidden={aba !== 'painel'}>
-          <Painel
-            projecao={projecao}
-            parametros={parametros}
-            camposComErro={camposComErro}
-          />
-        </div>
-        <div hidden={aba !== 'avulsa'}>
-          <Avulsa parametros={parametros} camposComErro={camposComErro} />
-        </div>
-        <div hidden={aba !== 'carro'}>
-          <MeuCarro
-            ajustes={ajustes}
-            parametros={parametros}
-            projecao={projecao}
-            camposComErro={camposComErro}
-            onChange={setAjustes}
-          />
-        </div>
-      </main>
-      <NavegacaoInferior aba={aba} onChange={trocarAba} />
-      <Doacao aberta={doacaoAberta} onFechar={fecharDoacao} coracao={coracao} />
-    </div>
+    <>
+      {inicio && (
+        <TelaInicial
+          onComecar={() => sairDoInicio('carro')}
+          onResultados={() => sairDoInicio('painel')}
+        />
+      )}
+      <div
+        hidden={inicio}
+        className="mx-auto min-h-dvh max-w-md largo:max-w-240"
+      >
+        <Cabecalho
+          carro={parametros.carro}
+          posicaoCarro={ROTULOS_CARRO[ajustes.carroAtivo]}
+          trocas={trocasDeCarro}
+          onTrocarCarro={trocarCarro}
+          pontinho={pontinho}
+          coracao={coracao}
+          onApoiar={abrirPeloCoracao}
+          onInicio={voltarAoInicio}
+        />
+        <main className="px-4 pb-28">
+          <div hidden={aba !== 'rotina'}>
+            <Rotina
+              parametros={parametros}
+              projecao={projecao}
+              camposComErro={camposComErro}
+              onChange={setAjustes}
+            />
+          </div>
+          <div hidden={aba !== 'painel'}>
+            <Painel
+              projecao={projecao}
+              parametros={parametros}
+              camposComErro={camposComErro}
+            />
+          </div>
+          <div hidden={aba !== 'avulsa'}>
+            <Avulsa parametros={parametros} camposComErro={camposComErro} />
+          </div>
+          <div hidden={aba !== 'carro'}>
+            <MeuCarro
+              ajustes={ajustes}
+              parametros={parametros}
+              projecao={projecao}
+              camposComErro={camposComErro}
+              onChange={setAjustes}
+            />
+          </div>
+        </main>
+        <NavegacaoInferior aba={aba} onChange={trocarAba} />
+        <Doacao
+          aberta={doacaoAberta && !inicio}
+          onFechar={fecharDoacao}
+          coracao={coracao}
+        />
+      </div>
+    </>
   )
 }

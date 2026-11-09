@@ -24,7 +24,8 @@ preenchidos de novo na primeira vez.
 
 - **Tela inicial**: a cada abertura do app, o ícone e o nome do app com dois botões: "Comece
   por aqui", que leva a Meu carro, e "Ir para os resultados", que leva ao Painel. Nela não
-  aparecem o cabeçalho, a navegação de baixo nem o pop-up de doação.
+  aparecem o cabeçalho, a navegação de baixo nem o pop-up de doação. O ícone com o nome do
+  app, no canto superior esquerdo, volta para ela.
 - **Meu carro**: dois carros, o Principal e o Secundário, cada um com os dados do veículo e
   dos custos, com o pagamento como financiamento (por mês) ou aluguel (por semana). O seletor
   ao lado de "Veículo" troca o carro em uso, assim como um toque no nome do carro no
