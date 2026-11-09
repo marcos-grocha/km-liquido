@@ -4,7 +4,12 @@ import { Campos } from '../../components/CampoParametro'
 import { RestaurarPadrao } from '../../components/RestaurarPadrao'
 import { Resumo, Secao } from '../../components/Secao'
 import { Segmentado } from '../../components/Segmentado'
-import { sugestao, type DefinicaoCampo } from '../../components/campos'
+import {
+  METADE,
+  METADE_DIREITA,
+  sugestao,
+  type DefinicaoCampo,
+} from '../../components/campos'
 import type { CamposComErro } from '../../components/useCamposComErro'
 import {
   ROTULOS_CARRO,
@@ -67,14 +72,6 @@ const PAGAMENTO: Record<PagamentoDoCarro, DefinicaoCampo> = {
 const OPCOES_PAGAMENTO = (
   Object.keys(ROTULOS_PAGAMENTO) as PagamentoDoCarro[]
 ).map((valor) => ({ valor, rotulo: ROTULOS_PAGAMENTO[valor] }))
-
-/**
- * Cada metade do card Veículo. No celular, as duas se empilham na mesma grade;
- * em tela larga, o veículo e a manutenção ficam à esquerda e os custos fixos à direita,
- * alinhados pela base para os dois resumos ficarem na mesma altura.
- */
-const METADE =
-  'col-span-2 grid grid-cols-2 content-start gap-3 largo:col-span-1 largo:content-end'
 
 const OPCOES_CARRO = ([0, 1] as const).map((indice) => ({
   valor: String(indice) as `${IndiceCarro}`,
@@ -175,9 +172,7 @@ export function MeuCarro({
           {/* Em tela larga, a linha vertical entre as metades já separa os custos fixos. */}
           <hr className="col-span-2 border-slate-200 largo:hidden dark:border-slate-800" />
         </div>
-        <div
-          className={`${METADE} largo:border-l largo:border-slate-200 largo:pl-6 dark:largo:border-slate-800`}
-        >
+        <div className={METADE_DIREITA}>
           {campos(CUSTOS_FIXOS)}
           <div className="col-span-2 space-y-1">
             <p className="text-sm font-medium text-slate-700 dark:text-slate-200">

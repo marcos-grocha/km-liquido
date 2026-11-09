@@ -45,3 +45,14 @@ export function sugestao(campo: CampoNumerico): string {
   const valor = formatarEntrada(PARAMETROS_PADRAO[campo], formato)
   return `${completarCasas(valor, formato)} é uma sugestão realista`
 }
+
+/**
+ * Cada metade de um card de ajustes. No celular, as duas se empilham na mesma
+ * grade; em tela larga, ficam lado a lado, alinhadas pela base para os resumos
+ * do fim de cada uma ficarem na mesma altura.
+ */
+export const METADE =
+  'col-span-2 grid grid-cols-2 content-start gap-3 largo:col-span-1 largo:content-end'
+
+/** A metade da direita, separada da outra por uma linha vertical em tela larga. */
+export const METADE_DIREITA = `${METADE} largo:border-l largo:border-slate-200 largo:pl-6 dark:largo:border-slate-800`
