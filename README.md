@@ -115,3 +115,9 @@ o app de novo e apaga a cópia anterior.
 - [ ] Diário real: registrar ganhos, km e abastecimentos e comparar com a estimativa
 - [ ] Metas: quantas horas rodar para chegar a um valor
 - [ ] Outros custos: depreciação, licenciamento, celular
+
+
+<img width="1912" height="906" alt="image" src="https://github.com/user-attachments/assets/f1a27f8d-05ba-4fa7-8714-846d443cebbd" />
+
+<img width="1912" height="911" alt="image" src="https://github.com/user-attachments/assets/2be39eba-4c40-4359-9572-71ad54edbf14" />
+
