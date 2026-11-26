@@ -269,4 +269,40 @@ describe('calcularAvulsa', () => {
       faturamentoResponsavel: 52.29,
     })
   })
+
+  it('estima as horas pelo faturamento por hora da Rotina', () => {
+    // 20 km/h × R$ 1,50/km = R$ 30/h.
+    const resultado = calcularAvulsa(exemplo, { faturamentoBruto: 94.29 })
+
+    expect(resultado.horasEstimadas).toBe(true)
+    esperarValores(resultado, {
+      horas: 3.14,
+      faturamentoPorKm: 1.5,
+      faturamentoPorHora: 30,
+    })
+  })
+
+  it('mostra quanto o motorista fez por km e por hora informados', () => {
+    const resultado = calcularAvulsa(exemplo, {
+      faturamentoBruto: 300,
+      km: 160,
+      horas: 7.5,
+    })
+
+    expect(resultado.kmEstimado).toBe(false)
+    expect(resultado.horasEstimadas).toBe(false)
+    esperarValores(resultado, {
+      km: 160,
+      horas: 7.5,
+      faturamentoPorKm: 1.88,
+      faturamentoPorHora: 40,
+    })
+  })
+
+  it('não divide por zero com o bruto zerado', () => {
+    const resultado = calcularAvulsa(exemplo, { faturamentoBruto: 0 })
+
+    expect(resultado.faturamentoPorKm).toBe(0)
+    expect(resultado.faturamentoPorHora).toBe(0)
+  })
 })

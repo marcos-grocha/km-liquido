@@ -39,7 +39,12 @@ preenchidos de novo na primeira vez.
 - **Painel**: lucro real do mês, hora líquida, km líquido e o demonstrativo do faturamento
   bruto até o lucro, por hora, dia, semana, mês ou ano.
 - **Quanto sobrou**: "fiz R$ X hoje, quanto sobrou?" — quanto do bruto separar para o combustível e
-  para a manutenção. O km rodado é opcional; sem ele, a distância é estimada pelo valor por km.
+  para a manutenção. O km rodado e as horas trabalhadas são opcionais: em branco, o km é
+  estimado pelo valor por km e as horas, pelo faturamento por hora da Rotina. Informados, o
+  texto abaixo de cada campo mostra quanto o motorista fez por km e por hora, ao lado da média
+  da Rotina: em verde se igualou ou passou a média, em vermelho se ficou abaixo.
+  Cada campo tem um botão de borracha que o zera e devolve o cursor a ele (um só para horas e
+  minutos); já em branco, o botão fica apagado.
 - **Apoie o projeto**: pop-up com a chave Pix para doações e atalhos para o WhatsApp e o
   Instagram, para dúvidas, sugestões e críticas. Abre sozinho depois que o carro foi
   configurado e, uma vez fechado, só volta depois de uma semana. Ao fechar, encolhe de volta
@@ -52,7 +57,9 @@ preenchidos de novo na primeira vez.
   em duas metades, com os custos fixos à direita; na Rotina, as horas e os dias ficam à
   esquerda e o km por hora e o valor por km à direita; no Painel, os três cards de cima ficam
   numa coluna estreita e o demonstrativo à direita; no Quanto sobrou, o resultado aparece ao
-  lado do formulário. No celular e no tablet em pé, o layout continua o mesmo.
+  lado do formulário; no espaço que sobra abaixo dele, até a altura do formulário, um card cinza
+  mostra os valores cheios do seguro, do IPVA e do financiamento ou aluguel. No celular e no
+  tablet em pé, o layout continua o mesmo.
 
 ## Regras de cálculo
 
@@ -116,8 +123,6 @@ o app de novo e apaga a cópia anterior.
 - [ ] Metas: quantas horas rodar para chegar a um valor
 - [ ] Outros custos: depreciação, licenciamento, celular
 
-
 <img width="1912" height="906" alt="image" src="https://github.com/user-attachments/assets/f1a27f8d-05ba-4fa7-8714-846d443cebbd" />
 
 <img width="1912" height="911" alt="image" src="https://github.com/user-attachments/assets/2be39eba-4c40-4359-9572-71ad54edbf14" />
-

@@ -154,6 +154,18 @@ avulso (`calcularAvulsa`).
 - TOTAL = manutenção
 - faturamento responsável (sobra) = líquido − TOTAL
 
+As horas trabalhadas também são opcionais e não entram na sobra; servem para o motorista
+comparar o dia com a média da Rotina:
+
+- horas = horas informadas ou, se em branco, bruto ÷ faturamento por hora (km/h × valor/km)
+- faturamento por km = bruto ÷ km
+- faturamento por hora = bruto ÷ horas
+
+Com o km ou as horas informados, o texto abaixo do campo mostra o faturamento por km ou por
+hora alcançado, ao lado da média da Rotina: em verde quando é igual ou maior que a média e em
+vermelho quando é menor, comparados em centavos, como aparecem na tela. Com o bruto zerado, os
+dois valem zero.
+
 | Caso                                        |    km | Combustível | Líquido | Manutenção | Sobra |
 | ------------------------------------------- | ----: | ----------: | ------: | ---------: | ----: |
 | Planilha (bruto 94,29; combustível/km 0,50) | 62,86 |       31,43 |   62,86 |       6,29 | 56,57 |
