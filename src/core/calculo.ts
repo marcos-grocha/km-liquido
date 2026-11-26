@@ -45,6 +45,11 @@ export function custoCombustivelPorKm(p: Parametros): number {
   return p.precoCombustivel / p.consumoKmPorLitro
 }
 
+/** Faturamento bruto por hora trabalhada: km por hora × valor por km. */
+export function faturamentoPorHora(p: Parametros): number {
+  return p.kmPorHora * p.valorPorKm
+}
+
 /** Financiamento ou aluguel por mês; o aluguel semanal vale 52 semanas ÷ 12 meses. */
 function pagamentoMensalDoCarro(p: Parametros): number {
   return p.pagamentoDoCarro === 'aluguel'
@@ -123,7 +128,7 @@ export function calcularProjecao(p: Parametros): Projecao {
   return {
     custoCombustivelPorKm: combustivelPorKm,
     custoPorKm: combustivelPorKm + p.manutencaoPorKm,
-    faturamentoPorHora: p.kmPorHora * p.valorPorKm,
+    faturamentoPorHora: faturamentoPorHora(p),
     periodos,
     kmLiquido: periodos.mes.lucro / periodos.mes.km,
   }
@@ -133,12 +138,20 @@ export interface EntradaAvulsa {
   faturamentoBruto: number
   /** Km realmente rodados; sem ele, a distância é estimada pelo valor por km. */
   km?: number
+  /** Horas realmente trabalhadas; sem elas, são estimadas pelo faturamento por hora. */
+  horas?: number
 }
 
 export interface ResultadoAvulsa {
   km: number
   kmEstimado: boolean
+  horas: number
+  horasEstimadas: boolean
   faturamentoBruto: number
+  /** Bruto ÷ km: quanto o motorista fez por km rodado. */
+  faturamentoPorKm: number
+  /** Bruto ÷ horas: quanto o motorista fez por hora trabalhada. */
+  faturamentoPorHora: number
   combustivel: number
   faturamentoLiquido: number
   manutencao: number
@@ -146,20 +159,32 @@ export interface ResultadoAvulsa {
   faturamentoResponsavel: number
 }
 
+/** Divisão que dá zero quando não há o que dividir (bruto zero estima zero km). */
+function porUnidade(valor: number, quantidade: number): number {
+  return quantidade > 0 ? valor / quantidade : 0
+}
+
 /** "Fiz R$ X hoje, quanto sobrou?" — seguro, IPVA, financiamento e aluguel não entram. */
 export function calcularAvulsa(
   p: Parametros,
   entrada: EntradaAvulsa,
 ): ResultadoAvulsa {
+  const { faturamentoBruto } = entrada
   const kmEstimado = entrada.km === undefined
-  const km = entrada.km ?? entrada.faturamentoBruto / p.valorPorKm
+  const km = entrada.km ?? faturamentoBruto / p.valorPorKm
+  const horasEstimadas = entrada.horas === undefined
+  const horas = entrada.horas ?? faturamentoBruto / faturamentoPorHora(p)
   const combustivel = km * custoCombustivelPorKm(p)
-  const faturamentoLiquido = entrada.faturamentoBruto - combustivel
+  const faturamentoLiquido = faturamentoBruto - combustivel
   const manutencao = km * p.manutencaoPorKm
   return {
     km,
     kmEstimado,
-    faturamentoBruto: entrada.faturamentoBruto,
+    horas,
+    horasEstimadas,
+    faturamentoBruto,
+    faturamentoPorKm: porUnidade(faturamentoBruto, km),
+    faturamentoPorHora: porUnidade(faturamentoBruto, horas),
     combustivel,
     faturamentoLiquido,
     manutencao,

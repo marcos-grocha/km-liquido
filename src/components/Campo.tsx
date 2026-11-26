@@ -1,9 +1,17 @@
-import { useId, useState, type ChangeEvent } from 'react'
+import {
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ReactNode,
+  type RefObject,
+} from 'react'
 import {
   completarCasas,
   formatarDigitacao,
   type FormatoNumero,
 } from '../lib/numero'
+import { BotaoZerar } from './BotaoZerar'
 
 interface CampoProps {
   rotulo: string
@@ -27,7 +35,7 @@ interface CampoProps {
   formato?: FormatoNumero
   prefixo?: string
   sufixo?: string
-  dica?: string
+  dica?: ReactNode
   erro?: string | null
   /**
    * Id da mensagem de erro de quem agrupa vários campos: o campo marca o erro na
@@ -39,6 +47,10 @@ interface CampoProps {
   placeholder?: string
   maxLength?: number
   className?: string
+  /** Mostra o botão de zerar ao lado: limpa o campo e devolve o cursor a ele. */
+  zeravel?: boolean
+  /** Para quem agrupa campos pôr o cursor neste. */
+  ref?: RefObject<HTMLInputElement | null>
 }
 
 export function Campo({
@@ -61,8 +73,12 @@ export function Campo({
   placeholder,
   maxLength,
   className,
+  zeravel,
+  ref,
 }: CampoProps) {
   const id = useId()
+  const proprio = useRef<HTMLInputElement>(null)
+  const entrada = ref ?? proprio
   const idAjuda = `${id}-ajuda`
   const [focado, setFocado] = useState(false)
   const exibido = formato && !focado ? completarCasas(valor, formato) : valor
@@ -98,6 +114,11 @@ export function Campo({
     onChange?.(campo.value)
   }
 
+  function zerar() {
+    onChange?.('')
+    entrada.current?.focus()
+  }
+
   return (
     <div className={className}>
       <label
@@ -110,45 +131,55 @@ export function Campo({
       >
         {rotulo}
       </label>
-      <div
-        className={`flex items-center rounded-xl border ${compacto ? 'gap-1 px-2.5' : 'gap-1.5 px-3'} ${moldura}`}
-      >
-        {prefixo && (
-          <span className="text-sm text-slate-500 dark:text-slate-400">
-            {prefixo}
-          </span>
-        )}
-        <input
-          id={id}
-          type="text"
-          inputMode={
-            inputMode ?? (formato?.casas === 0 ? 'numeric' : 'decimal')
-          }
-          autoComplete="off"
-          value={exibido}
-          placeholder={placeholder}
-          maxLength={maxLength}
-          onChange={digitar}
-          onFocus={() => {
-            setFocado(true)
-            onFocus?.()
-          }}
-          onBlur={() => {
-            setFocado(false)
-            onBlur?.()
-          }}
-          readOnly={somenteLeitura}
-          tabIndex={somenteLeitura ? -1 : undefined}
-          aria-invalid={erro ? true : undefined}
-          aria-describedby={descritoPor}
-          className={`w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-sm placeholder:text-slate-400 ${somenteLeitura ? `pointer-events-none font-medium select-none ${corDoCalculado}` : ''}`}
-        />
-        {sufixo && (
-          <span
-            className={`shrink-0 text-sm ${somenteLeitura ? (pendente ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-700 dark:text-emerald-400') : 'text-slate-500 dark:text-slate-400'}`}
-          >
-            {sufixo}
-          </span>
+      <div className="flex gap-2">
+        <div
+          className={`flex min-w-0 flex-1 items-center rounded-xl border ${compacto ? 'gap-1 px-2.5' : 'gap-1.5 px-3'} ${moldura}`}
+        >
+          {prefixo && (
+            <span className="text-sm text-slate-500 dark:text-slate-400">
+              {prefixo}
+            </span>
+          )}
+          <input
+            ref={entrada}
+            id={id}
+            type="text"
+            inputMode={
+              inputMode ?? (formato?.casas === 0 ? 'numeric' : 'decimal')
+            }
+            autoComplete="off"
+            value={exibido}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            onChange={digitar}
+            onFocus={() => {
+              setFocado(true)
+              onFocus?.()
+            }}
+            onBlur={() => {
+              setFocado(false)
+              onBlur?.()
+            }}
+            readOnly={somenteLeitura}
+            tabIndex={somenteLeitura ? -1 : undefined}
+            aria-invalid={erro ? true : undefined}
+            aria-describedby={descritoPor}
+            className={`w-full min-w-0 bg-transparent py-2.5 text-base tabular-nums outline-none placeholder:text-sm placeholder:text-slate-400 ${somenteLeitura ? `pointer-events-none font-medium select-none ${corDoCalculado}` : ''}`}
+          />
+          {sufixo && (
+            <span
+              className={`shrink-0 text-sm ${somenteLeitura ? (pendente ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-700 dark:text-emerald-400') : 'text-slate-500 dark:text-slate-400'}`}
+            >
+              {sufixo}
+            </span>
+          )}
+        </div>
+        {zeravel && (
+          <BotaoZerar
+            rotulo={rotulo}
+            desativado={valor.trim() === ''}
+            onClick={zerar}
+          />
         )}
       </div>
       {ajuda && (
